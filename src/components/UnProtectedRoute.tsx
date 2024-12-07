@@ -7,17 +7,17 @@ const UnProtectedRoute = ({
   children,
 }: PropsWithChildren): React.ReactElement => {
   const [state, setState] = useState({ loading: true, ready: false });
-  useEffect(() => {
-    setTimeout(() => {
-      setState({ loading: false, ready: false });
-    }, 2000);
-  }, []);
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     setState({ loading: false, ready: false });
+  //   }, 2000);
+  // }, []);
 
-  if (state.loading) {
-    return <div>Loading...</div>;
-  } else if (!state.loading && !state.ready) {
-    return <Navigate to="/" replace />;
-  }
+  // if (state.loading) {
+  //   return <div>Loading...</div>;
+  // } else if (!state.loading && !state.ready) {
+  //   return <Navigate to="/" replace />;
+  // }
   return <React.Fragment>{children}</React.Fragment>;
 };
 

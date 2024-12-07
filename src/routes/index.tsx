@@ -1,45 +1,133 @@
-import { BrowserRouter, Routes, Route } from "react-router";
+import { Routes, Route } from "react-router";
 
-import Home from "./Home";
-import Login from "./Login";
-import Signup from "./Signup";
+import Stores from "./Stores";
 import Settings from "./Settings";
 import ProtectedRoute from "../components/ProtectedRoute";
 import UnProtectedRoute from "../components/UnProtectedRoute";
+import Products from "./Products";
+import Cart from "./Cart";
+import Orders from "./Orders";
+import Reports from "./Reports";
+// @ts-ignore
+import SignIn from "./SignIn";
+// @ts-ignore
+import SignUp from "./SignUp";
+import ForgotPassword from "./ForgotPassword";
+import { ROUTES } from "../constants/routes";
+import NotFound from "./NotFound";
 
-const Navigation = () => {
+export const ConnectedNavigation = () => {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route
-          index
-          path="/"
-          element={
-            <ProtectedRoute>
-              <Home />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/login" element={<Login />} />
-        <Route
-          path="/signup"
-          element={
-            <UnProtectedRoute>
-              <Signup />
-            </UnProtectedRoute>
-          }
-        />
-        <Route
-          path="settings"
-          element={
-            <ProtectedRoute>
-              <Settings />
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
-    </BrowserRouter>
+    <Routes>
+      <Route
+        index
+        path="/"
+        element={
+          <ProtectedRoute>
+            <Stores />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={`/${ROUTES.STORES}`}
+        element={
+          <ProtectedRoute>
+            <Stores />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={`/${ROUTES.PRODUCTS}`}
+        element={
+          <ProtectedRoute>
+            <Products />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={`/${ROUTES.CART}`}
+        element={
+          <ProtectedRoute>
+            <Cart />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={`/${ROUTES.ORDERS}`}
+        element={
+          <ProtectedRoute>
+            <Orders />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={`/${ROUTES.REPORTS}`}
+        element={
+          <ProtectedRoute>
+            <Reports />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={`/${ROUTES.SETTINGS}`}
+        element={
+          <ProtectedRoute>
+            <Settings />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        index
+        path="*"
+        element={
+          <UnProtectedRoute>
+            <NotFound />
+          </UnProtectedRoute>
+        }
+      />
+    </Routes>
   );
 };
 
-export default Navigation;
+export const Navigation = () => {
+  return (
+    <Routes>
+      <Route
+        index
+        path={`/${ROUTES.SIGNIN}`}
+        element={
+          <UnProtectedRoute>
+            <SignIn />
+          </UnProtectedRoute>
+        }
+      />
+      <Route
+        index
+        path={`/${ROUTES.SIGNUP}`}
+        element={
+          <UnProtectedRoute>
+            <SignUp />
+          </UnProtectedRoute>
+        }
+      />
+      <Route
+        index
+        path={`/${ROUTES.FORGOT_PASSWORD}`}
+        element={
+          <UnProtectedRoute>
+            <ForgotPassword />
+          </UnProtectedRoute>
+        }
+      />
+      <Route
+        index
+        path="*"
+        element={
+          <UnProtectedRoute>
+            <NotFound />
+          </UnProtectedRoute>
+        }
+      />
+    </Routes>
+  );
+};
