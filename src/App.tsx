@@ -10,7 +10,7 @@ import AppDrawer from "./components/AppDrawer";
 import store from "./services/redux/store";
 
 function App() {
-  const [connected, setConnected] = useState(true);
+  const [connected, setConnected] = useState(false);
   return (
     // @ts-ignore
     <ErrorBoundary fallback={<p>Something went wrong</p>}>
