@@ -8,13 +8,11 @@ import Products from "./Products";
 import Cart from "./Cart";
 import Orders from "./Orders";
 import Reports from "./Reports";
-// @ts-ignore
-import SignIn from "./SignIn";
-// @ts-ignore
-import SignUp from "./SignUp";
-import ForgotPassword from "./ForgotPassword";
 import { ROUTES } from "../constants/routes";
 import NotFound from "./NotFound";
+import SignInCtrl from "../components/controllers/SignInCtrl";
+import SignUpCtrl from "../components/controllers/SignUpCtrl";
+import ForgotPasswordCtrl from "../components/controllers/ForgotPasswordCtrl";
 
 export const ConnectedNavigation = () => {
   return (
@@ -97,7 +95,7 @@ export const Navigation = () => {
         path={`/${ROUTES.SIGNIN}`}
         element={
           <UnProtectedRoute>
-            <SignIn />
+            <SignInCtrl />
           </UnProtectedRoute>
         }
       />
@@ -106,7 +104,7 @@ export const Navigation = () => {
         path={`/${ROUTES.SIGNUP}`}
         element={
           <UnProtectedRoute>
-            <SignUp />
+            <SignUpCtrl />
           </UnProtectedRoute>
         }
       />
@@ -115,7 +113,7 @@ export const Navigation = () => {
         path={`/${ROUTES.FORGOT_PASSWORD}`}
         element={
           <UnProtectedRoute>
-            <ForgotPassword />
+            <ForgotPasswordCtrl />
           </UnProtectedRoute>
         }
       />

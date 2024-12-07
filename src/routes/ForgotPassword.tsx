@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { memo } from "react";
 import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
 import Container from "@mui/material/Container";
@@ -7,17 +7,23 @@ import Button from "@mui/material/Button";
 import { NavLink } from "react-router";
 import { Formik } from "formik";
 import * as Yup from "yup";
+
 import { ROUTES } from "../constants/routes";
 
-const initialValues = {
-  email: "",
-};
-const signinSchema = Yup.object().shape({
-  email: Yup.string().email("Invalid email").required("Email is required"),
-});
+interface FormValues {
+  email: string;
+}
+interface Props {
+  initialValues: FormValues;
+  validationSchema: Yup.ObjectSchema<FormValues>;
+  onSubmit: (values: FormValues) => void;
+}
 
-const ForgotPassword = () => {
-  const onSubmit = useCallback((values: typeof initialValues) => {}, []);
+const ForgotPassword = ({
+  initialValues,
+  validationSchema,
+  onSubmit,
+}: Props) => {
   return (
     <Container>
       <Typography variant="h3" component="h1">
@@ -28,7 +34,7 @@ const ForgotPassword = () => {
         instructions on how to reset your password.
       </Typography>
       <Formik
-        validationSchema={signinSchema}
+        validationSchema={validationSchema}
         validateOnMount
         initialValues={initialValues}
         onSubmit={onSubmit}
@@ -79,4 +85,4 @@ const ForgotPassword = () => {
   );
 };
 
-export default ForgotPassword;
+export default memo(ForgotPassword);

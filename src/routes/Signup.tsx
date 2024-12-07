@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { memo } from "react";
 import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
 import Container from "@mui/material/Container";
@@ -10,27 +10,19 @@ import * as Yup from "yup";
 
 import { ROUTES } from "../constants/routes";
 
-const initialValues = {
-  email: "",
-  password: "",
-  repeatPassword: "",
-};
-const signupSchema = Yup.object().shape({
-  email: Yup.string().email("Invalid email").required("Email is required"),
-  password: Yup.string()
-    .min(6, "Too Short!")
-    .max(50, "Too Long!")
-    .required("Password is required"),
-  repeatPassword: Yup.string()
-    .min(6, "Too Short!")
-    .max(50, "Too Long!")
-    .required("Confirm password is Required")
-    .equals([Yup.ref("password")], "Password does not match"),
-});
+interface FormValues {
+  email: string;
+  password: string;
+  repeatPassword: string;
+}
 
-function SignUp() {
-  const onSubmit = useCallback((values: typeof initialValues) => {}, []);
+interface Props {
+  initialValues: FormValues;
+  validationSchema: Yup.ObjectSchema<FormValues>;
+  onSubmit: (values: FormValues) => void;
+}
 
+const SignUp = ({ initialValues, validationSchema, onSubmit }: Props) => {
   return (
     <Container>
       <Typography variant="h3" component="h1">
@@ -38,7 +30,7 @@ function SignUp() {
       </Typography>
       <Typography variant="subtitle2">Create a free account</Typography>
       <Formik
-        validationSchema={signupSchema}
+        validationSchema={validationSchema}
         validateOnMount
         initialValues={initialValues}
         onSubmit={onSubmit}
@@ -111,6 +103,6 @@ function SignUp() {
       </Formik>
     </Container>
   );
-}
+};
 
-export default SignUp;
+export default memo(SignUp);
