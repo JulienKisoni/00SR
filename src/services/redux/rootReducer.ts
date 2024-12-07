@@ -4,10 +4,12 @@ import storage from "redux-persist/lib/storage"; // defaults to localStorage for
 
 import storesSlice from "./slices/stores";
 import userSlice from "./slices/user";
+import usersSlice from "./slices/users";
 
 const rootReducer = combineReducers({
   stores: storesSlice.reducer,
   user: userSlice.reducer,
+  users: usersSlice.reducer,
 });
 
 // Persist configuration
@@ -18,5 +20,7 @@ const persistConfig = {
 
 // Create a persisted reducer
 const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+export type RootState = ReturnType<typeof rootReducer>;
 
 export default persistedReducer;
