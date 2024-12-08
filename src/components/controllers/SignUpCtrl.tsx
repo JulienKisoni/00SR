@@ -44,7 +44,11 @@ const SignUpCtrl = () => {
     (values: FormValues) => {
       const usersSrv = new UsersSrv(dispatch);
       const user = new User({ email: values.email, password: values.password });
-      usersSrv.addOne(user);
+      const { error } = usersSrv.addOne(user);
+      if (error) {
+        alert(error.publicMessage);
+        return;
+      }
       navigate(`/${ROUTES.SIGNIN}`);
     },
     [navigate, dispatch]

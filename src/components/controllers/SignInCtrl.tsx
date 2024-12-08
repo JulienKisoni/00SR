@@ -33,12 +33,12 @@ const SignInCtrl = () => {
   const onSubmit = useCallback(
     (values: FormValues) => {
       const usersSrv = new UsersSrv(dispatch);
-
-      const user = usersSrv.getOne<Types.IUserDocument>(values);
-      if (user) {
-        usersSrv.login(user);
-        navigate(`/${ROUTES.STORES}`);
+      const { error } = usersSrv.login(values);
+      if (error) {
+        alert(error.publicMessage);
+        return;
       }
+      navigate(`/${ROUTES.STORES}`);
     },
     [navigate, dispatch]
   );
