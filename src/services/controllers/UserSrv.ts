@@ -47,7 +47,6 @@ export class UsersSrv extends Api {
       const equal = user?.password
         ? compareSync(password, user.password || "")
         : false;
-      console.log({ email, password, equal });
       if (!equal) {
         return { data: null, error };
       }
@@ -72,5 +71,8 @@ export class UsersSrv extends Api {
       return { data: data as Types.IUserDocument };
     }
     return { error };
+  }
+  logout() {
+    this.dispatch(setUser({ data: null }));
   }
 }
