@@ -1,5 +1,8 @@
+import type { Dispatch, UnknownAction } from "redux";
+
 export abstract class Api {
   abstract endpoint?: string;
+  abstract dispatch: Dispatch<UnknownAction>;
 
   abstract addOne<T extends Types.IUserDocument>(payload: T): void;
 

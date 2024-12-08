@@ -46,7 +46,6 @@ const SignUp = ({ initialValues, validationSchema, onSubmit }: Props) => {
           isSubmitting,
           /* and other goodies */
         }) => {
-          console.log({ values, errors, touched, isValid });
           return (
             <form onSubmit={handleSubmit}>
               <Stack direction="column" spacing={5}>

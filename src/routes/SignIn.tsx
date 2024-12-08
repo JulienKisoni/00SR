@@ -44,7 +44,6 @@ const SignIn = ({ initialValues, validationSchema, onSubmit }: Props) => {
           isSubmitting,
           /* and other goodies */
         }) => {
-          console.log({ values, errors, touched, isValid });
           return (
             <form>
               <Stack direction="column" spacing={5}>

@@ -1,7 +1,7 @@
 // import { ORDER_STATUS } from './enums';
 
 declare namespace Types {
-  export enum USER_ROLES {
+  enum USER_ROLES {
     user = "user",
     admin = "admin",
   }
@@ -23,7 +23,7 @@ declare namespace Types {
     profile: {
       username: string;
       picture: any;
-      role: USER_ROLES;
+      role: USER_ROLES | string;
     };
     //   storesDetails?: Partial<IStoreDocument>[];
     __v?: number;
