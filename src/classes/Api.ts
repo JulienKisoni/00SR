@@ -6,7 +6,9 @@ export abstract class Api {
 
   abstract addOne<T extends Types.IUserDocument>(payload: T): void;
 
-  //   abstract getOne: <T>(id: string) => T;
+  abstract getOne<T extends Types.IUserDocument>(filters: {
+    [key: string]: string;
+  }): T | null;
   //   abstract getMany: <T, U>(filters?: T) => U[];
 
   //   abstract updateOne: <T>(id: string, payload: Partial<T>) => T;

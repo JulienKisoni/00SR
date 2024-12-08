@@ -87,7 +87,7 @@ export const ConnectedNavigation = () => {
   );
 };
 
-export const Navigation = () => {
+export const NotConnectedNavigation = () => {
   return (
     <Routes>
       <Route

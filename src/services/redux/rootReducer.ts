@@ -16,6 +16,7 @@ const rootReducer = combineReducers({
 const persistConfig = {
   key: "root", // Key for the storage
   storage, // Storage engine to use (localStorage in this case)
+  version: 1,
 };
 
 // Create a persisted reducer

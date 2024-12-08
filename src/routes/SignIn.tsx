@@ -45,7 +45,7 @@ const SignIn = ({ initialValues, validationSchema, onSubmit }: Props) => {
           /* and other goodies */
         }) => {
           return (
-            <form>
+            <form onSubmit={handleSubmit}>
               <Stack direction="column" spacing={5}>
                 <TextField
                   id="email-address"

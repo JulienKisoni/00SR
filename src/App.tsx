@@ -1,29 +1,27 @@
-import React, { useState } from "react";
+import React from "react";
 import { BrowserRouter } from "react-router";
 import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
+import { persistStore } from "redux-persist";
 
 import "./App.css";
 
-import ErrorBoundary from "./components/ErrorBundary";
-import { Navigation, ConnectedNavigation } from "./routes";
-import AppDrawer from "./components/AppDrawer";
+import ErrorBoundary from "./components/ErrorBoundary";
 import store from "./services/redux/store";
+import Navigation from "./components/Navigation";
+
+const persistore = persistStore(store);
 
 function App() {
-  const [connected, setConnected] = useState(false);
   return (
     // @ts-ignore
     <ErrorBoundary fallback={<p>Something went wrong</p>}>
       <Provider store={store}>
-        <BrowserRouter>
-          {!connected ? (
+        <PersistGate loading="Loading datastore" persistor={persistore}>
+          <BrowserRouter>
             <Navigation />
-          ) : (
-            <AppDrawer>
-              <ConnectedNavigation />
-            </AppDrawer>
-          )}
-        </BrowserRouter>
+          </BrowserRouter>
+        </PersistGate>
       </Provider>
     </ErrorBoundary>
   );
