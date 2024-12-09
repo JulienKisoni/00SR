@@ -19,7 +19,10 @@ export abstract class Api {
   }): GenericResponse<T>;
   //   abstract getMany: <T, U>(filters?: T) => U[];
 
-  //   abstract updateOne: <T>(id: string, payload: Partial<T>) => T;
+  abstract updateOne<T extends Types.IUserDocument>(
+    id: string,
+    payload: Partial<T>
+  ): GenericResponse<T>;
 
   //   abstract deleteOne: (id: string) => void;
   //   abstract deleteMany: (ids: string[]) => void;

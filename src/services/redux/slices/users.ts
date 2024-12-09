@@ -18,6 +18,20 @@ const deleteUserImpl: CaseReducer<State, PayloadAction<{ userId: string }>> = (
     state.splice(index, 1);
   }
 };
+const updateUserImpl: CaseReducer<
+  State,
+  PayloadAction<{ userId: string; payload: Partial<Types.IUserDocument> }>
+> = (state, action) => {
+  const index = state.findIndex((user) => user._id === action.payload.userId);
+  if (index !== -1) {
+    const actualUser = state[index];
+    const newUser = {
+      ...actualUser,
+      ...action.payload.payload,
+    };
+    state.splice(index, 1, newUser);
+  }
+};
 
 const usersSlice = createSlice({
   name: "stores",
@@ -25,9 +39,10 @@ const usersSlice = createSlice({
   reducers: {
     createUser: createUserImpl,
     deleteUser: deleteUserImpl,
+    updateUser: updateUserImpl,
   },
 });
 
 export default usersSlice;
 
-export const { createUser, deleteUser } = usersSlice.actions;
+export const { createUser, deleteUser, updateUser } = usersSlice.actions;

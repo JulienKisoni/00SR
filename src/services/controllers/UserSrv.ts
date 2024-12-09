@@ -2,7 +2,7 @@ import { Dispatch, UnknownAction } from "@reduxjs/toolkit";
 import { hashSync, compareSync } from "bcryptjs";
 
 import { Api, GenericResponse } from "../../classes/Api";
-import { createUser } from "../redux/slices/users";
+import { createUser, updateUser } from "../redux/slices/users";
 import { setUser } from "../redux/slices/user";
 import store from "../redux/store";
 import { GenericError } from "../../classes/GenericError";
@@ -37,7 +37,7 @@ export class UsersSrv extends Api {
     return { data: undefined, error: undefined };
   }
 
-  getOne<T>(filters: any): GenericResponse<T> {
+  getOne<T extends Types.IUserDocument>(filters: any): GenericResponse<T> {
     const users = store.getState().users || [];
     let user: Types.IUserDocument | null = null;
     const { email, _id, password } = filters || {};
@@ -74,5 +74,41 @@ export class UsersSrv extends Api {
   }
   logout() {
     this.dispatch(setUser({ data: null }));
+  }
+  updateOne<T extends Types.IUserDocument>(
+    userId: string,
+    payload: Partial<T>
+  ): GenericResponse<T> {
+    const { error, data: _data } = this.getOne({ _id: userId });
+    if (error) {
+      return { error };
+    } else if (!_data) {
+      const error = new GenericError("Invalid data");
+      return { error };
+    }
+    this.dispatch(updateUser({ userId, payload }));
+    const { error: _error, data } = this.getOne({ _id: userId });
+    if (data) {
+      this.dispatch(setUser({ data }));
+    }
+    return { error: _error, data: data as unknown as T };
+  }
+  updatePassword({
+    userId,
+    email,
+    password,
+    newPassword,
+  }: {
+    userId: string;
+    email: string;
+    password: string;
+    newPassword: string;
+  }): GenericResponse<Types.IUserDocument> {
+    const { error } = this.getOne({ email, password });
+    if (error) {
+      return { error };
+    }
+    const hashPassword = hashSync(newPassword);
+    return this.updateOne(userId, { password: hashPassword });
   }
 }

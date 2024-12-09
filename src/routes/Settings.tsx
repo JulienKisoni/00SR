@@ -12,6 +12,7 @@ import { useNavigate } from "react-router";
 
 import { UsersSrv } from "../services/controllers/UserSrv";
 import { ROUTES } from "../constants/routes";
+import UpdatePasswordCtrl from "../components/controllers/UpdatePasswordCtrl";
 
 const Settings = () => {
   const [state, setState] = useState({ tabIndex: 0 });
@@ -51,7 +52,9 @@ const Settings = () => {
             </Stack>
           </TabPanel>
           <TabPanel value={1}>Item Two</TabPanel>
-          <TabPanel value={2}>Item Three</TabPanel>
+          <TabPanel value={2}>
+            <UpdatePasswordCtrl />
+          </TabPanel>
         </TabContext>
       </Box>
     </Container>
