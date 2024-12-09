@@ -13,6 +13,7 @@ import { useNavigate } from "react-router";
 import { UsersSrv } from "../services/controllers/UserSrv";
 import { ROUTES } from "../constants/routes";
 import UpdatePasswordCtrl from "../components/controllers/UpdatePasswordCtrl";
+import UpdateProfileCtrl from "../components/controllers/UpdateProfileCtrl";
 
 const Settings = () => {
   const [state, setState] = useState({ tabIndex: 0 });
@@ -51,7 +52,9 @@ const Settings = () => {
               <Button variant="contained">Delete account</Button>
             </Stack>
           </TabPanel>
-          <TabPanel value={1}>Item Two</TabPanel>
+          <TabPanel value={1}>
+            <UpdateProfileCtrl />
+          </TabPanel>
           <TabPanel value={2}>
             <UpdatePasswordCtrl />
           </TabPanel>

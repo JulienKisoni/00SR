@@ -27,11 +27,15 @@ export class UsersSrv extends Api {
       return { error };
     }
     const password = hashSync(user.password, saltRound);
+    const username = user.email.split("@")[0];
     const data: Types.IUserDocument = {
       _id: user._id,
       email: user.email,
       password,
-      profile: user.profile,
+      profile: {
+        ...user.profile,
+        username,
+      },
     };
     this.dispatch(createUser({ data }));
     return { data: undefined, error: undefined };
