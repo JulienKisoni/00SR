@@ -2,11 +2,14 @@ import React, { useCallback, useMemo } from "react";
 import * as Yup from "yup";
 import { FormikHelpers } from "formik";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
 
 import { UsersSrv } from "../../services/controllers/UserSrv";
 import { RootState } from "../../services/redux/rootReducer";
 import UpdateProfile from "../UpdateProfile";
 import { regex } from "../../constants";
+import ImagePicker from "../ImagePicker";
 
 interface FormValues {
   username: string;
@@ -64,11 +67,19 @@ const UpdateProfileCtrl = () => {
   }
 
   return (
-    <UpdateProfile
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-      onSubmit={onSubmit}
-    />
+    <Box>
+      <Stack direction="column" spacing={5}>
+        <ImagePicker
+          alt={connectedUser.profile.username}
+          profilePicture={connectedUser.profile.picture}
+        />
+        <UpdateProfile
+          initialValues={initialValues}
+          validationSchema={validationSchema}
+          onSubmit={onSubmit}
+        />
+      </Stack>
+    </Box>
   );
 };
 

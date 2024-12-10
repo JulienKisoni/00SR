@@ -7,3 +7,5 @@ export class GenericError extends Error {
     this.publicMessage = publicMessage || message;
   }
 }
+
+// For file refs: images/userId/image-name-{shortId}
