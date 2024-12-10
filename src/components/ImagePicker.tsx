@@ -3,6 +3,7 @@ import React, {
   PropsWithChildren,
   useCallback,
   useState,
+  useEffect,
 } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -13,6 +14,7 @@ import { styled } from "@mui/material/styles";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import Cropper from "react-easy-crop";
 import type { Area, Point } from "react-easy-crop";
+
 import { FileUpload } from "../classes/FileUpload";
 import { GenericError } from "../classes/GenericError";
 
@@ -49,7 +51,9 @@ interface ModalProps {
 }
 interface ImagePickerProps {
   alt: string;
-  profilePicture: string;
+  defaultSrc: string;
+  onSuccess: ({ downloadURL }: { downloadURL: string }) => void;
+  onError: (error: GenericError) => void;
 }
 interface PickerState {
   finalSrc: string;
@@ -96,15 +100,27 @@ const ModalComp = ({
   );
 };
 
-const ImagePicker = ({ alt, profilePicture }: ImagePickerProps) => {
+const ImagePicker = ({
+  alt,
+  defaultSrc,
+  onError,
+  onSuccess,
+}: ImagePickerProps) => {
   const [state, setState] = useState<PickerState>({
-    finalSrc: profilePicture || "",
+    finalSrc: defaultSrc || "https://placehold.co/400",
     showCrop: false,
     crop: initialCrop,
     cropSrc: "",
     file: null,
     croppedAreaPixels: null,
   });
+
+  useEffect(() => {
+    if (defaultSrc && defaultSrc !== state.finalSrc) {
+      setState((prev) => ({ ...prev, finalSrc: defaultSrc }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultSrc]);
 
   const handleClose = useCallback(() => {
     setState((prev) => ({
@@ -116,7 +132,6 @@ const ImagePicker = ({ alt, profilePicture }: ImagePickerProps) => {
     }));
   }, []);
   const handleCropping = useCallback((c: Point) => {
-    console.log("Cropping ", c);
     setState((prev) => ({ ...prev, crop: c }));
   }, []);
   const handleCropComplete = useCallback((_: any, croppedAreaPixels: Area) => {
@@ -126,10 +141,8 @@ const ImagePicker = ({ alt, profilePicture }: ImagePickerProps) => {
     const files = event.target.files;
     if (files !== null) {
       const file = files[0];
-      console.log({ name: file.name });
       const reader = new FileReader();
       reader.addEventListener("load", () => {
-        console.log("image loaded from reader");
         setState((prev) => ({
           ...prev,
           file,
@@ -138,11 +151,9 @@ const ImagePicker = ({ alt, profilePicture }: ImagePickerProps) => {
         }));
       });
       reader.addEventListener("error", (error) => {
-        console.log("Error file reader ", { error });
+        console.error("Error file reader ", { error });
       });
       reader.readAsDataURL(file);
-    } else {
-      console.log("No file");
     }
   }, []);
   const handleSave = useCallback(async () => {
@@ -156,23 +167,44 @@ const ImagePicker = ({ alt, profilePicture }: ImagePickerProps) => {
           aspect: 1,
           file: state.file,
         });
-        console.log({ image });
-      } else {
-        console.log("No image");
+        if (image) {
+          fileUpload.upload({
+            file: image,
+            filename: state.file.name,
+            onError: (err) => {
+              onError(err);
+              setState((prev) => ({
+                ...prev,
+                showCrop: false,
+                crop: initialCrop,
+                cropSrc: "",
+                file: null,
+                croppedAreaPixels: null,
+              }));
+            },
+            onSuccess: (data) => {
+              onSuccess(data);
+              setState({
+                finalSrc: data.downloadURL,
+                showCrop: false,
+                crop: initialCrop,
+                cropSrc: "",
+                file: null,
+                croppedAreaPixels: null,
+              });
+            },
+          });
+        }
       }
     } catch (error: any) {
       const _error = new GenericError(error?.message, "Error cropping image");
       alert(_error.publicMessage);
     }
-  }, [state]);
+  }, [state, onError, onSuccess]);
 
   return (
     <div>
-      {state.finalSrc ? (
-        <img src={state.finalSrc} alt={alt} />
-      ) : (
-        <p>No Final image yet</p>
-      )}
+      <img width={100} height={100} src={state.finalSrc} alt={alt} />
       <Button
         component="label"
         role={undefined}

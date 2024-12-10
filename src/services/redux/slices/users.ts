@@ -25,9 +25,13 @@ const updateUserImpl: CaseReducer<
   const index = state.findIndex((user) => user._id === action.payload.userId);
   if (index !== -1) {
     const actualUser = state[index];
+    const newProfile = action.payload.payload.profile || {};
     const newUser = {
       ...actualUser,
-      ...action.payload.payload,
+      profile: {
+        ...actualUser.profile,
+        ...newProfile,
+      },
     };
     state.splice(index, 1, newUser);
   }

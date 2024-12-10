@@ -4,7 +4,8 @@ import { firebaseStorage } from "../services/firebase";
 import { GenericError } from "./GenericError";
 
 interface UploadArgs {
-  file: File;
+  file: Blob | File;
+  filename: string;
   onSuccess: ({ downloadURL }: { downloadURL: string }) => void;
   onError: (error: GenericError) => void;
 }
@@ -17,7 +18,7 @@ interface CropImageArgs {
 }
 
 export class FileUpload {
-  folderRef: string;
+  private folderRef: string;
 
   constructor(folderRef: string) {
     this.folderRef = folderRef;
@@ -33,22 +34,16 @@ export class FileUpload {
     });
   }
 
-  uploadFile({ file, onError, onSuccess }: UploadArgs) {
-    const storageRef = ref(firebaseStorage, `${this.folderRef}/${file.name}`);
+  upload({ file, onError, onSuccess, filename }: UploadArgs) {
+    const storageRef = ref(firebaseStorage, `${this.folderRef}/${filename}`);
     const uploadTask = uploadBytesResumable(storageRef, file);
     uploadTask.on(
       "state_changed",
       (snapshot) => {
-        // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-        // const progress =
-        //   (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        // console.log("Upload is " + progress + "% done");
         switch (snapshot.state) {
           case "paused":
-            // console.log("Upload is paused");
             break;
           case "running":
-            // console.log("Upload is running");
             break;
         }
       },
@@ -78,7 +73,6 @@ export class FileUpload {
       () => {
         // Upload completed successfully, now we can get the download URL
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          console.log("File available at", downloadURL);
           onSuccess({ downloadURL });
         });
       }

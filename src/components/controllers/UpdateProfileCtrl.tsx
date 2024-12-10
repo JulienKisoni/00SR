@@ -10,6 +10,7 @@ import { RootState } from "../../services/redux/rootReducer";
 import UpdateProfile from "../UpdateProfile";
 import { regex } from "../../constants";
 import ImagePicker from "../ImagePicker";
+import { GenericError } from "../../classes/GenericError";
 
 interface FormValues {
   username: string;
@@ -37,6 +38,30 @@ const UpdateProfileCtrl = () => {
     };
     return data;
   }, [connectedUser]);
+
+  const onFileUploadError = useCallback((error: GenericError) => {
+    alert(error.publicMessage);
+  }, []);
+  const onFileUploadSuccess = useCallback(
+    ({ downloadURL }: { downloadURL: string }) => {
+      if (!connectedUser) {
+        alert("No connected user");
+        return;
+      }
+      alert("Upload success");
+      const usersSrv = new UsersSrv(dispatch);
+      const userId = connectedUser?._id || "";
+      const profile = connectedUser?.profile || {};
+      const payload: Partial<Types.IUserDocument> = {
+        profile: {
+          ...profile,
+          picture: downloadURL,
+        },
+      };
+      usersSrv.updateOne(userId, payload);
+    },
+    [dispatch, connectedUser]
+  );
 
   const onSubmit = useCallback(
     (values: FormValues, helpers: FormikHelpers<FormValues>) => {
@@ -71,7 +96,9 @@ const UpdateProfileCtrl = () => {
       <Stack direction="column" spacing={5}>
         <ImagePicker
           alt={connectedUser.profile.username}
-          profilePicture={connectedUser.profile.picture}
+          defaultSrc={connectedUser.profile.picture}
+          onError={onFileUploadError}
+          onSuccess={onFileUploadSuccess}
         />
         <UpdateProfile
           initialValues={initialValues}
