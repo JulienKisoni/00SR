@@ -11,10 +11,6 @@ declare namespace Types {
     updatedAt?: Date;
   }
 
-  // interface ExpToken {
-  //   tokenId: string;
-  //   expiryAt?: number;
-  // }
   export interface IUserDocument extends Timestamps {
     _id: string;
     email: string;
@@ -29,16 +25,24 @@ declare namespace Types {
     __v?: number;
   }
 
-  // export interface IStoreDocument extends Timestamps {
-  //   _id: string | Schema.Types.ObjectId;
-  //   name: string;
-  //   owner: string | Schema.Types.ObjectId;
-  //   ownerDetails?: Partial<IUserDocument>;
-  //   products: (string | Schema.Types.ObjectId)[];
-  //   description: string;
-  //   active: boolean;
-  //   __v?: number;
-  // }
+  interface Address {
+    line1: string;
+    line2?: string;
+    country: string;
+    state: string;
+    city: string;
+  }
+
+  export interface IStoreDocument extends Timestamps {
+    _id: string;
+    name: string;
+    owner: string;
+    products: string[];
+    description: string;
+    address: Address;
+    active: boolean;
+    __v?: number;
+  }
 
   // export interface IProductDocument extends Timestamps {
   //   _id: string | Schema.Types.ObjectId;
