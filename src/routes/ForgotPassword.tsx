@@ -5,7 +5,7 @@ import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { NavLink } from "react-router";
-import { Formik } from "formik";
+import { Formik, FormikHelpers } from "formik";
 import * as Yup from "yup";
 
 import { ROUTES } from "../constants/routes";
@@ -16,7 +16,7 @@ interface FormValues {
 interface Props {
   initialValues: FormValues;
   validationSchema: Yup.ObjectSchema<FormValues>;
-  onSubmit: (values: FormValues) => void;
+  onSubmit: (values: FormValues, helpers: FormikHelpers<FormValues>) => void;
 }
 
 const ForgotPassword = ({

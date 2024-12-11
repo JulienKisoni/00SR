@@ -1,11 +1,13 @@
 import { Dispatch, UnknownAction } from "@reduxjs/toolkit";
 import { hashSync, compareSync } from "bcryptjs";
+import ShortUniqueId from "short-unique-id";
 
 import { Api, GenericResponse } from "../../classes/Api";
 import { createUser, updateUser } from "../redux/slices/users";
 import { setUser } from "../redux/slices/user";
 import store from "../redux/store";
 import { GenericError } from "../../classes/GenericError";
+import emailSrv from "../email";
 
 const saltRound = 10;
 
@@ -81,7 +83,8 @@ export class UsersSrv extends Api {
   }
   updateOne<T extends Types.IUserDocument>(
     userId: string,
-    payload: Partial<T>
+    payload: Partial<T>,
+    updateCurrentUser = true
   ): GenericResponse<T> {
     const { error, data: _data } = this.getOne({ _id: userId });
     if (error) {
@@ -92,7 +95,7 @@ export class UsersSrv extends Api {
     }
     this.dispatch(updateUser({ userId, payload }));
     const { error: _error, data } = this.getOne({ _id: userId });
-    if (data) {
+    if (data && updateCurrentUser) {
       this.dispatch(setUser({ data }));
     }
     return { error: _error, data: data as unknown as T };
@@ -114,5 +117,36 @@ export class UsersSrv extends Api {
     }
     const hashPassword = hashSync(newPassword);
     return this.updateOne(userId, { password: hashPassword });
+  }
+  async recoverPassword({
+    email,
+  }: {
+    email: string;
+  }): Promise<GenericResponse<void>> {
+    const users = store.getState().users || [];
+    const user = users.find((user) => user.email === email);
+    if (!user) {
+      const error = new GenericError("No user found");
+      return { error };
+    }
+    try {
+      //@ts-ignore
+      const uid = new ShortUniqueId({ length: 10 });
+      //@ts-ignore
+      const plainPassword = uid.rnd();
+      const hashPassword = hashSync(plainPassword, saltRound);
+      const message = `Use this temporary password to log in to your account: ${plainPassword}`;
+      await emailSrv.send({
+        from_name: "My Inventory Manager",
+        to_name: user.profile.username,
+        to_email: user.email,
+        message,
+      });
+      this.updateOne(user._id, { password: hashPassword }, false);
+      return {};
+    } catch (e) {
+      const error = new GenericError("Could not send the email");
+      return { error };
+    }
   }
 }

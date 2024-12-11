@@ -28,6 +28,7 @@ const updateUserImpl: CaseReducer<
     const newProfile = action.payload.payload.profile || {};
     const newUser = {
       ...actualUser,
+      ...action.payload.payload,
       profile: {
         ...actualUser.profile,
         ...newProfile,

@@ -24,3 +24,4 @@ yarn-error.log*
 
 # private
 src/services/firebase/**/*
+src/services/email/**/*
