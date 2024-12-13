@@ -21,7 +21,10 @@ export class UsersSrv extends Api {
     this.dispatch = dispatch;
   }
 
-  addOne(user: Types.IUserDocument): GenericResponse<void> {
+  addOne<T extends Types.IUserDocument | Types.IStoreDocument>(
+    payload: T
+  ): GenericResponse<void> {
+    const user = payload as Types.IUserDocument;
     const users = store.getState().users || [];
     const existingUser = users.find((_user) => _user.email === user.email);
     if (existingUser) {
@@ -43,7 +46,9 @@ export class UsersSrv extends Api {
     return { data: undefined, error: undefined };
   }
 
-  getOne<T extends Types.IUserDocument>(filters: any): GenericResponse<T> {
+  getOne<T extends Types.IUserDocument | Types.IStoreDocument>(
+    filters: any
+  ): GenericResponse<T> {
     const users = store.getState().users || [];
     let user: Types.IUserDocument | null = null;
     const { email, _id, password } = filters || {};
@@ -81,12 +86,14 @@ export class UsersSrv extends Api {
   logout() {
     this.dispatch(setUser({ data: null }));
   }
-  updateOne<T extends Types.IUserDocument>(
+  updateOne<T extends Types.IUserDocument | Types.IStoreDocument>(
     userId: string,
     payload: Partial<T>,
     updateCurrentUser = true
   ): GenericResponse<T> {
-    const { error, data: _data } = this.getOne({ _id: userId });
+    const { error, data: _data } = this.getOne<Types.IUserDocument>({
+      _id: userId,
+    });
     if (error) {
       return { error };
     } else if (!_data) {
@@ -94,7 +101,9 @@ export class UsersSrv extends Api {
       return { error };
     }
     this.dispatch(updateUser({ userId, payload }));
-    const { error: _error, data } = this.getOne({ _id: userId });
+    const { error: _error, data } = this.getOne<Types.IUserDocument>({
+      _id: userId,
+    });
     if (data && updateCurrentUser) {
       this.dispatch(setUser({ data }));
     }
@@ -116,7 +125,9 @@ export class UsersSrv extends Api {
       return { error };
     }
     const hashPassword = hashSync(newPassword);
-    return this.updateOne(userId, { password: hashPassword });
+    return this.updateOne<Types.IUserDocument>(userId, {
+      password: hashPassword,
+    });
   }
   async recoverPassword({
     email,

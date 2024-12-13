@@ -1,4 +1,5 @@
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import type { Area } from "react-easy-crop";
 
 import { firebaseStorage } from "../services/firebase";
 import { GenericError } from "./GenericError";
@@ -11,7 +12,7 @@ interface UploadArgs {
 }
 interface CropImageArgs {
   imageSrc: string;
-  crop: any;
+  crop: Area;
   zoom: number;
   aspect: number;
   file: File;
@@ -28,7 +29,9 @@ export class FileUpload {
     return new Promise((resolve, reject) => {
       const image = new Image();
       image.crossOrigin = "anonymous"; // Prevent CORS issues
-      image.onload = () => resolve(image);
+      image.onload = () => {
+        resolve(image);
+      };
       image.onerror = (error) => reject(error);
       image.src = url;
     });
@@ -90,14 +93,17 @@ export class FileUpload {
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
-    const croppedWidth = image.width / zoom;
+    const croppedWidth = crop.width / zoom;
     const croppedHeight = croppedWidth / aspect;
 
     canvas.width = croppedWidth;
     canvas.height = croppedHeight;
 
-    const x = crop.x * (image.width / 100);
-    const y = crop.y * (image.height / 100);
+    const scaleX = image.naturalWidth / image.width;
+    const scaleY = image.naturalHeight / image.height;
+
+    const x = crop.x * scaleX;
+    const y = crop.y * scaleY;
 
     return new Promise((resolve, reject) => {
       if (!ctx) {

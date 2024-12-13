@@ -1,5 +1,5 @@
 import React from "react";
-import { Formik } from "formik";
+import { Formik, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
@@ -8,6 +8,7 @@ import MenuItem from "@mui/material/MenuItem";
 import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
+import Button from "@mui/material/Button";
 
 interface FormValues {
   line1: string;
@@ -18,51 +19,26 @@ interface FormValues {
   name: string;
   description: string;
 }
-const initialValues: FormValues = {
-  line1: "",
-  line2: "",
-  country: "",
-  state: "",
-  city: "Canada",
-  name: "",
-  description: "",
-};
-const validationSchema = Yup.object<FormValues>().shape({
-  name: Yup.string().required("Name is required"),
-  description: Yup.string()
-    .required("Description is required")
-    .min(6, "Too short")
-    .max(150, "Too long"),
-  line1: Yup.string().required("Line 1 is required"),
-  line2: Yup.string(),
-  state: Yup.string().required("State is required"),
-  city: Yup.string().required("City is required"),
-});
+interface Props {
+  initialValues: FormValues;
+  onSubmit: (values: FormValues, helpers: FormikHelpers<FormValues>) => void;
+  validationSchema: Yup.ObjectSchema<FormValues>;
+  states: { value: string; label: string }[];
+}
 
-const STATES = [
-  { value: "Alberta", label: "Alberta" },
-  { value: "Colombie-Britannique", label: "Colombie-Britannique" },
-  { value: "Manitoba", label: "Manitoba" },
-  { value: "Nouveau-Brunswick", label: "Nouveau-Brunswick" },
-  { value: "Terre-Neuve-et-Labrador", label: "Terre-Neuve-et-Labrador" },
-  { value: "Nouvelle-Écosse", label: "Nouvelle-Écosse" },
-  { value: "Ontario", label: "Ontario" },
-  { value: "Île-du-Prince-Édouard", label: "Île-du-Prince-Édouard" },
-  { value: "Québec", label: "Québec" },
-  { value: "Saskatchewan", label: "Saskatchewan" },
-  { value: "Territoires du Nord-Ouest", label: "Territoires du Nord-Ouest" },
-  { value: "Nunavut", label: "Nunavut" },
-  { value: "Yukon", label: "Yukon" },
-];
-
-const StoreForm = () => {
-  const onSubmit = () => {};
+const StoreForm = ({
+  initialValues,
+  validationSchema,
+  states,
+  onSubmit,
+}: Props) => {
   return (
     <div>
       <Formik
         validationSchema={validationSchema}
         validateOnMount
         initialValues={initialValues}
+        enableReinitialize
         onSubmit={onSubmit}
       >
         {({
@@ -73,9 +49,11 @@ const StoreForm = () => {
           handleBlur,
           handleSubmit,
           isValid,
+          dirty,
           isSubmitting,
           /* and other goodies */
         }) => {
+          const invalid = !dirty || !isValid;
           return (
             <form onSubmit={handleSubmit}>
               <Stack direction="column" spacing={5}>
@@ -84,6 +62,7 @@ const StoreForm = () => {
                   label="Name"
                   variant="outlined"
                   name="name"
+                  value={values.name}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   error={touched.name && !!errors.name}
@@ -94,6 +73,7 @@ const StoreForm = () => {
                   label="Description"
                   variant="outlined"
                   name="description"
+                  value={values.description}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   error={touched.description && !!errors.description}
@@ -106,6 +86,7 @@ const StoreForm = () => {
                   label="Address line 1"
                   variant="outlined"
                   name="line1"
+                  value={values.line1}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   error={touched.line1 && !!errors.line1}
@@ -116,6 +97,7 @@ const StoreForm = () => {
                   label="Address line 2 (optional)"
                   variant="outlined"
                   name="line2"
+                  value={values.line2}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   error={touched.line2 && !!errors.line2}
@@ -126,11 +108,12 @@ const StoreForm = () => {
                   label="Country"
                   variant="outlined"
                   name="country"
-                  disabled
                   value={values.country}
+                  onChange={handleChange}
+                  disabled
                 />
                 <FormControl>
-                  <InputLabel id="labelId-store-state">State</InputLabel>
+                  <InputLabel id="labelId-store-state">State Label</InputLabel>
                   <Select
                     id="store-state"
                     labelId="labelId-store-state"
@@ -138,10 +121,11 @@ const StoreForm = () => {
                     variant="outlined"
                     name="state"
                     onChange={handleChange}
+                    value={values.state}
                     onBlur={handleBlur}
                     error={touched.state && !!errors.state}
                   >
-                    {STATES.map((state) => (
+                    {states.map((state) => (
                       <MenuItem key={state.value} value={state.value}>
                         {state.label}
                       </MenuItem>
@@ -156,11 +140,15 @@ const StoreForm = () => {
                   label="City"
                   variant="outlined"
                   name="city"
+                  value={values.city}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   error={touched.city && !!errors.city}
                   helperText={touched.city ? errors.city : undefined}
                 />
+                <Button type="submit" variant="contained" disabled={invalid}>
+                  Save
+                </Button>
               </Stack>
             </form>
           );

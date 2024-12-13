@@ -1,13 +1,13 @@
 import React from "react";
 import Container from "@mui/material/Container";
 
-import StoreForm from "../components/forms/StoreForm";
+import StoreFormCtlr from "../components/controllers/forms/StoreFormCtrl";
 
 function Stores() {
   return (
     <Container>
       Stores Route
-      <StoreForm />
+      <StoreFormCtlr />
     </Container>
   );
 }

@@ -37,6 +37,7 @@ declare namespace Types {
     _id: string;
     name: string;
     owner: string;
+    picture: string;
     products: string[];
     description: string;
     address: Address;

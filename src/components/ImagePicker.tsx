@@ -62,6 +62,7 @@ interface PickerState {
   crop: Point;
   croppedAreaPixels: Area | null;
   file: File | null;
+  zoom: number;
 }
 
 const initialCrop = {
@@ -113,6 +114,7 @@ const ImagePicker = ({
     cropSrc: "",
     file: null,
     croppedAreaPixels: null,
+    zoom: 1,
   });
 
   useEffect(() => {
@@ -130,6 +132,9 @@ const ImagePicker = ({
       cropSrc: "",
       crop: initialCrop,
     }));
+  }, []);
+  const handleZoomChange = useCallback((z: number) => {
+    setState((prev) => ({ ...prev, zoom: z }));
   }, []);
   const handleCropping = useCallback((c: Point) => {
     setState((prev) => ({ ...prev, crop: c }));
@@ -160,14 +165,21 @@ const ImagePicker = ({
     try {
       if (state.croppedAreaPixels && state.file) {
         const fileUpload = new FileUpload("images");
-        const image = await fileUpload.getCroppedImg({
+        const params = {
           imageSrc: state.cropSrc,
           crop: state.croppedAreaPixels,
-          zoom: 1,
+          zoom: state.zoom,
           aspect: 1,
           file: state.file,
-        });
+        };
+        const image = await fileUpload.getCroppedImg(params);
         if (image) {
+          const croppedImageURL = URL.createObjectURL(image); // Preview cropped image
+          console.log({ croppedImageURL });
+          setState((prev) => ({
+            ...prev,
+            finalSrc: croppedImageURL,
+          }));
           fileUpload.upload({
             file: image,
             filename: state.file.name,
@@ -184,14 +196,14 @@ const ImagePicker = ({
             },
             onSuccess: (data) => {
               onSuccess(data);
-              setState({
-                finalSrc: data.downloadURL,
+              setState((prev) => ({
+                ...prev,
                 showCrop: false,
                 crop: initialCrop,
                 cropSrc: "",
                 file: null,
                 croppedAreaPixels: null,
-              });
+              }));
             },
           });
         }
@@ -204,12 +216,27 @@ const ImagePicker = ({
 
   return (
     <div>
-      <img width={100} height={100} src={state.finalSrc} alt={alt} />
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          borderWidth: "3px",
+          borderColor: "black",
+          borderStyle: "solid",
+          width: 120,
+          height: 120,
+          padding: 5,
+        }}
+      >
+        <img width="100%" height="100%" src={state.finalSrc} alt={alt} />
+      </div>
       <Button
         component="label"
         role={undefined}
         variant="contained"
         tabIndex={-1}
+        style={{ marginBottom: 20 }}
         startIcon={<CloudUploadIcon />}
       >
         Upload files
@@ -228,8 +255,9 @@ const ImagePicker = ({
           <Cropper
             image={state.cropSrc}
             crop={state.crop}
-            zoom={1}
+            zoom={state.zoom}
             aspect={1}
+            onZoomChange={handleZoomChange}
             onCropChange={handleCropping}
             onCropComplete={handleCropComplete}
           />
