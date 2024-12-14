@@ -25,6 +25,7 @@ interface Props {
   validationSchema: Yup.ObjectSchema<FormValues>;
   states: { value: string; label: string }[];
   mode?: Types.FormMode;
+  onDeleteStore?: () => void;
 }
 
 const StoreForm = ({
@@ -33,6 +34,7 @@ const StoreForm = ({
   states,
   onSubmit,
   mode = "add",
+  onDeleteStore,
 }: Props) => {
   const disableAll = useMemo(() => {
     switch (mode) {
@@ -46,6 +48,10 @@ const StoreForm = ({
         return false;
     }
   }, [mode]);
+  const buttonTitle = useMemo(() => {
+    return mode === "add" ? "Create store" : "Save changes";
+  }, [mode]);
+
   return (
     <div>
       <Formik
@@ -172,7 +178,12 @@ const StoreForm = ({
                     variant="contained"
                     disabled={disableAll || invalid}
                   >
-                    Save
+                    {buttonTitle}
+                  </Button>
+                ) : null}
+                {mode === "edit" && onDeleteStore ? (
+                  <Button variant="contained" onClick={onDeleteStore}>
+                    Delete store
                   </Button>
                 ) : null}
               </Stack>

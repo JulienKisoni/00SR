@@ -15,6 +15,7 @@ import SignUpCtrl from "../components/controllers/SignUpCtrl";
 import ForgotPasswordCtrl from "../components/controllers/ForgotPasswordCtrl";
 import AddStore from "./stores/AddStore";
 import ViewStore from "./stores/ViewStore";
+import EditStore from "./stores/EditStore";
 
 export const ConnectedNavigation = () => {
   return (
@@ -41,6 +42,14 @@ export const ConnectedNavigation = () => {
         element={
           <ProtectedRoute>
             <ViewStore />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={`/${ROUTES.STORES}/:storeId/edit`}
+        element={
+          <ProtectedRoute>
+            <EditStore />
           </ProtectedRoute>
         }
       />

@@ -69,8 +69,8 @@ function Stores() {
     navigate(`/${ROUTES.STORES}/${storeId}`);
   };
 
-  const handleEditClick = () => {
-    console.log("Edit clicked for row id:");
+  const handleEditClick = (storeId: string | number) => {
+    navigate(`/${ROUTES.STORES}/${storeId}/edit`);
   };
 
   const handleDeleteClick = useCallback(

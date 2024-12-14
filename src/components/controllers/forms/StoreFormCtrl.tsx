@@ -2,7 +2,6 @@ import React, { useCallback, useState } from "react";
 import { FormikHelpers } from "formik";
 import * as Yup from "yup";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router";
 
 import ImagePicker from "../../ImagePicker";
 import StoreForm from "../../forms/StoreForm";
@@ -52,15 +51,16 @@ interface Props {
   initialValues: FormValues;
   mode?: Types.FormMode;
   defaultImgSrc: string;
+  onDeleteStore?: () => void;
 }
 
 const StoreFormCtlr = ({
   mode = "add",
   initialValues,
   defaultImgSrc = "",
+  onDeleteStore,
 }: Props) => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const connectedUser = useSelector((state: RootState) => {
     return state.user.connectedUser;
@@ -74,29 +74,33 @@ const StoreFormCtlr = ({
         alert("No connected user");
         return;
       }
-      const payload: Types.IStoreDocument = {
-        _id: "",
-        name: values.name,
-        owner: connectedUser._id,
-        products: [],
-        description: values.description,
-        active: true,
-        picture: state.picture,
-        address: {
-          line1: values.line1,
-          line2: values.line2,
-          country: values.country,
-          state: values.state,
-          city: values.city,
-        },
-      };
-      const storeSrv = new StoreSrv(dispatch);
-      storeSrv.addOne<Types.IStoreDocument>(payload);
-      helpers.resetForm();
-      await helpers.validateForm();
-      alert("Store created");
+      if (mode === "add") {
+        const payload: Types.IStoreDocument = {
+          _id: "",
+          name: values.name,
+          owner: connectedUser._id,
+          products: [],
+          description: values.description,
+          active: true,
+          picture: state.picture,
+          address: {
+            line1: values.line1,
+            line2: values.line2,
+            country: values.country,
+            state: values.state,
+            city: values.city,
+          },
+        };
+        const storeSrv = new StoreSrv(dispatch);
+        storeSrv.addOne<Types.IStoreDocument>(payload);
+        helpers.resetForm();
+        await helpers.validateForm();
+        alert("Store created");
+      } else {
+        console.log("updated ", { values, state });
+      }
     },
-    [state, connectedUser, dispatch]
+    [state, connectedUser, dispatch, mode]
   );
   const onFileUploadError = useCallback((error: GenericError) => {
     alert(error.publicMessage);
@@ -124,6 +128,7 @@ const StoreFormCtlr = ({
         onSubmit={onSubmit}
         states={STATES}
         mode={mode}
+        onDeleteStore={onDeleteStore}
       />
     </div>
   );
