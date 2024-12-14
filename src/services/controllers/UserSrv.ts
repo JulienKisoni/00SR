@@ -160,4 +160,7 @@ export class UsersSrv extends Api {
       return { error };
     }
   }
+  deleteOne(id: string): GenericResponse<void> {
+    return {};
+  }
 }

@@ -3,7 +3,7 @@ import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
-import { useSelector, shallowEqual } from "react-redux";
+import { useSelector, shallowEqual, useDispatch } from "react-redux";
 import type { GridColDef } from "@mui/x-data-grid";
 import { useNavigate } from "react-router";
 
@@ -11,6 +11,7 @@ import ListTable from "../../components/ListTable";
 import { RootState } from "../../services/redux/rootReducer";
 import SearchBar from "../../components/SearchBar";
 import { ROUTES } from "../../constants/routes";
+import { StoreSrv } from "../../services/controllers/StoreSrv";
 
 const columns: GridColDef[] = [
   {
@@ -45,6 +46,7 @@ const columns: GridColDef[] = [
 
 function Stores() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [state, setState] = useState({ search: "" });
   const stores = useSelector((state: RootState) => {
@@ -71,9 +73,21 @@ function Stores() {
     console.log("Edit clicked for row id:");
   };
 
-  const handleDeleteClick = () => {
-    console.log("Delete clicked for row id:");
-  };
+  const handleDeleteClick = useCallback(
+    (storeId: string | number) => {
+      const store = stores.find((_store) => _store._id === storeId.toString());
+      if (store) {
+        const message = `Are you sure you wanna delete this store (${store.name})?`;
+        // eslint-disable-next-line no-restricted-globals
+        const agree = confirm(message);
+        if (agree) {
+          const storesSrv = new StoreSrv(dispatch);
+          storesSrv.deleteOne(store._id);
+        }
+      }
+    },
+    [dispatch, stores]
+  );
 
   const handleEndTyping = useCallback((value: string) => {
     setState((prev) => ({ ...prev, search: value }));
