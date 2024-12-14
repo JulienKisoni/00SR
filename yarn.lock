@@ -2232,7 +2232,7 @@
     prop-types "^15.8.1"
     react-is "^18.3.1"
 
-"@mui/x-data-grid@^7.23.2":
+"@mui/x-data-grid@7.23.2":
   version "7.23.2"
   resolved "https://registry.yarnpkg.com/@mui/x-data-grid/-/x-data-grid-7.23.2.tgz#3cc82c609a56b02dfe0317d74ab21d0e69dbe964"
   integrity sha512-Xhm4Bh+WiU5MSLFIZ8mE1egHoS0xPEVlwvjYvairPIkxNPubB7f+gtLkuAJ2+m+BYbgO7yDte+Pp7dfjkU+vOA==
@@ -2833,6 +2833,13 @@
   version "0.0.29"
   resolved "https://registry.yarnpkg.com/@types/json5/-/json5-0.0.29.tgz#ee28707ae94e11d2b827bcbe5270bcea7f3e71ee"
   integrity sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==
+
+"@types/lodash.debounce@^4.0.9":
+  version "4.0.9"
+  resolved "https://registry.yarnpkg.com/@types/lodash.debounce/-/lodash.debounce-4.0.9.tgz#0f5f21c507bce7521b5e30e7a24440975ac860a5"
+  integrity sha512-Ma5JcgTREwpLRwMM+XwBR7DaWe96nC38uCBDFKZWbNKD+osjVzdpnUSwBcqCptrp16sSOLBAUb50Car5I0TCsQ==
+  dependencies:
+    "@types/lodash" "*"
 
 "@types/lodash.isempty@4.4.9":
   version "4.4.9"

@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router";
 
-import Stores from "./Stores";
+import Stores from "./stores/Stores";
 import Settings from "./Settings";
 import ProtectedRoute from "../components/ProtectedRoute";
 import UnProtectedRoute from "../components/UnProtectedRoute";
@@ -13,6 +13,7 @@ import NotFound from "./NotFound";
 import SignInCtrl from "../components/controllers/SignInCtrl";
 import SignUpCtrl from "../components/controllers/SignUpCtrl";
 import ForgotPasswordCtrl from "../components/controllers/ForgotPasswordCtrl";
+import AddStore from "./stores/AddStore";
 
 export const ConnectedNavigation = () => {
   return (
@@ -33,7 +34,16 @@ export const ConnectedNavigation = () => {
             <Stores />
           </ProtectedRoute>
         }
-      />
+      >
+        <Route
+          path={`/${ROUTES.STORES}/add`}
+          element={
+            <ProtectedRoute>
+              <AddStore />
+            </ProtectedRoute>
+          }
+        />
+      </Route>
       <Route
         path={`/${ROUTES.PRODUCTS}`}
         element={
