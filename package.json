@@ -17,6 +17,7 @@
     "@mui/icons-material": "6.1.10",
     "@mui/lab": "6.0.0-beta.18",
     "@mui/material": "6.1.10",
+    "@mui/x-data-grid": "7.23.2",
     "@reduxjs/toolkit": "2.4.0",
     "bcryptjs": "2.4.3",
     "firebase": "11.0.2",

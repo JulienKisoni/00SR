@@ -21,6 +21,7 @@ export class StoreSrv extends Api {
     const body = {
       ...payload,
       _id,
+      createdAt: new Date().toISOString(),
     } as Types.IStoreDocument;
     this.dispatch(createStore({ data: body }));
     return { data: null, error: undefined };

@@ -8,7 +8,7 @@ const createStoreImpl: CaseReducer<
   State,
   PayloadAction<{ data: Types.IStoreDocument }>
 > = (state, action) => {
-  // state.push(action.payload.data);
+  state.push(action.payload.data);
 };
 const deleteStoreImpl: CaseReducer<
   State,

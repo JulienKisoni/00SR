@@ -7,8 +7,8 @@ declare namespace Types {
   }
 
   interface Timestamps {
-    createdAt?: Date;
-    updatedAt?: Date;
+    createdAt?: string;
+    updatedAt?: string;
   }
 
   export interface IUserDocument extends Timestamps {
