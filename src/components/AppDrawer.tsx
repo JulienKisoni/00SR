@@ -8,7 +8,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
+import DomainIcon from "@mui/icons-material/Domain";
 import { NavLink } from "react-router";
 
 import { protectedRoutes, ROUTES } from "../constants/routes";
@@ -16,6 +16,14 @@ import { protectedRoutes, ROUTES } from "../constants/routes";
 const drawerWidth = 72;
 
 const AppDrawer = ({ children }: PropsWithChildren) => {
+  const renderIcon = useCallback((route: ROUTES): React.JSX.Element => {
+    switch (route) {
+      case ROUTES.STORES:
+        return <DomainIcon fontSize="large" />;
+      default:
+        return <InboxIcon fontSize="large" />;
+    }
+  }, []);
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -33,16 +41,10 @@ const AppDrawer = ({ children }: PropsWithChildren) => {
       >
         <List>
           {protectedRoutes.map((route, index) => (
-            <ListItem key={route} disablePadding>
-              <NavLink to={`/${route}`}>
+            <ListItem key={route.route} disablePadding>
+              <NavLink to={`/${route.route}`}>
                 <ListItemButton>
-                  <ListItemIcon>
-                    {index % 2 === 0 ? (
-                      <InboxIcon fontSize="large" />
-                    ) : (
-                      <MailIcon fontSize="large" />
-                    )}
-                  </ListItemIcon>
+                  <ListItemIcon>{renderIcon(route.route)}</ListItemIcon>
                 </ListItemButton>
               </NavLink>
             </ListItem>

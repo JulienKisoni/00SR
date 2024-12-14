@@ -5,10 +5,12 @@ import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import { useSelector, shallowEqual } from "react-redux";
 import type { GridColDef } from "@mui/x-data-grid";
+import { useNavigate } from "react-router";
 
 import ListTable from "../../components/ListTable";
 import { RootState } from "../../services/redux/rootReducer";
 import SearchBar from "../../components/SearchBar";
+import { ROUTES } from "../../constants/routes";
 
 const columns: GridColDef[] = [
   {
@@ -42,6 +44,8 @@ const columns: GridColDef[] = [
 ];
 
 function Stores() {
+  const navigate = useNavigate();
+
   const [state, setState] = useState({ search: "" });
   const stores = useSelector((state: RootState) => {
     const data = state.stores.filter(
@@ -59,8 +63,8 @@ function Stores() {
     );
   }, [stores, state.search]);
 
-  const handleViewClick = () => {
-    console.log("View clicked for row id:");
+  const handleViewClick = (storeId: string | number) => {
+    navigate(`/${ROUTES.STORES}/${storeId}`);
   };
 
   const handleEditClick = () => {
@@ -82,7 +86,12 @@ function Stores() {
           <Typography variant="h3" component="h1">
             Stores
           </Typography>
-          <Button variant="contained">Add store</Button>
+          <Button
+            onClick={() => navigate(`/${ROUTES.STORES}/add`)}
+            variant="contained"
+          >
+            Add store
+          </Button>
         </Stack>
         <Stack direction="column">
           <Typography variant="subtitle2">

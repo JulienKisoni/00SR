@@ -6,6 +6,8 @@ declare namespace Types {
     admin = "admin",
   }
 
+  type FormMode = "readonly" | "edit" | "add";
+
   interface Timestamps {
     createdAt?: string;
     updatedAt?: string;

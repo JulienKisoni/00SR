@@ -54,6 +54,7 @@ interface ImagePickerProps {
   defaultSrc: string;
   onSuccess: ({ downloadURL }: { downloadURL: string }) => void;
   onError: (error: GenericError) => void;
+  disabled: boolean;
 }
 interface PickerState {
   finalSrc: string;
@@ -106,6 +107,7 @@ const ImagePicker = ({
   defaultSrc,
   onError,
   onSuccess,
+  disabled = false,
 }: ImagePickerProps) => {
   const [state, setState] = useState<PickerState>({
     finalSrc: defaultSrc || "https://placehold.co/400",
@@ -236,6 +238,7 @@ const ImagePicker = ({
         role={undefined}
         variant="contained"
         tabIndex={-1}
+        disabled={disabled}
         style={{ marginBottom: 20 }}
         startIcon={<CloudUploadIcon />}
       >

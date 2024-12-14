@@ -19,15 +19,6 @@ interface FormValues {
   name: string;
   description: string;
 }
-const initialValues: FormValues = {
-  line1: "",
-  line2: "",
-  country: "Canada",
-  state: "",
-  city: "",
-  name: "",
-  description: "",
-};
 const validationSchema = Yup.object<FormValues>().shape({
   name: Yup.string().required("Name is required"),
   description: Yup.string()
@@ -57,7 +48,17 @@ const STATES = [
   { value: "Yukon", label: "Yukon" },
 ];
 
-const StoreFormCtlr = () => {
+interface Props {
+  initialValues: FormValues;
+  mode?: Types.FormMode;
+  defaultImgSrc: string;
+}
+
+const StoreFormCtlr = ({
+  mode = "add",
+  initialValues,
+  defaultImgSrc = "",
+}: Props) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -112,15 +113,17 @@ const StoreFormCtlr = () => {
     <div>
       <ImagePicker
         alt="store"
-        defaultSrc=""
+        defaultSrc={defaultImgSrc}
         onError={onFileUploadError}
         onSuccess={onFileUploadSuccess}
+        disabled={mode === "readonly"}
       />
       <StoreForm
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={onSubmit}
         states={STATES}
+        mode={mode}
       />
     </div>
   );

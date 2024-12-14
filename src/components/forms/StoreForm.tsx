@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Formik, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import Stack from "@mui/material/Stack";
@@ -24,6 +24,7 @@ interface Props {
   onSubmit: (values: FormValues, helpers: FormikHelpers<FormValues>) => void;
   validationSchema: Yup.ObjectSchema<FormValues>;
   states: { value: string; label: string }[];
+  mode?: Types.FormMode;
 }
 
 const StoreForm = ({
@@ -31,7 +32,20 @@ const StoreForm = ({
   validationSchema,
   states,
   onSubmit,
+  mode = "add",
 }: Props) => {
+  const disableAll = useMemo(() => {
+    switch (mode) {
+      case "add":
+        return false;
+      case "readonly":
+        return true;
+      case "edit":
+        return false;
+      default:
+        return false;
+    }
+  }, [mode]);
   return (
     <div>
       <Formik
@@ -62,6 +76,7 @@ const StoreForm = ({
                   label="Name"
                   variant="outlined"
                   name="name"
+                  disabled={disableAll}
                   value={values.name}
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -72,6 +87,7 @@ const StoreForm = ({
                   id="store-description"
                   label="Description"
                   variant="outlined"
+                  disabled={disableAll}
                   name="description"
                   value={values.description}
                   onChange={handleChange}
@@ -86,6 +102,7 @@ const StoreForm = ({
                   label="Address line 1"
                   variant="outlined"
                   name="line1"
+                  disabled={disableAll}
                   value={values.line1}
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -97,6 +114,7 @@ const StoreForm = ({
                   label="Address line 2 (optional)"
                   variant="outlined"
                   name="line2"
+                  disabled={disableAll}
                   value={values.line2}
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -121,6 +139,7 @@ const StoreForm = ({
                     variant="outlined"
                     name="state"
                     onChange={handleChange}
+                    disabled={disableAll}
                     value={values.state}
                     onBlur={handleBlur}
                     error={touched.state && !!errors.state}
@@ -140,15 +159,22 @@ const StoreForm = ({
                   label="City"
                   variant="outlined"
                   name="city"
+                  disabled={disableAll}
                   value={values.city}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   error={touched.city && !!errors.city}
                   helperText={touched.city ? errors.city : undefined}
                 />
-                <Button type="submit" variant="contained" disabled={invalid}>
-                  Save
-                </Button>
+                {mode !== "readonly" ? (
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    disabled={disableAll || invalid}
+                  >
+                    Save
+                  </Button>
+                ) : null}
               </Stack>
             </form>
           );

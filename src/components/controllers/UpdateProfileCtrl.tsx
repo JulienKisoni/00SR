@@ -99,6 +99,7 @@ const UpdateProfileCtrl = () => {
           defaultSrc={connectedUser.profile.picture}
           onError={onFileUploadError}
           onSuccess={onFileUploadSuccess}
+          disabled={false}
         />
         <UpdateProfile
           initialValues={initialValues}

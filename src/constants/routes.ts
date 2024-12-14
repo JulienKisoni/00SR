@@ -10,13 +10,18 @@ export enum ROUTES {
   SETTINGS = "settings",
 }
 
-export const protectedRoutes: ROUTES[] = [
-  ROUTES.STORES,
-  ROUTES.PRODUCTS,
-  ROUTES.CART,
-  ROUTES.ORDERS,
-  ROUTES.REPORTS,
-  ROUTES.SETTINGS,
+interface IRoute {
+  route: ROUTES;
+  icon: string;
+}
+
+export const protectedRoutes: IRoute[] = [
+  { route: ROUTES.STORES, icon: "domain" },
+  { route: ROUTES.PRODUCTS, icon: "" },
+  { route: ROUTES.CART, icon: "" },
+  { route: ROUTES.ORDERS, icon: "" },
+  { route: ROUTES.REPORTS, icon: "" },
+  { route: ROUTES.SETTINGS, icon: "" },
 ];
 
 export const unprotectedRoutes: ROUTES[] = [

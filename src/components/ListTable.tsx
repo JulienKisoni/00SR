@@ -81,9 +81,9 @@ const Actions = ({
 };
 
 interface Props extends DataGridProps {
-  onEditClick: () => void;
-  onViewClick: () => void;
-  onDeleteClick: () => void;
+  onEditClick: (id: string | number) => void;
+  onViewClick: (id: string | number) => void;
+  onDeleteClick: (id: string | number) => void;
 }
 
 const ListTable = (props: Props) => {
@@ -101,9 +101,9 @@ const ListTable = (props: Props) => {
         renderCell: (params) => {
           return (
             <Actions
-              onDeleteClick={onDeleteClick}
-              onEditClick={onViewClick}
-              onViewClick={onEditClick}
+              onDeleteClick={() => onDeleteClick(params.id)}
+              onEditClick={() => onEditClick(params.id)}
+              onViewClick={() => onViewClick(params.id)}
               params={params}
             />
           );

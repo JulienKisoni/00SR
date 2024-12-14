@@ -14,6 +14,7 @@ import SignInCtrl from "../components/controllers/SignInCtrl";
 import SignUpCtrl from "../components/controllers/SignUpCtrl";
 import ForgotPasswordCtrl from "../components/controllers/ForgotPasswordCtrl";
 import AddStore from "./stores/AddStore";
+import ViewStore from "./stores/ViewStore";
 
 export const ConnectedNavigation = () => {
   return (
@@ -34,16 +35,23 @@ export const ConnectedNavigation = () => {
             <Stores />
           </ProtectedRoute>
         }
-      >
-        <Route
-          path={`/${ROUTES.STORES}/add`}
-          element={
-            <ProtectedRoute>
-              <AddStore />
-            </ProtectedRoute>
-          }
-        />
-      </Route>
+      />
+      <Route
+        path={`/${ROUTES.STORES}/:storeId`}
+        element={
+          <ProtectedRoute>
+            <ViewStore />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={`/${ROUTES.STORES}/add`}
+        element={
+          <ProtectedRoute>
+            <AddStore />
+          </ProtectedRoute>
+        }
+      />
       <Route
         path={`/${ROUTES.PRODUCTS}`}
         element={
