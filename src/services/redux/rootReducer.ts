@@ -5,11 +5,13 @@ import storage from "redux-persist/lib/storage"; // defaults to localStorage for
 import storesSlice from "./slices/stores";
 import userSlice from "./slices/user";
 import usersSlice from "./slices/users";
+import productsSlice from "./slices/products";
 
 const rootReducer = combineReducers({
   stores: storesSlice.reducer,
   user: userSlice.reducer,
   users: usersSlice.reducer,
+  products: productsSlice.reducer,
 });
 
 // Persist configuration

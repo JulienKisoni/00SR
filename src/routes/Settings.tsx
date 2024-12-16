@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
@@ -7,16 +7,41 @@ import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
-import { useDispatch } from "react-redux";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import Typography from "@mui/material/Typography";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 
 import { UsersSrv } from "../services/controllers/UserSrv";
 import { ROUTES } from "../constants/routes";
 import UpdatePasswordCtrl from "../components/controllers/UpdatePasswordCtrl";
 import UpdateProfileCtrl from "../components/controllers/UpdateProfileCtrl";
+import { RootState } from "../services/redux/rootReducer";
 
 const Settings = () => {
-  const [state, setState] = useState({ tabIndex: 0 });
+  const [state, setState] = useState<{
+    tabIndex: number;
+    selectedStore: Types.IStoreDocument | null;
+  }>({ tabIndex: 0, selectedStore: null });
+
+  const stores = useSelector((state: RootState) => {
+    const data = state.stores.filter(
+      (store) => store.owner === state.user.connectedUser?._id && store.active
+    );
+    return data;
+  }, shallowEqual);
+  const initialSelectedStore = useSelector((state: RootState) => {
+    return state.user.selectedStore;
+  }, shallowEqual);
+
+  useEffect(() => {
+    if (initialSelectedStore?._id) {
+      setState((prev) => ({ ...prev, selectedStore: initialSelectedStore }));
+    }
+  }, [initialSelectedStore]);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -33,8 +58,29 @@ const Settings = () => {
     navigate(`/${ROUTES.SIGNIN}`);
   }, [dispatch, navigate]);
 
+  const onSelectStore = useCallback(
+    (event: SelectChangeEvent<string>) => {
+      const storeId = event.target.value;
+      const store = stores.find((store) => store._id === storeId);
+      if (store) {
+        const usersSrv = new UsersSrv(dispatch);
+        usersSrv.selectStore(store);
+      }
+      console.log({ storeId });
+    },
+    [stores, dispatch]
+  );
+
   return (
     <Container>
+      <Stack spacing={2.5} direction="column">
+        <Typography variant="h3" component="h1">
+          Settings
+        </Typography>
+        <Typography variant="subtitle2">
+          Update your profile information and perform some actions.
+        </Typography>
+      </Stack>
       <Box sx={{ width: "100%", typography: "body1" }}>
         <TabContext value={state.tabIndex}>
           <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
@@ -45,11 +91,34 @@ const Settings = () => {
             </TabList>
           </Box>
           <TabPanel value={0}>
-            <Stack direction="row">
-              <Button variant="outlined" onClick={handleLogout}>
-                Logout
-              </Button>
-              <Button variant="contained">Delete account</Button>
+            <Stack direction="column" spacing={5}>
+              <FormControl>
+                <InputLabel id="labelId-selected-store">
+                  Selected store
+                </InputLabel>
+                <Select
+                  id="selected-store"
+                  labelId="labelId-selected-store"
+                  label="Selected store"
+                  variant="outlined"
+                  name="selectedStore"
+                  onChange={onSelectStore}
+                  disabled={!stores.length}
+                  value={state.selectedStore?._id || ""}
+                >
+                  {stores.map((state) => (
+                    <MenuItem key={state._id} value={state._id}>
+                      {state.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <Stack direction="row">
+                <Button variant="outlined" onClick={handleLogout}>
+                  Logout
+                </Button>
+                <Button variant="contained">Delete account</Button>
+              </Stack>
             </Stack>
           </TabPanel>
           <TabPanel value={1}>

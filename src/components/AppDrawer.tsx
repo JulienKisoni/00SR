@@ -9,6 +9,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import DomainIcon from "@mui/icons-material/Domain";
+import StoreIcon from "@mui/icons-material/Store";
 import { NavLink } from "react-router";
 
 import { protectedRoutes, ROUTES } from "../constants/routes";
@@ -20,6 +21,8 @@ const AppDrawer = ({ children }: PropsWithChildren) => {
     switch (route) {
       case ROUTES.STORES:
         return <DomainIcon fontSize="large" />;
+      case ROUTES.PRODUCTS:
+        return <StoreIcon fontSize="large" />;
       default:
         return <InboxIcon fontSize="large" />;
     }

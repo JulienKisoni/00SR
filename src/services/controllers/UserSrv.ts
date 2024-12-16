@@ -4,7 +4,7 @@ import ShortUniqueId from "short-unique-id";
 
 import { Api, GenericResponse } from "../../classes/Api";
 import { createUser, updateUser } from "../redux/slices/users";
-import { setUser } from "../redux/slices/user";
+import { selectStore, setUser } from "../redux/slices/user";
 import store from "../redux/store";
 import { GenericError } from "../../classes/GenericError";
 import emailSrv from "../email";
@@ -162,5 +162,8 @@ export class UsersSrv extends Api {
   }
   deleteOne(id: string): GenericResponse<void> {
     return {};
+  }
+  selectStore(store: Types.IStoreDocument): void {
+    this.dispatch(selectStore({ data: store }));
   }
 }

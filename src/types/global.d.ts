@@ -47,20 +47,21 @@ declare namespace Types {
     __v?: number;
   }
 
-  // export interface IProductDocument extends Timestamps {
-  //   _id: string | Schema.Types.ObjectId;
-  //   name: string;
-  //   quantity: number;
-  //   storeId: string | Schema.Types.ObjectId;
-  //   description: string;
-  //   minQuantity: number;
-  //   owner: string | Schema.Types.ObjectId;
-  //   active: boolean;
-  //   unitPrice: number;
-  //   reviews: (string | Schema.Types.ObjectId)[];
-  //   reviewDetails?: Partial<IReviewDocument>[];
-  //   __v?: number;
-  // }
+  export interface IProductDocument extends Timestamps {
+    _id: string;
+    name: string;
+    key: string;
+    quantity: number;
+    storeId: string;
+    description: string;
+    minQuantity: number;
+    owner: string;
+    active: boolean;
+    unitPrice: number;
+    reviews: string[];
+    picture: string;
+    __v?: number;
+  }
 
   // export interface CartItem {
   //   productId: string | Schema.Types.ObjectId;

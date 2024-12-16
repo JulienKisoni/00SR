@@ -4,7 +4,7 @@ import Stores from "./stores/Stores";
 import Settings from "./Settings";
 import ProtectedRoute from "../components/ProtectedRoute";
 import UnProtectedRoute from "../components/UnProtectedRoute";
-import Products from "./Products";
+import Products from "./products/Products";
 import Cart from "./Cart";
 import Orders from "./Orders";
 import Reports from "./Reports";
