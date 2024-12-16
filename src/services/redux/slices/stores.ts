@@ -21,14 +21,18 @@ const deleteStoreImpl: CaseReducer<
 };
 const updateStoreImpl: CaseReducer<
   State,
-  PayloadAction<{ storeId: string; payload: Partial<Types.IUserDocument> }>
+  PayloadAction<{ storeId: string; payload: Partial<Types.IStoreDocument> }>
 > = (state, action) => {
   const index = state.findIndex((user) => user._id === action.payload.storeId);
   if (index !== -1) {
     const actualStore = state[index];
-    const newStore = {
+    const newStore: Types.IStoreDocument = {
       ...actualStore,
       ...action.payload.payload,
+      address: {
+        ...actualStore.address,
+        ...action.payload.payload.address,
+      },
     };
     state.splice(index, 1, newStore);
   }

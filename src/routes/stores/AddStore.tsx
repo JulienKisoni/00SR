@@ -38,6 +38,7 @@ const AddStore = () => {
           mode="add"
           initialValues={initialValues}
           defaultImgSrc=""
+          storeId=""
         />
       </Stack>
     </Container>

@@ -53,6 +53,7 @@ const ViewStore = () => {
             mode="readonly"
             initialValues={initialValues}
             defaultImgSrc={store?.picture || ""}
+            storeId={store?._id || ""}
           />
         </Stack>
       )}

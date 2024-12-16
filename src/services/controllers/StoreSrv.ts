@@ -2,7 +2,7 @@ import { Dispatch, UnknownAction } from "@reduxjs/toolkit";
 import { v4 as uuidv4 } from "uuid";
 
 import { Api, GenericResponse } from "../../classes/Api";
-import { createStore, deleteStore } from "../redux/slices/stores";
+import { createStore, deleteStore, updateStore } from "../redux/slices/stores";
 
 export class StoreSrv extends Api {
   dispatch: Dispatch<UnknownAction>;
@@ -35,6 +35,7 @@ export class StoreSrv extends Api {
     id: string,
     payload: Partial<T>
   ): GenericResponse<T> {
+    this.dispatch(updateStore({ storeId: id, payload }));
     return { error: undefined };
   }
 

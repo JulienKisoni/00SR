@@ -2,12 +2,15 @@ import React, { useCallback, useState } from "react";
 import { FormikHelpers } from "formik";
 import * as Yup from "yup";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router";
 
 import ImagePicker from "../../ImagePicker";
 import StoreForm from "../../forms/StoreForm";
 import { GenericError } from "../../../classes/GenericError";
 import { RootState } from "../../../services/redux/rootReducer";
 import { StoreSrv } from "../../../services/controllers/StoreSrv";
+import { Store } from "../../../classes/Store";
+import { ROUTES } from "../../../constants/routes";
 
 interface FormValues {
   line1: string;
@@ -52,6 +55,7 @@ interface Props {
   mode?: Types.FormMode;
   defaultImgSrc: string;
   onDeleteStore?: () => void;
+  storeId: string;
 }
 
 const StoreFormCtlr = ({
@@ -59,8 +63,10 @@ const StoreFormCtlr = ({
   initialValues,
   defaultImgSrc = "",
   onDeleteStore,
+  storeId = "",
 }: Props) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const connectedUser = useSelector((state: RootState) => {
     return state.user.connectedUser;
@@ -74,33 +80,45 @@ const StoreFormCtlr = ({
         alert("No connected user");
         return;
       }
+      const newStore = new Store({
+        values,
+        owner: connectedUser._id,
+        picture: state.picture,
+        id: storeId,
+      });
+      const storeSrv = new StoreSrv(dispatch);
       if (mode === "add") {
-        const payload: Types.IStoreDocument = {
-          _id: "",
-          name: values.name,
-          owner: connectedUser._id,
-          products: [],
-          description: values.description,
-          active: true,
-          picture: state.picture,
-          address: {
-            line1: values.line1,
-            line2: values.line2,
-            country: values.country,
-            state: values.state,
-            city: values.city,
-          },
-        };
-        const storeSrv = new StoreSrv(dispatch);
+        const payload = newStore.toObject();
         storeSrv.addOne<Types.IStoreDocument>(payload);
         helpers.resetForm();
         await helpers.validateForm();
         alert("Store created");
-      } else {
-        console.log("updated ", { values, state });
+        navigate(`/${ROUTES.STORES}`);
+      } else if (mode === "edit") {
+        const oldStore = new Store({
+          values: initialValues,
+          owner: connectedUser._id,
+          picture: defaultImgSrc,
+          id: storeId,
+        }).toObject();
+        const payload = newStore.compareWithOld(oldStore);
+        storeSrv.updateOne(storeId, payload);
+        helpers.resetForm({ values });
+        await helpers.validateForm();
+        alert("Store updated");
+        console.log("updated ", { values, state, payload });
       }
     },
-    [state, connectedUser, dispatch, mode]
+    [
+      state,
+      connectedUser,
+      dispatch,
+      mode,
+      initialValues,
+      storeId,
+      defaultImgSrc,
+      navigate,
+    ]
   );
   const onFileUploadError = useCallback((error: GenericError) => {
     alert(error.publicMessage);

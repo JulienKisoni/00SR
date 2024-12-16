@@ -172,20 +172,22 @@ const StoreForm = ({
                   error={touched.city && !!errors.city}
                   helperText={touched.city ? errors.city : undefined}
                 />
-                {mode !== "readonly" ? (
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    disabled={disableAll || invalid}
-                  >
-                    {buttonTitle}
-                  </Button>
-                ) : null}
-                {mode === "edit" && onDeleteStore ? (
-                  <Button variant="contained" onClick={onDeleteStore}>
-                    Delete store
-                  </Button>
-                ) : null}
+                <Stack direction="row">
+                  {mode !== "readonly" ? (
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      disabled={disableAll || invalid}
+                    >
+                      {buttonTitle}
+                    </Button>
+                  ) : null}
+                  {mode === "edit" && onDeleteStore ? (
+                    <Button variant="contained" onClick={onDeleteStore}>
+                      Delete store
+                    </Button>
+                  ) : null}
+                </Stack>
               </Stack>
             </form>
           );

@@ -49,6 +49,7 @@ const EditStore = () => {
       if (agree) {
         const storesSrv = new StoreSrv(dispatch);
         storesSrv.deleteOne(store._id);
+        alert("Store deleted");
         navigate(`/${ROUTES.STORES}`);
       }
     }
@@ -71,6 +72,7 @@ const EditStore = () => {
             initialValues={initialValues}
             defaultImgSrc={store?.picture || ""}
             onDeleteStore={handleDeleteStore}
+            storeId={store?._id || ""}
           />
         </Stack>
       )}
