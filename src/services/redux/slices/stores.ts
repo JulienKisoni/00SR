@@ -37,6 +37,15 @@ const updateStoreImpl: CaseReducer<
     state.splice(index, 1, newStore);
   }
 };
+const addProductImpl: CaseReducer<
+  State,
+  PayloadAction<{ storeId: string; payload: string }>
+> = (state, action) => {
+  const store = state.find((store) => store._id === action.payload.storeId);
+  if (store) {
+    store.products.push(action.payload.payload);
+  }
+};
 
 const storesSlice = createSlice({
   name: "stores",
@@ -45,8 +54,10 @@ const storesSlice = createSlice({
     createStore: createStoreImpl,
     deleteStore: deleteStoreImpl,
     updateStore: updateStoreImpl,
+    addProduct: addProductImpl,
   },
 });
 
 export default storesSlice;
-export const { createStore, deleteStore, updateStore } = storesSlice.actions;
+export const { createStore, deleteStore, updateStore, addProduct } =
+  storesSlice.actions;

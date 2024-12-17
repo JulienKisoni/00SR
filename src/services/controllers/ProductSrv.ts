@@ -1,15 +1,12 @@
 import { Dispatch, UnknownAction } from "@reduxjs/toolkit";
-import { v4 as uuidv4 } from "uuid";
 
 import { Api, GenericResponse } from "../../classes/Api";
-import {
-  addProduct,
-  createStore,
-  deleteStore,
-  updateStore,
-} from "../redux/slices/stores";
+import { deleteStore, updateStore } from "../redux/slices/stores";
+import { createProduct } from "../redux/slices/products";
+import store from "../redux/store";
+import { GenericError } from "../../classes/GenericError";
 
-export class StoreSrv extends Api {
+export class ProductSrv extends Api {
   dispatch: Dispatch<UnknownAction>;
   endpoint?: string | undefined;
 
@@ -25,13 +22,15 @@ export class StoreSrv extends Api {
       | Types.IStoreDocument
       | Types.IProductDocument
   >(payload: T): GenericResponse<void> {
-    const _id = uuidv4();
-    const body = {
-      ...payload,
-      _id,
-      createdAt: new Date().toISOString(),
-    } as Types.IStoreDocument;
-    this.dispatch(createStore({ data: body }));
+    const currentStore: Types.IStoreDocument | undefined = store
+      .getState()
+      // @ts-ignore
+      .stores.find((_store) => _store._id === payload.storeId);
+    if (currentStore?.products?.includes(payload._id)) {
+      const error = new GenericError("Product already exist inside store");
+      return { error };
+    }
+    this.dispatch(createProduct({ data: payload as Types.IProductDocument }));
     return { data: null, error: undefined };
   }
   getOne<T extends Types.IUserDocument | Types.IStoreDocument>(filters: {
@@ -50,9 +49,5 @@ export class StoreSrv extends Api {
   deleteOne(id: string): GenericResponse<void> {
     this.dispatch(deleteStore({ storeId: id }));
     return {};
-  }
-
-  addProductToStore(storeId: string, productId: string): void {
-    this.dispatch(addProduct({ storeId, payload: productId }));
   }
 }

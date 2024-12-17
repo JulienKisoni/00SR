@@ -16,6 +16,7 @@ import ForgotPasswordCtrl from "../components/controllers/ForgotPasswordCtrl";
 import AddStore from "./stores/AddStore";
 import ViewStore from "./stores/ViewStore";
 import EditStore from "./stores/EditStore";
+import AddProduct from "./products/AddProduct";
 
 export const ConnectedNavigation = () => {
   return (
@@ -66,6 +67,14 @@ export const ConnectedNavigation = () => {
         element={
           <ProtectedRoute>
             <Products />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={`/${ROUTES.PRODUCTS}/add`}
+        element={
+          <ProtectedRoute>
+            <AddProduct />
           </ProtectedRoute>
         }
       />

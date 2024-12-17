@@ -21,9 +21,12 @@ export class UsersSrv extends Api {
     this.dispatch = dispatch;
   }
 
-  addOne<T extends Types.IUserDocument | Types.IStoreDocument>(
-    payload: T
-  ): GenericResponse<void> {
+  addOne<
+    T extends
+      | Types.IUserDocument
+      | Types.IStoreDocument
+      | Types.IProductDocument
+  >(payload: T): GenericResponse<void> {
     const user = payload as Types.IUserDocument;
     const users = store.getState().users || [];
     const existingUser = users.find((_user) => _user.email === user.email);

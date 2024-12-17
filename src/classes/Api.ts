@@ -10,9 +10,12 @@ export abstract class Api {
   abstract endpoint?: string;
   abstract dispatch: Dispatch<UnknownAction>;
 
-  abstract addOne<T extends Types.IUserDocument | Types.IStoreDocument>(
-    payload: T
-  ): GenericResponse<void>;
+  abstract addOne<
+    T extends
+      | Types.IUserDocument
+      | Types.IStoreDocument
+      | Types.IProductDocument
+  >(payload: T): GenericResponse<void>;
 
   abstract getOne<
     T extends Types.IUserDocument | Types.IStoreDocument

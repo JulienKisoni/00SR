@@ -3,38 +3,29 @@ import { Formik, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import InputLabel from "@mui/material/InputLabel";
-import FormControl from "@mui/material/FormControl";
-import FormHelperText from "@mui/material/FormHelperText";
 import Button from "@mui/material/Button";
 
 interface FormValues {
-  line1: string;
-  line2?: string;
-  country: string;
-  state: string;
-  city: string;
   name: string;
   description: string;
+  minQuantity: number | undefined;
+  unitPrice: number | undefined;
+  quantity: number | undefined;
 }
 interface Props {
   initialValues: FormValues;
   onSubmit: (values: FormValues, helpers: FormikHelpers<FormValues>) => void;
   validationSchema: Yup.ObjectSchema<FormValues>;
-  states: { value: string; label: string }[];
   mode?: Types.FormMode;
-  onDeleteStore?: () => void;
+  onDeleteProduct?: () => void;
 }
 
 const ProductForm = ({
   initialValues,
   validationSchema,
-  states,
   onSubmit,
   mode = "add",
-  onDeleteStore,
+  onDeleteProduct,
 }: Props) => {
   const disableAll = useMemo(() => {
     switch (mode) {
@@ -49,7 +40,7 @@ const ProductForm = ({
     }
   }, [mode]);
   const buttonTitle = useMemo(() => {
-    return mode === "add" ? "Create store" : "Save changes";
+    return mode === "add" ? "Create product" : "Save changes";
   }, [mode]);
 
   return (
@@ -73,12 +64,13 @@ const ProductForm = ({
           isSubmitting,
           /* and other goodies */
         }) => {
+          console.log({ values });
           const invalid = !dirty || !isValid;
           return (
             <form onSubmit={handleSubmit}>
               <Stack direction="column" spacing={5}>
                 <TextField
-                  id="store-name"
+                  id="product-name"
                   label="Name"
                   variant="outlined"
                   name="name"
@@ -90,9 +82,10 @@ const ProductForm = ({
                   helperText={touched.name ? errors.name : undefined}
                 />
                 <TextField
-                  id="store-description"
+                  id="product-description"
                   label="Description"
                   variant="outlined"
+                  multiline
                   disabled={disableAll}
                   name="description"
                   value={values.description}
@@ -104,73 +97,45 @@ const ProductForm = ({
                   }
                 />
                 <TextField
-                  id="address-line1"
-                  label="Address line 1"
+                  id="product-minQuantity"
+                  label="Minimum quantity"
                   variant="outlined"
-                  name="line1"
+                  name="minQuantity"
                   disabled={disableAll}
-                  value={values.line1}
+                  type="number"
+                  value={values.minQuantity || ""}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  error={touched.line1 && !!errors.line1}
-                  helperText={touched.line1 ? errors.line1 : undefined}
+                  error={touched.minQuantity && !!errors.minQuantity}
+                  helperText={
+                    touched.minQuantity ? errors.minQuantity : undefined
+                  }
                 />
                 <TextField
-                  id="address-line2"
-                  label="Address line 2 (optional)"
+                  id="product-quantity"
+                  label="Quantity"
                   variant="outlined"
-                  name="line2"
+                  name="quantity"
                   disabled={disableAll}
-                  value={values.line2}
+                  type="number"
+                  value={values.quantity || ""}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  error={touched.line2 && !!errors.line2}
-                  helperText={touched.line2 ? errors.line2 : undefined}
+                  error={touched.quantity && !!errors.quantity}
+                  helperText={touched.quantity ? errors.quantity : undefined}
                 />
                 <TextField
-                  id="store-country"
-                  label="Country"
+                  id="product-unitPrice"
+                  label="Price (CAD)"
                   variant="outlined"
-                  name="country"
-                  value={values.country}
-                  onChange={handleChange}
-                  disabled
-                />
-                <FormControl>
-                  <InputLabel id="labelId-store-state">State Label</InputLabel>
-                  <Select
-                    id="store-state"
-                    labelId="labelId-store-state"
-                    label="State"
-                    variant="outlined"
-                    name="state"
-                    onChange={handleChange}
-                    disabled={disableAll}
-                    value={values.state}
-                    onBlur={handleBlur}
-                    error={touched.state && !!errors.state}
-                  >
-                    {states.map((state) => (
-                      <MenuItem key={state.value} value={state.value}>
-                        {state.label}
-                      </MenuItem>
-                    ))}
-                    <FormHelperText>
-                      {touched.state ? errors.state : ""}
-                    </FormHelperText>
-                  </Select>
-                </FormControl>
-                <TextField
-                  id="store-city"
-                  label="City"
-                  variant="outlined"
-                  name="city"
+                  name="unitPrice"
                   disabled={disableAll}
-                  value={values.city}
+                  type="number"
+                  value={values.unitPrice || ""}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  error={touched.city && !!errors.city}
-                  helperText={touched.city ? errors.city : undefined}
+                  error={touched.unitPrice && !!errors.unitPrice}
+                  helperText={touched.unitPrice ? errors.unitPrice : undefined}
                 />
                 <Stack direction="row">
                   {mode !== "readonly" ? (
@@ -182,8 +147,8 @@ const ProductForm = ({
                       {buttonTitle}
                     </Button>
                   ) : null}
-                  {mode === "edit" && onDeleteStore ? (
-                    <Button variant="contained" onClick={onDeleteStore}>
+                  {mode === "edit" && onDeleteProduct ? (
+                    <Button variant="contained" onClick={onDeleteProduct}>
                       Delete store
                     </Button>
                   ) : null}
