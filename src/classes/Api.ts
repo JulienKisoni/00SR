@@ -18,7 +18,10 @@ export abstract class Api {
   >(payload: T): GenericResponse<void>;
 
   abstract getOne<
-    T extends Types.IUserDocument | Types.IStoreDocument
+    T extends
+      | Types.IUserDocument
+      | Types.IStoreDocument
+      | Types.IProductDocument
   >(filters: { [key: string]: string }): GenericResponse<T>;
   //   abstract getMany: <T, U>(filters?: T) => U[];
 

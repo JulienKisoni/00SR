@@ -64,7 +64,6 @@ const ProductForm = ({
           isSubmitting,
           /* and other goodies */
         }) => {
-          console.log({ values });
           const invalid = !dirty || !isValid;
           return (
             <form onSubmit={handleSubmit}>

@@ -34,9 +34,12 @@ export class StoreSrv extends Api {
     this.dispatch(createStore({ data: body }));
     return { data: null, error: undefined };
   }
-  getOne<T extends Types.IUserDocument | Types.IStoreDocument>(filters: {
-    [key: string]: string;
-  }): GenericResponse<T> {
+  getOne<
+    T extends
+      | Types.IUserDocument
+      | Types.IStoreDocument
+      | Types.IProductDocument
+  >(filters: { [key: string]: string }): GenericResponse<T> {
     return { error: undefined };
   }
   updateOne<T extends Types.IUserDocument | Types.IStoreDocument>(

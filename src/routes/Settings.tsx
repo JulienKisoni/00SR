@@ -66,7 +66,6 @@ const Settings = () => {
         const usersSrv = new UsersSrv(dispatch);
         usersSrv.selectStore(store);
       }
-      console.log({ storeId });
     },
     [stores, dispatch]
   );

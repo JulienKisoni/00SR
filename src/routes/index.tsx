@@ -17,6 +17,8 @@ import AddStore from "./stores/AddStore";
 import ViewStore from "./stores/ViewStore";
 import EditStore from "./stores/EditStore";
 import AddProduct from "./products/AddProduct";
+import ViewProduct from "./products/ViewProduct";
+import EditProduct from "./products/EditProduct";
 
 export const ConnectedNavigation = () => {
   return (
@@ -75,6 +77,22 @@ export const ConnectedNavigation = () => {
         element={
           <ProtectedRoute>
             <AddProduct />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={`/${ROUTES.PRODUCTS}/:productId`}
+        element={
+          <ProtectedRoute>
+            <ViewProduct />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={`/${ROUTES.PRODUCTS}/:productId/edit`}
+        element={
+          <ProtectedRoute>
+            <EditProduct />
           </ProtectedRoute>
         }
       />

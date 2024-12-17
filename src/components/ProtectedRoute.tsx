@@ -1,23 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import type { PropsWithChildren } from "react";
+import { useSelector, shallowEqual } from "react-redux";
 
 import { Navigate } from "react-router";
+import { RootState } from "../services/redux/rootReducer";
 
 const ProtectedRoute = ({
   children,
 }: PropsWithChildren): React.ReactElement => {
-  const [state, setState] = useState({ loading: true, ready: false });
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     setState({ loading: false, ready: false });
-  //   }, 2000);
-  // }, []);
+  const connectedUser = useSelector((state: RootState) => {
+    return state.user.connectedUser;
+  }, shallowEqual);
 
-  // if (state.loading) {
-  //   return <div>Loading...</div>;
-  // } else if (!state.loading && !state.ready) {
-  //   return <Navigate to="/login" replace />;
-  // }
+  if (connectedUser === null) {
+    return <Navigate to="/login" replace />;
+  }
   return <React.Fragment>{children}</React.Fragment>;
 };
 

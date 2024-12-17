@@ -106,7 +106,6 @@ const StoreFormCtlr = ({
         helpers.resetForm({ values });
         await helpers.validateForm();
         alert("Store updated");
-        console.log("updated ", { values, state, payload });
       }
     },
     [
@@ -125,7 +124,6 @@ const StoreFormCtlr = ({
   }, []);
   const onFileUploadSuccess = useCallback(
     ({ downloadURL }: { downloadURL: string }) => {
-      console.log({ downloadURL });
       setState((prev) => ({ ...prev, picture: downloadURL }));
     },
     []

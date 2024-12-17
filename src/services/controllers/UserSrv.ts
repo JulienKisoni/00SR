@@ -49,9 +49,12 @@ export class UsersSrv extends Api {
     return { data: undefined, error: undefined };
   }
 
-  getOne<T extends Types.IUserDocument | Types.IStoreDocument>(
-    filters: any
-  ): GenericResponse<T> {
+  getOne<
+    T extends
+      | Types.IUserDocument
+      | Types.IStoreDocument
+      | Types.IProductDocument
+  >(filters: any): GenericResponse<T> {
     const users = store.getState().users || [];
     let user: Types.IUserDocument | null = null;
     const { email, _id, password } = filters || {};

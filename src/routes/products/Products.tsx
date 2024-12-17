@@ -11,7 +11,7 @@ import ListTable from "../../components/ListTable";
 import { RootState } from "../../services/redux/rootReducer";
 import SearchBar from "../../components/SearchBar";
 import { ROUTES } from "../../constants/routes";
-import { StoreSrv } from "../../services/controllers/StoreSrv";
+import { ProductSrv } from "../../services/controllers/ProductSrv";
 
 const columns: GridColDef[] = [
   {
@@ -93,26 +93,28 @@ function Products() {
     );
   }, [products, state.search]);
 
-  const handleViewClick = (storeId: string | number) => {
-    navigate(`/${ROUTES.STORES}/${storeId}`);
+  const handleViewClick = (productId: string | number) => {
+    navigate(`/${ROUTES.PRODUCTS}/${productId}`);
   };
 
-  const handleEditClick = (storeId: string | number) => {
-    navigate(`/${ROUTES.STORES}/${storeId}/edit`);
+  const handleEditClick = (productId: string | number) => {
+    navigate(`/${ROUTES.PRODUCTS}/${productId}/edit`);
   };
 
   const handleDeleteClick = useCallback(
-    (storeId: string | number) => {
-      // const store = stores.find((_store) => _store._id === storeId.toString());
-      // if (store) {
-      //   const message = `Are you sure you wanna delete this store (${store.name})?`;
-      //   // eslint-disable-next-line no-restricted-globals
-      //   const agree = confirm(message);
-      //   if (agree) {
-      //     const storesSrv = new StoreSrv(dispatch);
-      //     storesSrv.deleteOne(store._id);
-      //   }
-      // }
+    (productId: string | number) => {
+      const product = products.find(
+        (_product) => _product._id === productId.toString()
+      );
+      if (product) {
+        const message = `Are you sure you wanna delete this product (${product.name})?`;
+        // eslint-disable-next-line no-restricted-globals
+        const agree = confirm(message);
+        if (agree) {
+          const productSrv = new ProductSrv(dispatch);
+          productSrv.deleteOne(product._id);
+        }
+      }
     },
     [dispatch, products]
   );

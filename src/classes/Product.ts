@@ -4,9 +4,9 @@ import ShortUniqueId from "short-unique-id";
 interface FormValues {
   name: string;
   description: string;
-  minQuantity: number;
-  unitPrice: number;
-  quantity: number;
+  minQuantity: number | undefined;
+  unitPrice: number | undefined;
+  quantity: number | undefined;
 }
 interface Args {
   values: FormValues;
@@ -14,7 +14,7 @@ interface Args {
   picture: string;
   id?: string;
   storeId: string;
-  reviews?: [];
+  reviews?: string[];
   key?: string;
   createdAt?: string;
 }
@@ -27,7 +27,7 @@ export class Product implements Types.IProductDocument {
   unitPrice: number = 0;
   storeId: string = "";
   owner = "";
-  reviews = [];
+  reviews: string[] = [];
   description = "";
   active = true;
   createdAt?: string | undefined;
@@ -56,9 +56,9 @@ export class Product implements Types.IProductDocument {
     this.createdAt = createdAt || new Date().toISOString();
     this.picture = picture;
     this.reviews = reviews || [];
-    this.minQuantity = minQuantity;
-    this.unitPrice = unitPrice;
-    this.quantity = quantity;
+    this.minQuantity = minQuantity || 0;
+    this.unitPrice = unitPrice || 0;
+    this.quantity = quantity || 0;
     this.storeId = storeId;
   }
 
@@ -76,22 +76,19 @@ export class Product implements Types.IProductDocument {
       minQuantity: this.minQuantity,
       quantity: this.quantity,
       unitPrice: this.unitPrice,
+      createdAt: this.createdAt,
     };
     return store;
   }
 
-  compareWithOld(
-    oldProduct: Types.IProductDocument
-  ): Partial<Types.IProductDocument> {
+  compareWithOld(oldProduct: FormValues): Partial<FormValues> {
     const keys = Object.keys(oldProduct);
-    const difference: Partial<Types.IProductDocument> = {};
+    const difference: Partial<FormValues> = {};
     keys.forEach((key) => {
-      if (key !== "reviews") {
+      // @ts-ignore
+      if (this[key] !== oldProduct[key]) {
         // @ts-ignore
-        if (this[key] !== oldProduct[key]) {
-          // @ts-ignore
-          difference[key] = this[key];
-        }
+        difference[key] = this[key];
       }
     });
     return difference;

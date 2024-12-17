@@ -1,8 +1,12 @@
 import { Dispatch, UnknownAction } from "@reduxjs/toolkit";
 
 import { Api, GenericResponse } from "../../classes/Api";
-import { deleteStore, updateStore } from "../redux/slices/stores";
-import { createProduct } from "../redux/slices/products";
+import {
+  createProduct,
+  deleteProduct,
+  updateProduct,
+} from "../redux/slices/products";
+import { removeStoreProduct } from "../redux/slices/stores";
 import store from "../redux/store";
 import { GenericError } from "../../classes/GenericError";
 
@@ -33,21 +37,35 @@ export class ProductSrv extends Api {
     this.dispatch(createProduct({ data: payload as Types.IProductDocument }));
     return { data: null, error: undefined };
   }
-  getOne<T extends Types.IUserDocument | Types.IStoreDocument>(filters: {
-    [key: string]: string;
-  }): GenericResponse<T> {
-    return { error: undefined };
+  getOne<
+    T extends
+      | Types.IUserDocument
+      | Types.IStoreDocument
+      | Types.IProductDocument
+  >({ productId }: { productId: string }): GenericResponse<T> {
+    const product = store
+      .getState()
+      .products.find((prod) => prod._id === productId);
+    return { error: undefined, data: product as T };
   }
   updateOne<T extends Types.IUserDocument | Types.IStoreDocument>(
     id: string,
     payload: Partial<T>
   ): GenericResponse<T> {
-    this.dispatch(updateStore({ storeId: id, payload }));
+    this.dispatch(updateProduct({ productId: id, payload }));
     return { error: undefined };
   }
 
   deleteOne(id: string): GenericResponse<void> {
-    this.dispatch(deleteStore({ storeId: id }));
-    return {};
+    const { error, data: product } = this.getOne<Types.IProductDocument>({
+      productId: id,
+    });
+    if (error) {
+      return { error };
+    }
+    const storeId = product?.storeId || "";
+    this.dispatch(deleteProduct({ productId: id }));
+    this.dispatch(removeStoreProduct({ storeId, productId: id }));
+    return { error: undefined };
   }
 }

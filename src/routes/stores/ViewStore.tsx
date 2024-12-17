@@ -7,6 +7,7 @@ import { shallowEqual, useSelector } from "react-redux";
 
 import { RootState } from "../../services/redux/rootReducer";
 import StoreFormCtlr from "../../components/controllers/forms/StoreFormCtrl";
+import NotFound from "../NotFound";
 
 interface FormValues {
   line1: string;
@@ -22,7 +23,10 @@ const ViewStore = () => {
   const { storeId } = useParams();
 
   const store = useSelector((state: RootState) => {
-    return state.stores.find((_store) => _store._id === storeId);
+    const userId = state.user.connectedUser?._id;
+    return state.stores.find(
+      (_store) => _store._id === storeId && _store.owner === userId
+    );
   }, shallowEqual);
 
   const initialValues: FormValues | null = useMemo(() => {
@@ -37,26 +41,32 @@ const ViewStore = () => {
     return values;
   }, [store]);
 
+  if (initialValues === null) {
+    return <NotFound />;
+  } else if (!store?._id) {
+    return (
+      <Container>
+        <div>Loading</div>
+      </Container>
+    );
+  }
+
   return (
     <Container>
-      {!initialValues ? (
-        <div>Loading</div>
-      ) : (
-        <Stack spacing={2.5} direction="column">
-          <Typography variant="h3" component="h1">
-            {store?.name}
-          </Typography>
-          <Typography variant="subtitle2">
-            View picture and other information about your store
-          </Typography>
-          <StoreFormCtlr
-            mode="readonly"
-            initialValues={initialValues}
-            defaultImgSrc={store?.picture || ""}
-            storeId={store?._id || ""}
-          />
-        </Stack>
-      )}
+      <Stack spacing={2.5} direction="column">
+        <Typography variant="h3" component="h1">
+          {store?.name}
+        </Typography>
+        <Typography variant="subtitle2">
+          View picture and other information about your store
+        </Typography>
+        <StoreFormCtlr
+          mode="readonly"
+          initialValues={initialValues}
+          defaultImgSrc={store?.picture || ""}
+          storeId={store?._id || ""}
+        />
+      </Stack>
     </Container>
   );
 };

@@ -197,6 +197,7 @@ const ImagePicker = ({
               }));
             },
             onSuccess: (data) => {
+              console.log({ url: data.downloadURL });
               onSuccess(data);
               setState((prev) => ({
                 ...prev,

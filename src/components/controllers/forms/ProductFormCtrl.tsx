@@ -79,14 +79,12 @@ const ProductFormCtlr = ({
         picture: state.picture,
         id: productId,
         storeId: selectedStore._id || "",
-        reviews: [],
       });
 
       const productSrv = new ProductSrv(dispatch);
       const storeSrv = new StoreSrv(dispatch);
       if (mode === "add") {
         const payload = newProduct.toObject();
-        console.log({ payload });
         const { error } = productSrv.addOne<Types.IProductDocument>(payload);
         if (error) {
           alert(error.publicMessage);
@@ -99,24 +97,11 @@ const ProductFormCtlr = ({
           navigate(`/${ROUTES.PRODUCTS}`);
         }
       } else if (mode === "edit") {
-        const oldStore = new Product({
-          values: {
-            ...initialValues,
-            minQuantity: values.minQuantity || 0,
-            unitPrice: values.unitPrice || 0,
-            quantity: values.quantity || 0,
-          },
-          owner: connectedUser._id,
-          picture: defaultImgSrc,
-          id: productId,
-          storeId: selectedStore._id || "",
-        }).toObject();
-        const payload = newProduct.compareWithOld(oldStore);
-        // productSrv.updateOne(storeId, payload);
-        // helpers.resetForm({ values });
-        // await helpers.validateForm();
-        // alert("Store updated");
-        // console.log("updated ", { values, state, payload });
+        const payload = newProduct.compareWithOld(initialValues);
+        productSrv.updateOne(productId, payload);
+        helpers.resetForm({ values });
+        await helpers.validateForm();
+        alert("Product updated");
       }
     },
     [
@@ -127,7 +112,6 @@ const ProductFormCtlr = ({
       initialValues,
       productId,
       selectedStore,
-      defaultImgSrc,
       navigate,
     ]
   );
@@ -136,7 +120,6 @@ const ProductFormCtlr = ({
   }, []);
   const onFileUploadSuccess = useCallback(
     ({ downloadURL }: { downloadURL: string }) => {
-      console.log({ downloadURL });
       setState((prev) => ({ ...prev, picture: downloadURL }));
     },
     []

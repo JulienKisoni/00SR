@@ -12,10 +12,10 @@ const createProductImpl: CaseReducer<
 };
 const deleteProductImpl: CaseReducer<
   State,
-  PayloadAction<{ storeId: string }>
+  PayloadAction<{ productId: string }>
 > = (state, action) => {
   const index = state.findIndex(
-    (product) => product._id === action.payload.storeId
+    (product) => product._id === action.payload.productId
   );
   if (index !== -1) {
     state.splice(index, 1);
@@ -23,10 +23,10 @@ const deleteProductImpl: CaseReducer<
 };
 const updateProductImpl: CaseReducer<
   State,
-  PayloadAction<{ storeId: string; payload: Partial<Types.IProductDocument> }>
+  PayloadAction<{ productId: string; payload: Partial<Types.IProductDocument> }>
 > = (state, action) => {
   const index = state.findIndex(
-    (product) => product._id === action.payload.storeId
+    (product) => product._id === action.payload.productId
   );
   if (index !== -1) {
     const actualStore = state[index];
