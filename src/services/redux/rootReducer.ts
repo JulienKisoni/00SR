@@ -6,12 +6,14 @@ import storesSlice from "./slices/stores";
 import userSlice from "./slices/user";
 import usersSlice from "./slices/users";
 import productsSlice from "./slices/products";
+import cartSlice from "./slices/cart";
 
 const rootReducer = combineReducers({
   stores: storesSlice.reducer,
   user: userSlice.reducer,
   users: usersSlice.reducer,
   products: productsSlice.reducer,
+  cart: cartSlice.reducer,
 });
 
 // Persist configuration

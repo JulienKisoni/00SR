@@ -63,11 +63,20 @@ declare namespace Types {
     __v?: number;
   }
 
-  // export interface CartItem {
-  //   productId: string | Schema.Types.ObjectId;
-  //   quantity: number;
-  //   productDetails?: Partial<IProductDocument>;
-  // }
+  export interface CartItem {
+    productId: string;
+    quantity: number;
+    totalPrice?: number;
+    productDetails?: Partial<IProductDocument>;
+  }
+
+  export interface Cart {
+    storeId: string;
+    userId: string;
+    totalPrices: number;
+    items: Types.CartItem[];
+    cartId: string;
+  }
 
   // export interface IOrderDocument extends Timestamps {
   //   __v?: number;

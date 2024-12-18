@@ -142,7 +142,17 @@ function Products() {
             Add, search, manage and select your products
           </Typography>
         </Stack>
-        <SearchBar onEndTyping={handleEndTyping} placeholder="Search by name" />
+        <Stack direction="row" justifyContent="space-between">
+          <SearchBar
+            onEndTyping={handleEndTyping}
+            placeholder="Search by name"
+          />
+          <Stack direction="row">
+            <Button variant="contained">Add to cart</Button>
+            <Button variant="contained">Generate graphic(s)</Button>
+            <Button variant="contained">Delete product(s)</Button>
+          </Stack>
+        </Stack>
         <ListTable
           rows={filteredProducts}
           columns={columns}
