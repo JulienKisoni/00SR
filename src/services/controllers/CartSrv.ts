@@ -29,8 +29,14 @@ export class CartSrv extends Api {
       | Types.IStoreDocument
       | Types.IProductDocument
       | Types.Cart
-  >({ userId }: { userId: string }): GenericResponse<T> {
-    const cart = store.getState().cart[userId];
+  >({
+    userId,
+    storeId,
+  }: {
+    userId: string;
+    storeId: string;
+  }): GenericResponse<T> {
+    const cart = store.getState().cart[userId][storeId];
     const error = new GenericError("No existing cart for this user");
     if (!cart) {
       return { error };
@@ -44,18 +50,27 @@ export class CartSrv extends Api {
     return { error: undefined };
   }
 
-  setCart({ userId, data }: { userId: string; data: Types.Cart }) {
-    this.dispatch(setCart({ data, userId }));
+  setCart({
+    userId,
+    data,
+    storeId,
+  }: {
+    userId: string;
+    storeId: string;
+    data: Types.Cart;
+  }) {
+    this.dispatch(setCart({ data, userId, storeId }));
   }
 
-  deleteOne(userId: string): GenericResponse<void> {
+  deleteOne(userId: string, storeId: string): GenericResponse<void> {
     const { error } = this.getOne<Types.Cart>({
       userId,
+      storeId,
     });
     if (error) {
       return { error };
     }
-    this.dispatch(setCart({ userId, data: undefined }));
+    this.dispatch(setCart({ userId, storeId, data: undefined }));
     return { error: undefined };
   }
 }

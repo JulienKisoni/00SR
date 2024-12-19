@@ -4,14 +4,18 @@ import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import { useSelector, shallowEqual, useDispatch } from "react-redux";
-import type { GridColDef } from "@mui/x-data-grid";
+import type { GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
 import { useNavigate } from "react-router";
+import { useGridApiRef } from "@mui/x-data-grid";
 
 import ListTable from "../../components/ListTable";
 import { RootState } from "../../services/redux/rootReducer";
 import SearchBar from "../../components/SearchBar";
 import { ROUTES } from "../../constants/routes";
 import { ProductSrv } from "../../services/controllers/ProductSrv";
+import { CartSrv } from "../../services/controllers/CartSrv";
+import { Cart, CartItem } from "../../classes/Cart";
+import { GenericError } from "../../classes/GenericError";
 
 const columns: GridColDef[] = [
   {
@@ -65,11 +69,30 @@ const columns: GridColDef[] = [
   },
 ];
 
+interface State {
+  search: string;
+  selectedProductIDs: string[];
+}
+
 function Products() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const [state, setState] = useState({ search: "" });
+  const apiRef = useGridApiRef();
+
+  const cartSrv = useMemo(() => new CartSrv(dispatch), [dispatch]);
+  const productSrv = useMemo(() => new ProductSrv(dispatch), [dispatch]);
+
+  const [state, setState] = useState<State>({
+    search: "",
+    selectedProductIDs: [],
+  });
+  const connectedUserId = useSelector((state: RootState) => {
+    return state.user.connectedUser?._id;
+  }, shallowEqual);
+  const selectedStoreId = useSelector((state: RootState) => {
+    return state.user.selectedStore?._id;
+  }, shallowEqual);
   const products = useSelector((state: RootState) => {
     const storeId = state.user.selectedStore?._id;
     if (!storeId) {
@@ -123,6 +146,46 @@ function Products() {
     setState((prev) => ({ ...prev, search: value }));
   }, []);
 
+  const onRowSelectionModelChange = useCallback(
+    (rowSelectionModel: GridRowSelectionModel) => {
+      const IDs = rowSelectionModel.map((rowId) => rowId.toString());
+      setState((prev) => ({ ...prev, selectedProductIDs: IDs }));
+    },
+    []
+  );
+
+  const onAddToCart = useCallback(() => {
+    if (connectedUserId && selectedStoreId) {
+      const items: Types.CartItem[] = state.selectedProductIDs.map(
+        (productId) => {
+          const item = new CartItem(productId, 1);
+          return item.calculateTotalPrice(productSrv).toObject();
+        }
+      );
+      const cart = new Cart({
+        storeId: selectedStoreId,
+        userId: connectedUserId,
+      });
+      const cartObj: Types.Cart = cart.addItems(items).toObject();
+      apiRef.current.setRowSelectionModel([]);
+      cartSrv.setCart({
+        userId: connectedUserId,
+        storeId: selectedStoreId,
+        data: cartObj,
+      });
+    } else {
+      const error = new GenericError("Something went wrong");
+      alert(error.publicMessage);
+    }
+  }, [
+    state.selectedProductIDs,
+    cartSrv,
+    productSrv,
+    connectedUserId,
+    selectedStoreId,
+    apiRef,
+  ]);
+
   return (
     <Container>
       <Stack spacing={2.5} direction="column">
@@ -148,7 +211,13 @@ function Products() {
             placeholder="Search by name"
           />
           <Stack direction="row">
-            <Button variant="contained">Add to cart</Button>
+            <Button
+              disabled={!state.selectedProductIDs.length}
+              onClick={onAddToCart}
+              variant="contained"
+            >
+              Add to cart
+            </Button>
             <Button variant="contained">Generate graphic(s)</Button>
             <Button variant="contained">Delete product(s)</Button>
           </Stack>
@@ -159,6 +228,8 @@ function Products() {
           onDeleteClick={handleDeleteClick}
           onViewClick={handleViewClick}
           onEditClick={handleEditClick}
+          onRowSelectionModelChange={onRowSelectionModelChange}
+          apiRef={apiRef}
         />
       </Stack>
     </Container>

@@ -1,14 +1,24 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { CaseReducer, PayloadAction } from "@reduxjs/toolkit";
 
-type State = Record<string, Types.Cart | undefined>;
+type State = Record<string, Record<string, Types.Cart | undefined>>;
 const initialState: State = {};
 
 const setCartImpl: CaseReducer<
   State,
-  PayloadAction<{ data: Types.Cart | undefined; userId: string }>
+  PayloadAction<{
+    data: Types.Cart | undefined;
+    userId: string;
+    storeId: string;
+  }>
 > = (state, action) => {
-  state[action.payload.userId] = action.payload.data;
+  if (!state[action.payload.userId]) {
+    state[action.payload.userId] = {};
+  }
+  if (!state[action.payload.userId][action.payload.storeId]) {
+    state[action.payload.userId][action.payload.storeId] = {} as Types.Cart;
+  }
+  state[action.payload.userId][action.payload.storeId] = action.payload.data;
 };
 
 const cartSlice = createSlice({

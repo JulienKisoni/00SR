@@ -30,6 +30,6 @@ export abstract class Api {
     payload: Partial<T>
   ): GenericResponse<T>;
 
-  abstract deleteOne(id: string): GenericResponse<void>;
+  abstract deleteOne(id: string, ...extraArgs: any[]): GenericResponse<void>;
   //   abstract deleteMany: (ids: string[]) => void;
 }

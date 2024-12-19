@@ -87,7 +87,14 @@ interface Props extends DataGridProps {
 }
 
 const ListTable = (props: Props) => {
-  const { rows, columns, onDeleteClick, onEditClick, onViewClick } = props;
+  const {
+    rows,
+    columns,
+    onDeleteClick,
+    onEditClick,
+    onViewClick,
+    ...restProps
+  } = props;
 
   const displayedColumns: GridColDef<any>[] = useMemo(() => {
     return [
@@ -121,6 +128,7 @@ const ListTable = (props: Props) => {
       getRowId={(row: any) => row._id}
       sx={{ border: 0 }}
       disableRowSelectionOnClick
+      {...restProps}
     />
   );
 };

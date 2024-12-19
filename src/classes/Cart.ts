@@ -19,7 +19,7 @@ export class CartItem implements Types.CartItem {
     this.quantity = quantity;
   }
 
-  calculateTotalPrice(productSrv: ProductSrv) {
+  calculateTotalPrice(productSrv: ProductSrv): CartItem {
     const { error, data } = productSrv.getOne<Types.IProductDocument>({
       productId: this.productId,
     });
@@ -33,6 +33,7 @@ export class CartItem implements Types.CartItem {
         this.totalPrice = 0;
       }
     }
+    return this;
   }
 
   toObject(): Types.CartItem {
@@ -68,7 +69,7 @@ export class Cart implements Types.Cart {
     }
   }
 
-  addItems(items: Types.CartItem[]): void {
+  addItems(items: Types.CartItem[]): Cart {
     items.forEach((item) => {
       const index = this.items.findIndex(
         (_item) => _item.productId === item.productId
@@ -85,14 +86,16 @@ export class Cart implements Types.Cart {
       }
     });
     this.calculateTotalPrices();
+    return this;
   }
 
-  calculateTotalPrices() {
+  calculateTotalPrices(): Cart {
     this.totalPrices = this.items
       .map((elt) => elt.totalPrice || 0)
       .reduce((a: number, b: number) => {
         return a + b;
       }, 0);
+    return this;
   }
 
   toObject(): Types.Cart {
