@@ -84,6 +84,7 @@ interface Props extends DataGridProps {
   onEditClick: (id: string | number) => void;
   onViewClick: (id: string | number) => void;
   onDeleteClick: (id: string | number) => void;
+  hideActions?: boolean;
 }
 
 const ListTable = (props: Props) => {
@@ -93,10 +94,14 @@ const ListTable = (props: Props) => {
     onDeleteClick,
     onEditClick,
     onViewClick,
+    hideActions = false,
     ...restProps
   } = props;
 
   const displayedColumns: GridColDef<any>[] = useMemo(() => {
+    if (hideActions) {
+      return [...columns];
+    }
     return [
       ...columns,
       {
@@ -117,7 +122,7 @@ const ListTable = (props: Props) => {
         },
       },
     ];
-  }, [columns, onDeleteClick, onViewClick, onEditClick]);
+  }, [columns, onDeleteClick, onViewClick, onEditClick, hideActions]);
 
   return (
     <DataGrid

@@ -4,6 +4,15 @@ import { Api, GenericResponse } from "../../classes/Api";
 import { setCart } from "../redux/slices/cart";
 import store from "../redux/store";
 import { GenericError } from "../../classes/GenericError";
+import { ProductSrv } from "./ProductSrv";
+import { Cart } from "../../classes/Cart";
+
+interface UpdateQtyParams {
+  storeId: string;
+  userId: string;
+  productId: string;
+  qty: number;
+}
 
 export class CartSrv extends Api {
   dispatch: Dispatch<UnknownAction>;
@@ -72,5 +81,57 @@ export class CartSrv extends Api {
     }
     this.dispatch(setCart({ userId, storeId, data: undefined }));
     return { error: undefined };
+  }
+  updateQty({
+    userId,
+    storeId,
+    qty,
+    productId,
+  }: UpdateQtyParams): GenericResponse<void> {
+    const { error, data: cart } = this.getOne<Types.Cart>({
+      userId,
+      storeId,
+    });
+    if (error) {
+      return { error };
+    } else if (cart) {
+      const productSrv = new ProductSrv(this.dispatch);
+      const { error, data: product } =
+        productSrv.getOne<Types.IProductDocument>({ productId });
+      if (error) {
+        return { error };
+      } else if (product) {
+        const { unitPrice } = product;
+        const newTotalPrice = unitPrice * qty;
+        const tempCart: Types.Cart = {
+          ...cart,
+          items: cart.items.map((item) => {
+            if (item.productId === productId) {
+              return {
+                ...item,
+                quantity: qty,
+                totalPrice: newTotalPrice,
+              };
+            }
+            return item;
+          }),
+        };
+        const newCart = new Cart({ cart: tempCart })
+          .calculateTotalPrices()
+          .toObject();
+
+        const payload = {
+          userId,
+          storeId,
+          data: newCart,
+        };
+        this.dispatch(setCart(payload));
+        return { error: undefined };
+      } else {
+        return { error: undefined };
+      }
+    } else {
+      return { error: undefined };
+    }
   }
 }
