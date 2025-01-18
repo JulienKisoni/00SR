@@ -1,4 +1,5 @@
 import { Dispatch, UnknownAction } from "@reduxjs/toolkit";
+import isEmpty from "lodash.isempty";
 
 import { Api, GenericResponse } from "../../classes/Api";
 import { setCart } from "../redux/slices/cart";
@@ -62,6 +63,83 @@ export class CartSrv extends Api {
     payload: Partial<T>
   ): GenericResponse<T> {
     return { error: undefined };
+  }
+
+  addItems({
+    userId,
+    data: newCart,
+    storeId,
+  }: {
+    userId: string;
+    storeId: string;
+    data: Types.Cart;
+  }) {
+    const { data: currentCart } = this.getOne<Types.Cart>({
+      userId,
+      storeId,
+    });
+    const existingItems: Types.CartItem[] = [];
+    const nonExistingItems: Types.CartItem[] = [];
+    const cartItemsIDs: string[] =
+      currentCart?.items.map((item) => item.productId) || [];
+
+    newCart.items.forEach((item) => {
+      if (cartItemsIDs.includes(item.productId)) {
+        const currentItem = currentCart?.items.find(
+          (_item) => _item.productId === item.productId
+        );
+        currentItem && existingItems.push(currentItem);
+      } else {
+        nonExistingItems.push(item);
+      }
+    });
+
+    if (!currentCart || isEmpty(currentCart)) {
+      console.log("Setting new cart directly ", { currentCart, existingItems });
+      // this.setCart({ userId, storeId, data: newCart });
+      return;
+    }
+
+    console.log({ nonExistingItems });
+
+    if (existingItems.length) {
+      console.log("need to update qty of existing items ", { existingItems });
+      const finalExistingItems = currentCart.items.map((item) => {
+        if (
+          item.productDetails?.unitPrice &&
+          existingItems.map((_item) => _item.productId).includes(item.productId)
+        ) {
+          const newQty = item.quantity + 1;
+          const newTotalPrice = item.productDetails.unitPrice * newQty;
+          return {
+            ...item,
+            quantity: item.quantity + 1,
+            totalPrice: newTotalPrice,
+          };
+        }
+        return item;
+      });
+      const tempCart: Types.Cart = {
+        ...currentCart,
+        items: [...finalExistingItems, ...nonExistingItems],
+      };
+      console.log({ tempCart });
+      const cart = new Cart({ cart: tempCart })
+        .calculateTotalPrices()
+        .toObject();
+      console.log("Save updated cart ", { cart });
+      // this.setCart({ userId, storeId, data: cart });
+    } else {
+      const tempCart: Types.Cart = {
+        ...currentCart,
+        items: [...currentCart.items, ...nonExistingItems],
+      };
+      const cart = new Cart({ cart: tempCart })
+        .calculateTotalPrices()
+        .toObject();
+      console.log("Save updated cart 2 ", { cart });
+      // this.setCart({ userId, storeId, data: cart });
+    }
   }
 
   setCart({

@@ -168,7 +168,7 @@ function Products() {
       });
       const cartObj: Types.Cart = cart.addItems(items).toObject();
       apiRef.current.setRowSelectionModel([]);
-      cartSrv.setCart({
+      cartSrv.addItems({
         userId: connectedUserId,
         storeId: selectedStoreId,
         data: cartObj,
