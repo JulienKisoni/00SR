@@ -96,50 +96,18 @@ export class CartSrv extends Api {
 
     if (!currentCart || isEmpty(currentCart)) {
       console.log("Setting new cart directly ", { currentCart, existingItems });
-      // this.setCart({ userId, storeId, data: newCart });
+      this.setCart({ userId, storeId, data: newCart });
       return;
     }
 
     console.log({ nonExistingItems });
 
-    if (existingItems.length) {
-      console.log("need to update qty of existing items ", { existingItems });
-      const finalExistingItems = currentCart.items.map((item) => {
-        if (
-          item.productDetails?.unitPrice &&
-          existingItems.map((_item) => _item.productId).includes(item.productId)
-        ) {
-          const newQty = item.quantity + 1;
-          const newTotalPrice = item.productDetails.unitPrice * newQty;
-          return {
-            ...item,
-            quantity: item.quantity + 1,
-            totalPrice: newTotalPrice,
-          };
-        }
-        return item;
-      });
-      const tempCart: Types.Cart = {
-        ...currentCart,
-        items: [...finalExistingItems, ...nonExistingItems],
-      };
-      console.log({ tempCart });
-      const cart = new Cart({ cart: tempCart })
-        .calculateTotalPrices()
-        .toObject();
-      console.log("Save updated cart ", { cart });
-      // this.setCart({ userId, storeId, data: cart });
-    } else {
-      const tempCart: Types.Cart = {
-        ...currentCart,
-        items: [...currentCart.items, ...nonExistingItems],
-      };
-      const cart = new Cart({ cart: tempCart })
-        .calculateTotalPrices()
-        .toObject();
-      console.log("Save updated cart 2 ", { cart });
-      // this.setCart({ userId, storeId, data: cart });
-    }
+    const newItems = newCart.items;
+    const cart = new Cart({ cart: currentCart });
+    cart.addItems(newItems).toObject();
+
+    console.log("Cart to save ", { cart });
+    this.setCart({ userId, storeId, data: cart });
   }
 
   setCart({

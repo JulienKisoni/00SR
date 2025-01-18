@@ -74,10 +74,13 @@ export class Cart implements Types.Cart {
       const index = this.items.findIndex(
         (_item) => _item.productId === item.productId
       );
-      if (index !== -1) {
+      const unitPrice = this.items[index]?.productDetails?.unitPrice;
+      if (index !== -1 && unitPrice) {
         const newQty = this.items[index].quantity + item.quantity;
+        const newTotalPrice = unitPrice * newQty;
         const newItem: Types.CartItem = {
           ...item,
+          totalPrice: newTotalPrice,
           quantity: newQty,
         };
         this.items.splice(index, 1, newItem);
