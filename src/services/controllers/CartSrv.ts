@@ -13,6 +13,11 @@ interface UpdateQtyParams {
   productId: string;
   qty: number;
 }
+interface RemoveProductsParams {
+  storeId: string;
+  userId: string;
+  productIDs: string[];
+}
 
 export class CartSrv extends Api {
   dispatch: Dispatch<UnknownAction>;
@@ -120,16 +125,39 @@ export class CartSrv extends Api {
           .calculateTotalPrices()
           .toObject();
 
-        const payload = {
-          userId,
-          storeId,
-          data: newCart,
-        };
-        this.dispatch(setCart(payload));
+        this.setCart({ userId, storeId, data: newCart });
         return { error: undefined };
       } else {
         return { error: undefined };
       }
+    } else {
+      return { error: undefined };
+    }
+  }
+
+  removeProducts({
+    storeId,
+    userId,
+    productIDs,
+  }: RemoveProductsParams): GenericResponse<void> {
+    const { error, data: cart } = this.getOne<Types.Cart>({
+      userId,
+      storeId,
+    });
+    if (error) {
+      return { error };
+    } else if (cart) {
+      const tempCart: Types.Cart = {
+        ...cart,
+        items: cart.items.filter(
+          (item) => !productIDs.includes(item.productId)
+        ),
+      };
+      const newCart = new Cart({ cart: tempCart })
+        .calculateTotalPrices()
+        .toObject();
+      this.setCart({ userId, storeId, data: newCart });
+      return { error: undefined };
     } else {
       return { error: undefined };
     }

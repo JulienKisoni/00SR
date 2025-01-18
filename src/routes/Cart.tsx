@@ -195,8 +195,14 @@ function Cart() {
   );
 
   const handleDeleteItems = useCallback(() => {
-    console.log("items");
-  }, []);
+    if (state.selectedProductIDs.length && selectedStoreId && connectedUserId) {
+      cartSrv.removeProducts({
+        storeId: selectedStoreId,
+        userId: connectedUserId,
+        productIDs: state.selectedProductIDs,
+      });
+    }
+  }, [state.selectedProductIDs, cartSrv, selectedStoreId, connectedUserId]);
   const handleGenerateOrder = useCallback(() => {
     navigate(`/${ROUTES.ORDERS}`);
   }, [navigate]);
