@@ -1,9 +1,12 @@
-// import { ORDER_STATUS } from './enums';
-
 declare namespace Types {
   enum USER_ROLES {
     user = "user",
     admin = "admin",
+  }
+
+  enum ORDER_STATUS {
+    pending = "pending",
+    completed = "completed",
   }
 
   type FormMode = "readonly" | "edit" | "add";
@@ -23,7 +26,6 @@ declare namespace Types {
       picture: any;
       role: USER_ROLES | string;
     };
-    //   storesDetails?: Partial<IStoreDocument>[];
     __v?: number;
   }
 
@@ -78,13 +80,14 @@ declare namespace Types {
     cartId: string;
   }
 
-  // export interface IOrderDocument extends Timestamps {
-  //   __v?: number;
-  //   _id: string | Schema.Types.ObjectId;
-  //   items: CartItem[];
-  //   owner: string | Schema.Types.ObjectId;
-  //   totalPrice: number;
-  //   orderNumber: string;
-  //   status: ORDER_STATUS;
-  // }
+  export interface IOrderDocument extends Timestamps {
+    __v?: number;
+    _id: string;
+    items: Types.CartItem[];
+    owner: string;
+    storeId: string;
+    totalPrice: number;
+    orderNumber: string;
+    status: ORDER_STATUS;
+  }
 }
