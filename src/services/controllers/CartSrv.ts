@@ -1,5 +1,6 @@
 import { Dispatch, UnknownAction } from "@reduxjs/toolkit";
 import isEmpty from "lodash.isempty";
+import cloneDeep from "lodash.clonedeep";
 
 import { Api, GenericResponse } from "../../classes/Api";
 import { setCart } from "../redux/slices/cart";
@@ -74,10 +75,11 @@ export class CartSrv extends Api {
     storeId: string;
     data: Types.Cart;
   }) {
-    const { data: currentCart } = this.getOne<Types.Cart>({
+    const { data } = this.getOne<Types.Cart>({
       userId,
       storeId,
     });
+    const currentCart = cloneDeep(data);
     const existingItems: Types.CartItem[] = [];
     const nonExistingItems: Types.CartItem[] = [];
     const cartItemsIDs: string[] =
@@ -104,10 +106,10 @@ export class CartSrv extends Api {
 
     const newItems = newCart.items;
     const cart = new Cart({ cart: currentCart });
-    cart.addItems(newItems).toObject();
+    cart.addItems(newItems);
 
     console.log("Cart to save ", { cart });
-    this.setCart({ userId, storeId, data: cart });
+    this.setCart({ userId, storeId, data: cart.toObject() });
   }
 
   setCart({
