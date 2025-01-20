@@ -1,7 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import ShortUniqueId from "short-unique-id";
 
-import { ProductSrv } from "../services/controllers/ProductSrv";
 import store from "../services/redux/store";
 
 interface OrderArgs {

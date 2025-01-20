@@ -21,6 +21,15 @@ const deleteOrderImpl: CaseReducer<
     state.splice(index, 1);
   }
 };
+const deleteOrdersImpl: CaseReducer<
+  State,
+  PayloadAction<{ orderIDs: string[] }>
+> = (state, action) => {
+  const filteredOrders = state.filter(
+    (order) => !action.payload.orderIDs.includes(order._id)
+  );
+  return filteredOrders;
+};
 
 const ordersSlice = createSlice({
   name: "orders",
@@ -28,8 +37,9 @@ const ordersSlice = createSlice({
   reducers: {
     createOrder: createOrderImpl,
     deleteOrder: deleteOrderImpl,
+    deleteOrders: deleteOrdersImpl,
   },
 });
 
 export default ordersSlice;
-export const { createOrder, deleteOrder } = ordersSlice.actions;
+export const { createOrder, deleteOrder, deleteOrders } = ordersSlice.actions;
