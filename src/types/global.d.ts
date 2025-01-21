@@ -85,6 +85,7 @@ declare namespace Types {
     _id: string;
     items: Types.CartItem[];
     owner: string;
+    ownerDetails?: Partial<Types.IUserDocument>;
     storeId: string;
     totalPrice: number;
     orderNumber: string;

@@ -18,9 +18,9 @@ import MenuList from "@mui/material/MenuList";
 
 interface ActionProps {
   params: GridRenderCellParams;
-  onEditClick: () => void;
-  onViewClick: () => void;
-  onDeleteClick: () => void;
+  onEditClick?: () => void;
+  onViewClick?: () => void;
+  onDeleteClick?: () => void;
 }
 const Actions = ({
   params,
@@ -56,24 +56,30 @@ const Actions = ({
         onClose={handleMenuClose}
       >
         <MenuList>
-          <MenuItem onClick={onViewClick}>
-            <ListItemIcon>
-              <VisibilityIcon fontSize="small" style={{ marginRight: 8 }} />
-            </ListItemIcon>
-            <ListItemText>View</ListItemText>
-          </MenuItem>
-          <MenuItem onClick={onEditClick}>
-            <ListItemIcon>
-              <EditIcon fontSize="small" style={{ marginRight: 8 }} />
-            </ListItemIcon>
-            <ListItemText>Edit</ListItemText>
-          </MenuItem>
-          <MenuItem onClick={onDeleteClick}>
-            <ListItemIcon>
-              <DeleteIcon fontSize="small" style={{ marginRight: 8 }} />
-            </ListItemIcon>
-            <ListItemText>Delete</ListItemText>
-          </MenuItem>
+          {onViewClick ? (
+            <MenuItem onClick={onViewClick}>
+              <ListItemIcon>
+                <VisibilityIcon fontSize="small" style={{ marginRight: 8 }} />
+              </ListItemIcon>
+              <ListItemText>View</ListItemText>
+            </MenuItem>
+          ) : null}
+          {onEditClick ? (
+            <MenuItem onClick={onEditClick}>
+              <ListItemIcon>
+                <EditIcon fontSize="small" style={{ marginRight: 8 }} />
+              </ListItemIcon>
+              <ListItemText>Edit</ListItemText>
+            </MenuItem>
+          ) : null}
+          {onDeleteClick ? (
+            <MenuItem onClick={onDeleteClick}>
+              <ListItemIcon>
+                <DeleteIcon fontSize="small" style={{ marginRight: 8 }} />
+              </ListItemIcon>
+              <ListItemText>Delete</ListItemText>
+            </MenuItem>
+          ) : null}
         </MenuList>
       </Menu>
     </>
@@ -81,9 +87,9 @@ const Actions = ({
 };
 
 interface Props extends DataGridProps {
-  onEditClick: (id: string | number) => void;
-  onViewClick: (id: string | number) => void;
-  onDeleteClick: (id: string | number) => void;
+  onEditClick?: (id: string | number) => void;
+  onViewClick?: (id: string | number) => void;
+  onDeleteClick?: (id: string | number) => void;
   hideActions?: boolean;
 }
 
@@ -113,9 +119,15 @@ const ListTable = (props: Props) => {
         renderCell: (params) => {
           return (
             <Actions
-              onDeleteClick={() => onDeleteClick(params.id)}
-              onEditClick={() => onEditClick(params.id)}
-              onViewClick={() => onViewClick(params.id)}
+              onDeleteClick={
+                onDeleteClick ? () => onDeleteClick(params.id) : undefined
+              }
+              onEditClick={
+                onEditClick ? () => onEditClick(params.id) : undefined
+              }
+              onViewClick={
+                onViewClick ? () => onViewClick(params.id) : undefined
+              }
               params={params}
             />
           );

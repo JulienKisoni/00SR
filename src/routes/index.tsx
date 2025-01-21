@@ -6,7 +6,7 @@ import ProtectedRoute from "../components/ProtectedRoute";
 import UnProtectedRoute from "../components/UnProtectedRoute";
 import Products from "./products/Products";
 import Cart from "./Cart";
-import Orders from "./Orders";
+import Orders from "./orders/Orders";
 import Reports from "./Reports";
 import { ROUTES } from "../constants/routes";
 import NotFound from "./NotFound";
@@ -19,6 +19,7 @@ import EditStore from "./stores/EditStore";
 import AddProduct from "./products/AddProduct";
 import ViewProduct from "./products/ViewProduct";
 import EditProduct from "./products/EditProduct";
+import ViewOrder from "./orders/ViewOrder";
 
 export const ConnectedNavigation = () => {
   return (
@@ -109,6 +110,14 @@ export const ConnectedNavigation = () => {
         element={
           <ProtectedRoute>
             <Orders />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={`/${ROUTES.ORDERS}/:orderId`}
+        element={
+          <ProtectedRoute>
+            <ViewOrder />
           </ProtectedRoute>
         }
       />

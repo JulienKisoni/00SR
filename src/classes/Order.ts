@@ -8,6 +8,10 @@ interface OrderArgs {
   userId: string;
   cartItems: Types.CartItem[];
 }
+enum ORDER_STATUS {
+  pending = "pending",
+  completed = "completed",
+}
 
 export class Order implements Types.IOrderDocument {
   _id: string;
@@ -17,26 +21,31 @@ export class Order implements Types.IOrderDocument {
   orderNumber: string;
   status: Types.ORDER_STATUS;
   storeId: string;
+  createdAt?: string | undefined;
+  updatedAt?: string | undefined;
 
   constructor({ storeId, userId, cartItems }: OrderArgs) {
     this.orderNumber = this.generateOrderNumber();
-    this.status = Types.ORDER_STATUS.pending;
+    this.status = ORDER_STATUS.pending;
     this.owner = userId;
     this.storeId = storeId;
     this._id = uuidv4();
     this.items = this.refreshProductItems(cartItems);
     this.calculateTotalPrice();
+    this.createdAt = new Date().toISOString();
   }
 
   generateOrderNumber(): string {
+    //@ts-ignore
     const uid = new ShortUniqueId({ length: 6 });
     const now = new Date();
     const y = now.getFullYear();
-    const m = now.getMonth() + 1;
-    const d = now.getDay() + 1;
+    const m = (now.getMonth() + 1).toString().padStart(2, "0");
+    const d = now.getDate().toString().padStart(2, "0");
     const fullDate = `${y}-${m}-${d}`;
-    console.log({ fullDate });
-    return `${fullDate}-${uid.rnd()}`;
+    //@ts-ignore
+    const orderNumber = `${fullDate}-${uid.rnd()}`;
+    return orderNumber;
   }
 
   refreshProductItems(cartItems: Types.CartItem[]): Types.CartItem[] {
@@ -77,6 +86,7 @@ export class Order implements Types.IOrderDocument {
       owner: this.owner,
       status: this.status,
       storeId: this.storeId,
+      createdAt: this.createdAt,
     };
   }
 }

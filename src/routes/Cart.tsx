@@ -10,16 +10,16 @@ import type {
   GridRowIdGetter,
   GridRowSelectionModel,
 } from "@mui/x-data-grid";
-import { useNavigate } from "react-router";
 import { useGridApiRef } from "@mui/x-data-grid";
 import TextField from "@mui/material/TextField";
 import debounce from "lodash.debounce";
 
-import { ROUTES } from "../constants/routes";
 import SearchBar from "../components/SearchBar";
 import ListTable from "../components/ListTable";
 import { RootState } from "../services/redux/rootReducer";
 import { CartSrv } from "../services/controllers/CartSrv";
+import { OrderSrv } from "../services/controllers/OrderSrv";
+import { Order } from "../classes/Order";
 
 interface State {
   search: string;
@@ -83,12 +83,12 @@ const BuyQty = memo((props: BuyQtyProps) => {
 });
 
 function Cart() {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const apiRef = useGridApiRef();
 
   const cartSrv = useMemo(() => new CartSrv(dispatch), [dispatch]);
+  const orderSrv = useMemo(() => new OrderSrv(dispatch), [dispatch]);
 
   const [state, setState] = useState<State>({
     search: "",
@@ -204,8 +204,28 @@ function Cart() {
     }
   }, [state.selectedProductIDs, cartSrv, selectedStoreId, connectedUserId]);
   const handleGenerateOrder = useCallback(() => {
-    navigate(`/${ROUTES.ORDERS}`);
-  }, [navigate]);
+    if (!connectedUserId || !selectedStoreId) {
+      return;
+    }
+    const items: Types.CartItem[] = cartItems.filter((cartItem) =>
+      state.selectedProductIDs.includes(cartItem.productId)
+    );
+    const order = new Order({
+      storeId: selectedStoreId,
+      userId: connectedUserId,
+      cartItems: items,
+    });
+
+    orderSrv.addOne(order.toObject());
+    apiRef.current.setRowSelectionModel([]);
+  }, [
+    state.selectedProductIDs,
+    cartItems,
+    orderSrv,
+    selectedStoreId,
+    connectedUserId,
+    apiRef,
+  ]);
   const getRowId: GridRowIdGetter<any> | undefined = useCallback(
     (row: Types.CartItem) => {
       return row.productId;
@@ -220,7 +240,11 @@ function Cart() {
           <Typography variant="h3" component="h1">
             Cart
           </Typography>
-          <Button onClick={handleGenerateOrder} variant="contained">
+          <Button
+            disabled={!state.selectedProductIDs?.length}
+            onClick={handleGenerateOrder}
+            variant="contained"
+          >
             Generate Order
           </Button>
         </Stack>
@@ -247,9 +271,6 @@ function Cart() {
         <ListTable
           rows={filteredProducts}
           columns={columns}
-          onDeleteClick={() => {}}
-          onViewClick={() => {}}
-          onEditClick={() => {}}
           onRowSelectionModelChange={onRowSelectionModelChange}
           apiRef={apiRef}
           getRowId={getRowId}
