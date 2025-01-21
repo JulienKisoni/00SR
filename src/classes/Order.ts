@@ -59,11 +59,13 @@ export class Order implements Types.IOrderDocument {
         (prod) => prod._id === item.productId
       ) as Types.IProductDocument;
       const { unitPrice } = _product;
-      return {
+      const _cartItem: Types.CartItem = {
         productId: item.productId,
         quantity: item.quantity,
         totalPrice: item.quantity * unitPrice,
+        productDetails: _product,
       };
+      return _cartItem;
     });
     return refreshedItems;
   }

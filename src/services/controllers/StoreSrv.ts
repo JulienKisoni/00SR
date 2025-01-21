@@ -8,6 +8,8 @@ import {
   deleteStore,
   updateStore,
 } from "../redux/slices/stores";
+import store from "../redux/store";
+import { GenericError } from "../../classes/GenericError";
 
 export class StoreSrv extends Api {
   dispatch: Dispatch<UnknownAction>;
@@ -40,6 +42,15 @@ export class StoreSrv extends Api {
       | Types.IStoreDocument
       | Types.IProductDocument
   >(filters: { [key: string]: string }): GenericResponse<T> {
+    const { _id } = filters;
+    if (_id) {
+      const _store = store.getState().stores.find((elt) => elt._id === _id);
+      if (_store) {
+        return { data: _store as T };
+      }
+      const error = new GenericError("No store found");
+      return { error };
+    }
     return { error: undefined };
   }
   updateOne<T extends Types.IUserDocument | Types.IStoreDocument>(
