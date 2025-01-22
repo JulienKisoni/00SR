@@ -91,4 +91,14 @@ declare namespace Types {
     orderNumber: string;
     status: ORDER_STATUS;
   }
+  export interface IReportDocument extends Timestamps {
+    __v?: number;
+    _id: string;
+    name: string;
+    description: string;
+    owner: string;
+    storeId: string;
+    ownerDetails?: Partial<Types.IUserDocument>;
+    orders: Types.IOrderDocument[];
+  }
 }

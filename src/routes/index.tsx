@@ -7,7 +7,7 @@ import UnProtectedRoute from "../components/UnProtectedRoute";
 import Products from "./products/Products";
 import Cart from "./Cart";
 import Orders from "./orders/Orders";
-import Reports from "./Reports";
+import Reports from "./reports/Reports";
 import { ROUTES } from "../constants/routes";
 import NotFound from "./NotFound";
 import SignInCtrl from "../components/controllers/SignInCtrl";
@@ -20,6 +20,9 @@ import AddProduct from "./products/AddProduct";
 import ViewProduct from "./products/ViewProduct";
 import EditProduct from "./products/EditProduct";
 import ViewOrder from "./orders/ViewOrder";
+import AddReport from "./reports/AddReport";
+import ViewReport from "./reports/ViewReport";
+import EditReport from "./reports/EditReport";
 
 export const ConnectedNavigation = () => {
   return (
@@ -126,6 +129,30 @@ export const ConnectedNavigation = () => {
         element={
           <ProtectedRoute>
             <Reports />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={`/${ROUTES.REPORTS}/add`}
+        element={
+          <ProtectedRoute>
+            <AddReport />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={`/${ROUTES.REPORTS}/:reportId`}
+        element={
+          <ProtectedRoute>
+            <ViewReport />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={`/${ROUTES.REPORTS}/:reportId/edit`}
+        element={
+          <ProtectedRoute>
+            <EditReport />
           </ProtectedRoute>
         }
       />
