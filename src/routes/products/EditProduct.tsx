@@ -72,7 +72,7 @@ const EditProduct = () => {
         const productSrv = new ProductSrv(dispatch);
         productSrv.deleteOne(product._id);
         alert("Product deleted");
-        navigate(`/${ROUTES.PRODUCTS}`);
+        navigate(`/${ROUTES.PRODUCTS}`, { replace: true });
       }
     }
   }, [product, dispatch, navigate]);

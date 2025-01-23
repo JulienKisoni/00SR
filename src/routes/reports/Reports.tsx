@@ -19,6 +19,7 @@ import { RootState } from "../../services/redux/rootReducer";
 import { UsersSrv } from "../../services/controllers/UserSrv";
 import { ROUTES } from "../../constants/routes";
 import { GenericError } from "../../classes/GenericError";
+import { ReportSrv } from "../../services/controllers/ReportSrv";
 
 interface State {
   search: string;
@@ -77,8 +78,7 @@ function Reports() {
 
   const apiRef = useGridApiRef();
 
-  const usersSrv = useMemo(() => new UsersSrv(dispatch), [dispatch]);
-  const orderSrv = useMemo(() => new OrderSrv(dispatch), [dispatch]);
+  const reportSrv = useMemo(() => new ReportSrv(dispatch), [dispatch]);
 
   const [state, setState] = useState<State>({
     search: "",
@@ -142,9 +142,9 @@ function Reports() {
 
   const handleDeleteItems = useCallback(() => {
     if (state.selectedReportIDs.length && selectedStoreId && connectedUserId) {
-      // orderSrv.deleteMany(state.selectedReportIDs);
+      reportSrv.deleteMany(state.selectedReportIDs);
     }
-  }, [state.selectedReportIDs, selectedStoreId, connectedUserId, orderSrv]);
+  }, [state.selectedReportIDs, selectedStoreId, connectedUserId, reportSrv]);
   const handleDownloadReports = useCallback(() => {
     if (
       !connectedUserId ||
@@ -190,14 +190,14 @@ function Reports() {
         // eslint-disable-next-line no-restricted-globals
         const agree = confirm(message);
         if (agree) {
-          // const { error } = orderSrv.deleteOne(reportId.toString());
-          // if (error) {
-          //   alert(error.publicMessage);
-          // }
+          const { error } = reportSrv.deleteOne(reportId.toString());
+          if (error) {
+            alert(error.publicMessage);
+          }
         }
       }
     },
-    [orderSrv, filteredReports]
+    [reportSrv, filteredReports]
   );
   const handleViewReport = useCallback(
     (reportId: string | number) => {

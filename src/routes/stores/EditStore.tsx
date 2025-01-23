@@ -50,7 +50,7 @@ const EditStore = () => {
         const storesSrv = new StoreSrv(dispatch);
         storesSrv.deleteOne(store._id);
         alert("Store deleted");
-        navigate(`/${ROUTES.STORES}`);
+        navigate(`/${ROUTES.STORES}`, { replace: true });
       }
     }
   }, [store, dispatch, navigate]);

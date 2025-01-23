@@ -35,7 +35,10 @@ const EditReport = () => {
     return state.user.connectedUser;
   }, shallowEqual);
 
-  const reportOrders: Types.IOrderDocument[] = [];
+  const reportOrders: Types.IOrderDocument[] = useMemo(
+    () => report?.orders || [],
+    [report?.orders]
+  );
 
   const loading = useMemo(() => {
     if (!report || !selectedStore || !connectedUser) {
@@ -74,7 +77,7 @@ const EditReport = () => {
       if (agree) {
         reportSrv.deleteOne(report._id);
         alert("Report deleted");
-        navigate(`/${ROUTES.REPORTS}`);
+        navigate(`/${ROUTES.REPORTS}`, { replace: true });
       }
     }
   }, [report, reportSrv, navigate]);
@@ -102,11 +105,11 @@ const EditReport = () => {
           Update the name and/or the description of your report
         </Typography>
         <Typography variant="subtitle2">
-          You're about to create a report of the following order(s)
+          You're about to edit a report of the following order(s)
         </Typography>
         {reportOrders.map((order) => {
           return (
-            <Typography variant="subtitle2">
+            <Typography key={order._id} variant="subtitle2">
               {`- Order #${order.orderNumber}`}
             </Typography>
           );
@@ -116,7 +119,7 @@ const EditReport = () => {
           initialValues={initialValues}
           onDeleteReport={handleDeleteReport}
           reportId={report?._id || ""}
-          createdAt="qsdfqsdfqs"
+          createdAt={report?.createdAt}
           orders={reportOrders}
         />
       </Stack>
