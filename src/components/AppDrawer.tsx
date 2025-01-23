@@ -13,6 +13,8 @@ import StoreIcon from "@mui/icons-material/Store";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import DescriptionIcon from "@mui/icons-material/Description";
+import BarChartIcon from "@mui/icons-material/BarChart";
+import SettingsIcon from "@mui/icons-material/Settings";
 import { NavLink } from "react-router";
 
 import { protectedRoutes, ROUTES } from "../constants/routes";
@@ -32,6 +34,10 @@ const AppDrawer = ({ children }: PropsWithChildren) => {
         return <ReceiptIcon fontSize="large" />;
       case ROUTES.REPORTS:
         return <DescriptionIcon fontSize="large" />;
+      case ROUTES.GRAPHICS:
+        return <BarChartIcon fontSize="large" />;
+      case ROUTES.SETTINGS:
+        return <SettingsIcon fontSize="large" />;
       default:
         return <InboxIcon fontSize="large" />;
     }

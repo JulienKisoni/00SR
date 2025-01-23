@@ -8,6 +8,7 @@ export enum ROUTES {
   ORDERS = "orders",
   REPORTS = "reports",
   SETTINGS = "settings",
+  GRAPHICS = "graphics",
 }
 
 interface IRoute {
