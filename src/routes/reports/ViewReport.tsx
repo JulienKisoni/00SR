@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useState } from "react";
+import React, { useMemo, useEffect, useState, useCallback } from "react";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
@@ -10,12 +10,60 @@ import { ROUTES } from "../../constants/routes";
 import NotFound from "../NotFound";
 import { UsersSrv } from "../../services/controllers/UserSrv";
 import { StoreSrv } from "../../services/controllers/StoreSrv";
+import OrderDetails from "../../components/OrderDetails";
+import { GridColDef, GridRowIdGetter } from "@mui/x-data-grid";
 
 interface FormValues {
   name: string;
   description: string;
 }
 type TransformedReport = Types.IReportDocument & { totalPrices: number };
+interface SelectedOrder {
+  orderNumber: string;
+  orderOwnerName: string;
+  createdAt: string;
+  orderStoreName: string;
+  totalPrice: number;
+  items: Types.CartItem[];
+}
+const columns: GridColDef[] = [
+  {
+    field: "productName",
+    headerName: "Product name",
+    sortable: false,
+    disableColumnMenu: true,
+  },
+  {
+    field: "productDescription",
+    headerName: "Product description",
+    sortable: false,
+    disableColumnMenu: true,
+  },
+  {
+    field: "quantity",
+    headerName: "Buy Qty",
+    type: "number",
+    sortable: false,
+    disableColumnMenu: true,
+  },
+  {
+    field: "productDetails",
+    headerName: "Unit price",
+    type: "number",
+    sortable: false,
+    disableColumnMenu: true,
+    valueGetter: (productDetails: Partial<Types.IProductDocument>) =>
+      `${productDetails?.unitPrice}$`,
+  },
+  {
+    field: "totalPrice",
+    headerName: "Total price",
+    valueGetter: (key: number) => `${key}$`,
+    type: "number",
+    sortable: false,
+    disableColumnMenu: true,
+  },
+];
 
 const ViewReport = () => {
   const { reportId } = useParams();
@@ -107,6 +155,57 @@ const ViewReport = () => {
     return values;
   }, [report]);
 
+  const getRowId: GridRowIdGetter<Types.CartItem> | undefined = useCallback(
+    (row: Types.CartItem) => {
+      return row.productId;
+    },
+    []
+  );
+  const renderOrderDetails = useCallback(
+    (orders: Types.IOrderDocument[]) => {
+      return orders.map((order) => {
+        const { data: userData } = usersSrv.getOne<Types.IUserDocument>({
+          _id: order.owner,
+        });
+        const { data: storeData } = storesSrv.getOne<Types.IStoreDocument>({
+          _id: order.storeId,
+        });
+        if (
+          !storeData?.name ||
+          !userData?.profile?.username ||
+          !order.createdAt
+        ) {
+          return null;
+        }
+        const items = order.items.map((item) => {
+          return {
+            ...item,
+            productName: item.productDetails?.name,
+            productDescription: item.productDetails?.description,
+          };
+        });
+        const selectedOrder: SelectedOrder = {
+          orderNumber: order.orderNumber,
+          orderOwnerName: userData?.profile.username,
+          orderStoreName: storeData?.name,
+          createdAt: order.createdAt,
+          totalPrice: order.totalPrice,
+          items,
+        };
+        return (
+          <OrderDetails
+            key={order._id}
+            getRowId={getRowId}
+            columns={columns}
+            selectedOrder={selectedOrder}
+            ordersPagination={undefined}
+          />
+        );
+      });
+    },
+    [usersSrv, storesSrv, getRowId]
+  );
+
   if (initialValues === null) {
     return <NotFound />;
   }
@@ -143,6 +242,7 @@ const ViewReport = () => {
           Description: {report?.description}
         </Typography>
         <Typography variant="subtitle2">ORDERS DETAILS</Typography>
+        {renderOrderDetails(transformedReport?.orders || [])}
       </Stack>
     </Container>
   );

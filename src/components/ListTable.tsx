@@ -140,7 +140,6 @@ const ListTable = (props: Props) => {
     <DataGrid
       rows={rows}
       columns={displayedColumns}
-      pagination={undefined}
       checkboxSelection
       getRowId={(row: any) => row._id}
       sx={{ border: 0 }}

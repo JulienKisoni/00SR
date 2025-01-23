@@ -1,19 +1,25 @@
 import React, { useCallback, useMemo } from "react";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
-import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
 import { useSelector, shallowEqual, useDispatch } from "react-redux";
 import type { GridColDef, GridRowIdGetter } from "@mui/x-data-grid";
 import { useParams, useNavigate } from "react-router";
 
-import ListTable from "../../components/ListTable";
 import { OrderSrv } from "../../services/controllers/OrderSrv";
 import { RootState } from "../../services/redux/rootReducer";
 import { UsersSrv } from "../../services/controllers/UserSrv";
 import { ROUTES } from "../../constants/routes";
 import { StoreSrv } from "../../services/controllers/StoreSrv";
+import OrderDetails from "../../components/OrderDetails";
 
+interface SelectedOrder {
+  orderNumber: string;
+  orderOwnerName: string;
+  createdAt: string;
+  orderStoreName: string;
+  totalPrice: number;
+  items: Types.CartItem[];
+}
 const columns: GridColDef[] = [
   {
     field: "productName",
@@ -70,7 +76,7 @@ function ViewOrder() {
   const selectedStoreId = useSelector((state: RootState) => {
     return state.user.selectedStore?._id;
   }, shallowEqual);
-  const selectedOrder = useSelector((state: RootState) => {
+  const currentOrder = useSelector((state: RootState) => {
     if (!selectedStoreId || !connectedUserId || !orderId) {
       return undefined;
     }
@@ -83,23 +89,23 @@ function ViewOrder() {
   }, shallowEqual);
 
   const orderItems = useMemo(() => {
-    if (!selectedOrder) {
+    if (!currentOrder) {
       return [];
     }
-    return selectedOrder.items.map((item) => {
+    return currentOrder.items.map((item) => {
       return {
         ...item,
         productName: item.productDetails?.name,
         productDescription: item.productDetails?.description,
       };
     });
-  }, [selectedOrder]);
+  }, [currentOrder]);
   const orderOwnerName = useMemo(() => {
-    if (!connectedUserId || !selectedOrder) {
+    if (!connectedUserId || !currentOrder) {
       return null;
     }
     const { error, data } = usersSrv.getOne<Types.IUserDocument>({
-      _id: selectedOrder.owner,
+      _id: currentOrder.owner,
     });
     if (error) {
       return null;
@@ -108,13 +114,13 @@ function ViewOrder() {
     } else {
       return null;
     }
-  }, [selectedOrder, connectedUserId, usersSrv]);
+  }, [currentOrder, connectedUserId, usersSrv]);
   const orderStoreName = useMemo(() => {
-    if (!connectedUserId || !selectedOrder) {
+    if (!connectedUserId || !currentOrder) {
       return null;
     }
     const { error, data } = storesSrv.getOne<Types.IStoreDocument>({
-      _id: selectedOrder.storeId,
+      _id: currentOrder.storeId,
     });
     if (error) {
       return null;
@@ -123,20 +129,39 @@ function ViewOrder() {
     } else {
       return null;
     }
-  }, [selectedOrder, connectedUserId, storesSrv]);
+  }, [currentOrder, connectedUserId, storesSrv]);
+  const selectedOrder: SelectedOrder = useMemo(() => {
+    if (
+      !currentOrder ||
+      !currentOrder?.createdAt ||
+      !orderOwnerName ||
+      !orderStoreName
+    ) {
+      return {} as SelectedOrder;
+    }
+    return {
+      orderNumber: currentOrder.orderNumber,
+      orderOwnerName,
+      orderStoreName,
+      createdAt: currentOrder.createdAt,
+      totalPrice: currentOrder.totalPrice,
+      items: orderItems,
+    };
+  }, [orderItems, orderOwnerName, orderStoreName, currentOrder]);
   const getRowId: GridRowIdGetter<Types.CartItem> | undefined = useCallback(
     (row: Types.CartItem) => {
       return row.productId;
     },
     []
   );
+
   const handleDeleteOrder = useCallback(() => {
-    if (selectedOrder) {
-      const message = `Are you sure you wanna delete this order (${selectedOrder.orderNumber})?`;
+    if (currentOrder) {
+      const message = `Are you sure you wanna delete this order (${currentOrder.orderNumber})?`;
       // eslint-disable-next-line no-restricted-globals
       const agree = confirm(message);
       if (agree) {
-        const { error } = ordersSrv.deleteOne(selectedOrder._id.toString());
+        const { error } = ordersSrv.deleteOne(currentOrder._id.toString());
         if (error) {
           alert(error.publicMessage);
         } else {
@@ -144,9 +169,9 @@ function ViewOrder() {
         }
       }
     }
-  }, [navigate, selectedOrder, ordersSrv]);
+  }, [navigate, currentOrder, ordersSrv]);
 
-  if (!selectedOrder) {
+  if (!currentOrder) {
     return (
       <Container>
         <Typography variant="h3" component="h1">
@@ -158,39 +183,14 @@ function ViewOrder() {
 
   return (
     <Container>
-      <Stack spacing={2.5} direction="column">
-        <Stack justifyContent="space-between" direction="row">
-          <Typography variant="h3" component="h1">
-            Order {`#${selectedOrder.orderNumber}`}
-          </Typography>
-          <Button onClick={handleDeleteOrder} variant="contained">
-            Delete order
-          </Button>
-        </Stack>
-        <Stack direction="column">
-          <Typography variant="subtitle2">
-            View details about your order
-          </Typography>
-          <Typography variant="subtitle2">
-            Ordered by: {orderOwnerName}
-          </Typography>
-          <Typography variant="subtitle2">
-            Ordered at: {selectedOrder.createdAt}
-          </Typography>
-          <Typography variant="subtitle2">Store: {orderStoreName}</Typography>
-          <Typography variant="subtitle2">
-            Total price: {`${selectedOrder.totalPrice}$`}
-          </Typography>
-          <Typography variant="subtitle2">ITEMS DETAILS</Typography>
-        </Stack>
-        <ListTable
-          rows={orderItems}
-          columns={columns}
-          getRowId={getRowId}
-          hideActions
-          checkboxSelection={false}
-        />
-      </Stack>
+      <OrderDetails
+        subtitle="View details about your order"
+        getRowId={getRowId}
+        columns={columns}
+        handleDeleteOrder={handleDeleteOrder}
+        selectedOrder={selectedOrder}
+        ordersPagination
+      />
     </Container>
   );
 }
