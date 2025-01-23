@@ -93,7 +93,7 @@ const StoreFormCtlr = ({
         helpers.resetForm();
         await helpers.validateForm();
         alert("Store created");
-        navigate(`/${ROUTES.STORES}`);
+        navigate(`/${ROUTES.STORES}`, { replace: true });
       } else if (mode === "edit") {
         const oldStore = new Store({
           values: initialValues,

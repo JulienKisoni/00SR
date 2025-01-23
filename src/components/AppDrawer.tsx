@@ -12,6 +12,7 @@ import DomainIcon from "@mui/icons-material/Domain";
 import StoreIcon from "@mui/icons-material/Store";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ReceiptIcon from "@mui/icons-material/Receipt";
+import DescriptionIcon from "@mui/icons-material/Description";
 import { NavLink } from "react-router";
 
 import { protectedRoutes, ROUTES } from "../constants/routes";
@@ -29,6 +30,8 @@ const AppDrawer = ({ children }: PropsWithChildren) => {
         return <ShoppingCartIcon fontSize="large" />;
       case ROUTES.ORDERS:
         return <ReceiptIcon fontSize="large" />;
+      case ROUTES.REPORTS:
+        return <DescriptionIcon fontSize="large" />;
       default:
         return <InboxIcon fontSize="large" />;
     }

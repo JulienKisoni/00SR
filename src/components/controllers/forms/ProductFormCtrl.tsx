@@ -94,7 +94,7 @@ const ProductFormCtlr = ({
           helpers.resetForm();
           await helpers.validateForm();
           alert("Product created");
-          navigate(`/${ROUTES.PRODUCTS}`);
+          navigate(`/${ROUTES.PRODUCTS}`, { replace: true });
         }
       } else if (mode === "edit") {
         const payload = newProduct.compareWithOld(initialValues);

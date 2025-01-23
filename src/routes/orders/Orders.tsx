@@ -18,6 +18,7 @@ import { OrderSrv } from "../../services/controllers/OrderSrv";
 import { RootState } from "../../services/redux/rootReducer";
 import { UsersSrv } from "../../services/controllers/UserSrv";
 import { ROUTES } from "../../constants/routes";
+import { GenericError } from "../../classes/GenericError";
 
 interface State {
   search: string;
@@ -92,25 +93,24 @@ function Orders() {
     return state.orders.filter((order) => order.storeId === selectedStoreId);
   }, shallowEqual);
 
-  const transformedOrders = useMemo(() => {
+  const transformedOrders: Types.IOrderDocument[] = useMemo(() => {
     return orders.map((_order) => {
       const { data } = usersSrv.getOne<Types.IUserDocument>({
         _id: _order.owner,
       });
       if (data) {
+        const ownerDetails: Partial<Types.IUserDocument> = {
+          profile: data.profile,
+        };
         return {
           ..._order,
-          ownerDetails: {
-            profile: {
-              username: data.profile.username,
-            },
-          },
+          ownerDetails,
         };
       }
       return _order;
     });
   }, [orders, usersSrv]);
-  const filteredOrders = useMemo(() => {
+  const filteredOrders: Types.IOrderDocument[] = useMemo(() => {
     if (!state.search) {
       return transformedOrders;
     }
@@ -137,11 +137,36 @@ function Orders() {
     }
   }, [state.selectedOrderIDs, selectedStoreId, connectedUserId, orderSrv]);
   const handleGenerateReport = useCallback(() => {
-    if (!connectedUserId || !selectedStoreId) {
+    if (
+      !connectedUserId ||
+      !selectedStoreId ||
+      !state.selectedOrderIDs.length
+    ) {
       return;
     }
-    apiRef.current.setRowSelectionModel([]);
-  }, [selectedStoreId, connectedUserId, apiRef]);
+    const tempTargetedOrders: Types.IOrderDocument[] = filteredOrders.filter(
+      (order) => state.selectedOrderIDs.includes(order._id)
+    );
+    try {
+      const payload: string = JSON.stringify(tempTargetedOrders);
+      localStorage.setItem("tempTargetedOrders", payload);
+      navigate(`/${ROUTES.REPORTS}/add`);
+    } catch (err: any) {
+      const error = new GenericError(
+        err.message || err.reason || "Something went wrong"
+      );
+      alert(error.message);
+    } finally {
+      apiRef.current.setRowSelectionModel([]);
+    }
+  }, [
+    selectedStoreId,
+    connectedUserId,
+    apiRef,
+    state.selectedOrderIDs,
+    filteredOrders,
+    navigate,
+  ]);
   const getRowId: GridRowIdGetter<Types.IOrderDocument> | undefined =
     useCallback((row: Types.IOrderDocument) => {
       return row._id;

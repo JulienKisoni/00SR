@@ -78,10 +78,11 @@ const ReportFormCtrl = ({
           alert(error.publicMessage);
           return;
         } else {
+          localStorage.removeItem("tempTargetedOrders");
           helpers.resetForm();
           await helpers.validateForm();
           alert("Report created");
-          navigate(`/${ROUTES.REPORTS}`);
+          navigate(`/${ROUTES.REPORTS}`, { replace: true });
         }
       } else if (mode === "edit") {
         const payload = newReport.compareWithOld(initialValues);

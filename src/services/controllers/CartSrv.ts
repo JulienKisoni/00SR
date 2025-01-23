@@ -97,18 +97,14 @@ export class CartSrv extends Api {
     });
 
     if (!currentCart || isEmpty(currentCart)) {
-      console.log("Setting new cart directly ", { currentCart, existingItems });
       this.setCart({ userId, storeId, data: newCart });
       return;
     }
-
-    console.log({ nonExistingItems });
 
     const newItems = newCart.items;
     const cart = new Cart({ cart: currentCart });
     cart.addItems(newItems);
 
-    console.log("Cart to save ", { cart });
     this.setCart({ userId, storeId, data: cart.toObject() });
   }
 
