@@ -22,6 +22,7 @@ export const protectedRoutes: IRoute[] = [
   { route: ROUTES.CART, icon: "" },
   { route: ROUTES.ORDERS, icon: "" },
   { route: ROUTES.REPORTS, icon: "" },
+  { route: ROUTES.GRAPHICS, icon: "" },
   { route: ROUTES.SETTINGS, icon: "" },
 ];
 

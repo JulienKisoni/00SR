@@ -23,6 +23,7 @@ import ViewOrder from "./orders/ViewOrder";
 import AddReport from "./reports/AddReport";
 import ViewReport from "./reports/ViewReport";
 import EditReport from "./reports/EditReport";
+import Graphics from "./graphics/Graphics";
 
 export const ConnectedNavigation = () => {
   return (
@@ -153,6 +154,14 @@ export const ConnectedNavigation = () => {
         element={
           <ProtectedRoute>
             <EditReport />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={`/${ROUTES.GRAPHICS}`}
+        element={
+          <ProtectedRoute>
+            <Graphics />
           </ProtectedRoute>
         }
       />
