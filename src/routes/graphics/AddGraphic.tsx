@@ -3,14 +3,14 @@ import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 
-import ReportFormCtrl from "../../components/controllers/forms/ReportFormCtrl";
+import GraphicFormCtrl from "../../components/controllers/forms/GraphicFormCtrl";
 
 interface FormValues {
   name: string;
   description: string;
 }
 interface IState {
-  tempTargetedOrders: Types.IOrderDocument[];
+  tempTargetedProducts: Types.IProductDocument[];
 }
 
 const initialValues: FormValues = {
@@ -18,27 +18,27 @@ const initialValues: FormValues = {
   description: "",
 };
 
-const AddReport = () => {
-  const [state, setState] = useState<IState>({ tempTargetedOrders: [] });
+const AddGraphic = () => {
+  const [state, setState] = useState<IState>({ tempTargetedProducts: [] });
 
   useEffect(() => {
-    const payload = localStorage.getItem("tempTargetedOrders");
+    const payload = localStorage.getItem("tempTargetedProducts");
     if (payload) {
-      const orders: Types.IOrderDocument[] = JSON.parse(payload);
-      if (orders?.length) {
-        setState((prev) => ({ ...prev, tempTargetedOrders: orders }));
+      const products: Types.IProductDocument[] = JSON.parse(payload);
+      if (products?.length) {
+        setState((prev) => ({ ...prev, tempTargetedProducts: products }));
       }
     }
   }, []);
 
-  if (!state.tempTargetedOrders.length) {
+  if (!state.tempTargetedProducts.length) {
     return (
       <Container>
         <Stack spacing={2.5} direction="column">
           <Typography variant="h3" component="h1">
             Error
           </Typography>
-          <Typography variant="subtitle2">No order(s) selected</Typography>
+          <Typography variant="subtitle2">No product(s) selected</Typography>
         </Stack>
       </Container>
     );
@@ -48,27 +48,27 @@ const AddReport = () => {
     <Container>
       <Stack spacing={2.5} direction="column">
         <Typography variant="h3" component="h1">
-          Create report
+          Create graphic
         </Typography>
         <Typography variant="subtitle2">
-          You're about to create a report for the following order(s)
+          You're about to create a graphic for the following product(s)
         </Typography>
-        {state.tempTargetedOrders.map((order) => {
+        {state.tempTargetedProducts.map((product) => {
           return (
-            <Typography key={order._id} variant="subtitle2">
-              {`- Order #${order.orderNumber}`}
+            <Typography key={product._id} variant="subtitle2">
+              {product.name}
             </Typography>
           );
         })}
-        <ReportFormCtrl
+        <GraphicFormCtrl
           mode="add"
           initialValues={initialValues}
-          reportId=""
-          orders={state.tempTargetedOrders}
+          graphicId=""
+          products={state.tempTargetedProducts}
         />
       </Stack>
     </Container>
   );
 };
 
-export default AddReport;
+export default AddGraphic;

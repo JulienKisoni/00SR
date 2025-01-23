@@ -24,6 +24,9 @@ import AddReport from "./reports/AddReport";
 import ViewReport from "./reports/ViewReport";
 import EditReport from "./reports/EditReport";
 import Graphics from "./graphics/Graphics";
+import AddGraphic from "./graphics/AddGraphic";
+import ViewGraphic from "./graphics/ViewGraphic";
+import EditGraphic from "./graphics/EditGraphic";
 
 export const ConnectedNavigation = () => {
   return (
@@ -162,6 +165,30 @@ export const ConnectedNavigation = () => {
         element={
           <ProtectedRoute>
             <Graphics />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={`/${ROUTES.GRAPHICS}/add`}
+        element={
+          <ProtectedRoute>
+            <AddGraphic />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={`/${ROUTES.GRAPHICS}/:graphicId`}
+        element={
+          <ProtectedRoute>
+            <ViewGraphic />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={`/${ROUTES.GRAPHICS}/:graphicId/edit`}
+        element={
+          <ProtectedRoute>
+            <EditGraphic />
           </ProtectedRoute>
         }
       />

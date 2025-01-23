@@ -16,6 +16,8 @@ import { ProductSrv } from "../../services/controllers/ProductSrv";
 import { CartSrv } from "../../services/controllers/CartSrv";
 import { Cart, CartItem } from "../../classes/Cart";
 import { GenericError } from "../../classes/GenericError";
+import { GraphicSrv } from "../../services/controllers/Graphic";
+import { Graphic } from "../../classes/Graphic";
 
 const columns: GridColDef[] = [
   {
@@ -82,6 +84,7 @@ function Products() {
 
   const cartSrv = useMemo(() => new CartSrv(dispatch), [dispatch]);
   const productSrv = useMemo(() => new ProductSrv(dispatch), [dispatch]);
+  const graphicSrv = useMemo(() => new GraphicSrv(dispatch), [dispatch]);
 
   const [state, setState] = useState<State>({
     search: "",
@@ -185,6 +188,40 @@ function Products() {
     selectedStoreId,
     apiRef,
   ]);
+  const handleGenerateGraphics = useCallback(() => {
+    if (
+      !connectedUserId ||
+      !selectedStoreId ||
+      !state.selectedProductIDs.length
+    ) {
+      const error = new GenericError("Something went wrong");
+      alert(error.publicMessage);
+      return;
+    }
+    // TODO: max of 3 products per graphic
+    const tempTargetedProducts = filteredProducts.filter((prod) =>
+      state.selectedProductIDs.includes(prod._id)
+    );
+    try {
+      const payload: string = JSON.stringify(tempTargetedProducts);
+      localStorage.setItem("tempTargetedProducts", payload);
+      navigate(`/${ROUTES.GRAPHICS}/add`);
+    } catch (err: any) {
+      const error = new GenericError(
+        err.message || err.reason || "Something went wrong"
+      );
+      alert(error.publicMessage);
+    } finally {
+      apiRef.current.setRowSelectionModel([]);
+    }
+  }, [
+    filteredProducts,
+    state.selectedProductIDs,
+    connectedUserId,
+    selectedStoreId,
+    navigate,
+    apiRef,
+  ]);
 
   return (
     <Container>
@@ -218,7 +255,13 @@ function Products() {
             >
               Add to cart
             </Button>
-            <Button variant="contained">Generate graphic(s)</Button>
+            <Button
+              disabled={!state.selectedProductIDs.length}
+              variant="contained"
+              onClick={handleGenerateGraphics}
+            >
+              Generate graphic(s)
+            </Button>
             <Button variant="contained">Delete product(s)</Button>
           </Stack>
         </Stack>

@@ -65,7 +65,7 @@ const columns: GridColDef[] = [
   },
 ];
 
-const ViewReport = () => {
+const ViewGraphic = () => {
   const { reportId } = useParams();
   const dispatch = useDispatch();
   const [state, setState] = useState({ deny: false });
@@ -248,4 +248,4 @@ const ViewReport = () => {
   );
 };
 
-export default ViewReport;
+export default ViewGraphic;

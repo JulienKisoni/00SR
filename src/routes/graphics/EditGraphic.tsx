@@ -16,7 +16,7 @@ interface FormValues {
   description: string;
 }
 
-const EditReport = () => {
+const EditGraphic = () => {
   const { reportId } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -127,4 +127,4 @@ const EditReport = () => {
   );
 };
 
-export default EditReport;
+export default EditGraphic;

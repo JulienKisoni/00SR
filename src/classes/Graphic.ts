@@ -10,7 +10,7 @@ interface GraphicArgs {
   name: string;
   description: string;
   products: Types.IProductDocument[];
-  reportId: string;
+  graphicId: string;
   createdAt?: string;
 }
 
@@ -30,12 +30,12 @@ export class Graphic implements Types.IGraphicDocument {
     name,
     description,
     products,
-    reportId,
+    graphicId,
     createdAt,
   }: GraphicArgs) {
     this.owner = userId;
     this.storeId = storeId;
-    this._id = reportId || uuidv4();
+    this._id = graphicId || uuidv4();
     this.createdAt = createdAt || new Date().toISOString();
     this.name = name;
     this.description = description;
