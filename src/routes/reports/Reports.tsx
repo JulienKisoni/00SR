@@ -14,9 +14,7 @@ import { useNavigate } from "react-router";
 
 import SearchBar from "../../components/SearchBar";
 import ListTable from "../../components/ListTable";
-import { OrderSrv } from "../../services/controllers/OrderSrv";
 import { RootState } from "../../services/redux/rootReducer";
-import { UsersSrv } from "../../services/controllers/UserSrv";
 import { ROUTES } from "../../constants/routes";
 import { GenericError } from "../../classes/GenericError";
 import { ReportSrv } from "../../services/controllers/ReportSrv";
@@ -153,6 +151,7 @@ function Reports() {
     ) {
       return;
     }
+    // TODO: download a maximum of 4 reports
     /* const tempTargetedOrders: Types.IReportDocument[] = filteredReports.filter(
       (order) => state.selectedReportIDs.includes(order._id)
     );
