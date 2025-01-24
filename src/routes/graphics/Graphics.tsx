@@ -16,12 +16,11 @@ import SearchBar from "../../components/SearchBar";
 import ListTable from "../../components/ListTable";
 import { RootState } from "../../services/redux/rootReducer";
 import { ROUTES } from "../../constants/routes";
-import { GenericError } from "../../classes/GenericError";
-import { ReportSrv } from "../../services/controllers/ReportSrv";
+import { GraphicSrv } from "../../services/controllers/Graphic";
 
 interface State {
   search: string;
-  selectedReportIDs: string[];
+  selectedGraphicIDs: string[];
 }
 
 const columns: GridColDef[] = [
@@ -46,25 +45,10 @@ const columns: GridColDef[] = [
     valueGetter: (value: string) => new Date(value),
   },
   {
-    field: "totalItems",
-    headerName: "# Items",
+    field: "products",
+    headerName: "# Products",
     type: "number",
-    sortable: false,
-    disableColumnMenu: true,
-  },
-  {
-    field: "orders",
-    headerName: "Total orders",
-    valueGetter: (orders: Types.IReportDocument[]) => orders.length,
-    type: "number",
-    sortable: false,
-    disableColumnMenu: true,
-  },
-  {
-    field: "totalPrices",
-    headerName: "Total price",
-    valueGetter: (key: number) => `${key}$`,
-    type: "number",
+    valueGetter: (products: Types.IProductDocument[]) => products.length,
     sortable: false,
     disableColumnMenu: true,
   },
@@ -76,11 +60,11 @@ function Graphics() {
 
   const apiRef = useGridApiRef();
 
-  const reportSrv = useMemo(() => new ReportSrv(dispatch), [dispatch]);
+  const graphicSrv = useMemo(() => new GraphicSrv(dispatch), [dispatch]);
 
   const [state, setState] = useState<State>({
     search: "",
-    selectedReportIDs: [],
+    selectedGraphicIDs: [],
   });
   const connectedUserId = useSelector((state: RootState) => {
     return state.user.connectedUser?._id;
@@ -88,43 +72,22 @@ function Graphics() {
   const selectedStoreId = useSelector((state: RootState) => {
     return state.user.selectedStore?._id;
   }, shallowEqual);
-  const reports: Types.IReportDocument[] = useSelector((state: RootState) => {
+  const graphics: Types.IGraphicDocument[] = useSelector((state: RootState) => {
     if (!selectedStoreId || !connectedUserId) {
       return [];
     }
-    return state.reports.filter((report) => report.storeId === selectedStoreId);
+    return state.graphics.filter(
+      (graphic) => graphic.storeId === selectedStoreId
+    );
   }, shallowEqual);
-
-  const transformedReports: Types.IReportDocument[] = useMemo(() => {
-    const tempReports = reports.map((_report) => {
-      let allOrderItems: Types.CartItem[] = [];
-      _report.orders.forEach((ord) => {
-        allOrderItems = [...allOrderItems, ...ord.items];
-      });
-      return {
-        ..._report,
-        allOrderItems,
-      };
-    });
-    return tempReports.map((report) => {
-      return {
-        ...report,
-        totalItems: report.allOrderItems?.length,
-        totalPrices: report.allOrderItems
-          .map((item) => item.totalPrice || 0)
-          .reduce((a: number, b: number) => a + b, 0),
-        allOrderItems: undefined,
-      };
-    });
-  }, [reports]);
-  const filteredReports: Types.IReportDocument[] = useMemo(() => {
+  const filteredGraphics: Types.IGraphicDocument[] = useMemo(() => {
     if (!state.search) {
-      return transformedReports;
+      return graphics;
     }
-    return transformedReports.filter((item) =>
+    return graphics.filter((item) =>
       item.name.toLowerCase().includes(state.search.toLowerCase())
     );
-  }, [transformedReports, state.search]);
+  }, [graphics, state.search]);
 
   const handleEndTyping = useCallback((value: string) => {
     setState((prev) => ({ ...prev, search: value }));
@@ -133,80 +96,48 @@ function Graphics() {
   const onRowSelectionModelChange = useCallback(
     (rowSelectionModel: GridRowSelectionModel) => {
       const IDs = rowSelectionModel.map((rowId) => rowId.toString());
-      setState((prev) => ({ ...prev, selectedReportIDs: IDs }));
+      setState((prev) => ({ ...prev, selectedGraphicIDs: IDs }));
     },
     []
   );
 
   const handleDeleteItems = useCallback(() => {
-    if (state.selectedReportIDs.length && selectedStoreId && connectedUserId) {
-      reportSrv.deleteMany(state.selectedReportIDs);
+    if (state.selectedGraphicIDs.length && selectedStoreId && connectedUserId) {
+      graphicSrv.deleteMany(state.selectedGraphicIDs);
     }
-  }, [state.selectedReportIDs, selectedStoreId, connectedUserId, reportSrv]);
-  const handleDownloadReports = useCallback(() => {
-    if (
-      !connectedUserId ||
-      !selectedStoreId ||
-      !state.selectedReportIDs.length
-    ) {
-      return;
-    }
-    // TODO: download a maximum of 4 reports
-    /* const tempTargetedOrders: Types.IReportDocument[] = filteredReports.filter(
-      (order) => state.selectedReportIDs.includes(order._id)
-    );
-    try {
-      const payload: string = JSON.stringify(tempTargetedOrders);
-      localStorage.setItem("tempTargetedOrders", payload);
-      navigate(`/${ROUTES.REPORTS}/add`);
-    } catch (err: any) {
-      const error = new GenericError(
-        err.message || err.reason || "Something went wrong"
-      );
-      alert(error.message);
-    } finally {
-      apiRef.current.setRowSelectionModel([]);
-    } */
-  }, [
-    selectedStoreId,
-    connectedUserId,
-    apiRef,
-    state.selectedReportIDs,
-    filteredReports,
-    navigate,
-  ]);
-  const getRowId: GridRowIdGetter<Types.IReportDocument> | undefined =
-    useCallback((row: Types.IReportDocument) => {
+  }, [state.selectedGraphicIDs, selectedStoreId, connectedUserId, graphicSrv]);
+  const getRowId: GridRowIdGetter<Types.IGraphicDocument> | undefined =
+    useCallback((row: Types.IGraphicDocument) => {
       return row._id;
     }, []);
   const handleSingleDelete = useCallback(
-    (reportId: string | number) => {
-      const report = filteredReports.find(
-        (_report) => _report._id === reportId.toString()
+    (graphicId: string | number) => {
+      const graphic = filteredGraphics.find(
+        (_graphic) => _graphic._id === graphicId.toString()
       );
-      if (report) {
-        const message = `Are you sure you wanna delete this report (${report.name})?`;
+      if (graphic) {
+        const message = `Are you sure you wanna delete this graphic (${graphic.name})?`;
         // eslint-disable-next-line no-restricted-globals
         const agree = confirm(message);
         if (agree) {
-          const { error } = reportSrv.deleteOne(reportId.toString());
+          const { error } = graphicSrv.deleteOne(graphicId.toString());
           if (error) {
             alert(error.publicMessage);
           }
         }
       }
     },
-    [reportSrv, filteredReports]
+    [graphicSrv, filteredGraphics]
   );
-  const handleViewReport = useCallback(
-    (reportId: string | number) => {
-      navigate(`/${ROUTES.REPORTS}/${reportId}`);
+  const handleViewGraphic = useCallback(
+    (graphicId: string | number) => {
+      navigate(`/${ROUTES.GRAPHICS}/${graphicId}`);
     },
     [navigate]
   );
-  const handleEditReport = useCallback(
-    (reportId: string | number) => {
-      navigate(`/${ROUTES.REPORTS}/${reportId}/edit`);
+  const handleEditGraphic = useCallback(
+    (graphicId: string | number) => {
+      navigate(`/${ROUTES.GRAPHICS}/${graphicId}/edit`);
     },
     [navigate]
   );
@@ -231,7 +162,7 @@ function Graphics() {
           />
           <Stack direction="row">
             <Button
-              disabled={!state.selectedReportIDs?.length}
+              disabled={!state.selectedGraphicIDs?.length}
               onClick={handleDeleteItems}
               variant="contained"
             >
@@ -240,11 +171,11 @@ function Graphics() {
           </Stack>
         </Stack>
         <ListTable
-          rows={filteredReports}
+          rows={filteredGraphics}
           columns={columns}
           onDeleteClick={handleSingleDelete}
-          onViewClick={handleViewReport}
-          onEditClick={handleEditReport}
+          onViewClick={handleViewGraphic}
+          onEditClick={handleEditGraphic}
           onRowSelectionModelChange={onRowSelectionModelChange}
           apiRef={apiRef}
           getRowId={getRowId}

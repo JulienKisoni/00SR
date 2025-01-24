@@ -8,8 +8,8 @@ import { useSelector, shallowEqual, useDispatch } from "react-redux";
 import { RootState } from "../../services/redux/rootReducer";
 import { ROUTES } from "../../constants/routes";
 import NotFound from "../NotFound";
-import ReportFormCtrl from "../../components/controllers/forms/ReportFormCtrl";
-import { ReportSrv } from "../../services/controllers/ReportSrv";
+import GraphicFormCtrl from "../../components/controllers/forms/GraphicFormCtrl";
+import { GraphicSrv } from "../../services/controllers/Graphic";
 
 interface FormValues {
   name: string;
@@ -17,16 +17,16 @@ interface FormValues {
 }
 
 const EditGraphic = () => {
-  const { reportId } = useParams();
+  const { graphicId } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const [state, setState] = useState({ deny: false });
 
-  const reportSrv = useMemo(() => new ReportSrv(dispatch), [dispatch]);
+  const graphicSrv = useMemo(() => new GraphicSrv(dispatch), [dispatch]);
 
-  const report = useSelector((state: RootState) => {
-    return state.reports.find((_report) => _report._id === reportId);
+  const graphic = useSelector((state: RootState) => {
+    return state.graphics.find((_graphic) => _graphic._id === graphicId);
   }, shallowEqual);
   const selectedStore = useSelector((state: RootState) => {
     return state.user.selectedStore;
@@ -35,52 +35,52 @@ const EditGraphic = () => {
     return state.user.connectedUser;
   }, shallowEqual);
 
-  const reportOrders: Types.IOrderDocument[] = useMemo(
-    () => report?.orders || [],
-    [report?.orders]
+  const graphicProducts: Types.IProductDocument[] = useMemo(
+    () => graphic?.products || [],
+    [graphic?.products]
   );
 
   const loading = useMemo(() => {
-    if (!report || !selectedStore || !connectedUser) {
+    if (!graphic || !selectedStore || !connectedUser) {
       return true;
     }
     return false;
-  }, [report, selectedStore, connectedUser]);
+  }, [graphic, selectedStore, connectedUser]);
 
   useEffect(() => {
     const condition1 =
-      connectedUser && report && connectedUser?._id !== report?.owner;
+      connectedUser && graphic && connectedUser?._id !== graphic?.owner;
     const condition2 =
-      report && selectedStore && report.storeId !== selectedStore._id;
+      graphic && selectedStore && graphic.storeId !== selectedStore._id;
     if (condition1 || condition2) {
-      alert("You do not have access to this report");
+      alert("You do not have access to this graphic");
       setState((prev) => ({ ...prev, deny: true }));
     }
-  }, [selectedStore, report, connectedUser]);
+  }, [selectedStore, graphic, connectedUser]);
 
   const initialValues: FormValues | null = useMemo(() => {
-    if (!report) {
+    if (!graphic) {
       return null;
     }
     const values: FormValues = {
-      name: report.name,
-      description: report.description,
+      name: graphic.name,
+      description: graphic.description,
     };
     return values;
-  }, [report]);
+  }, [graphic]);
 
-  const handleDeleteReport = useCallback(() => {
-    if (report) {
-      const message = `Are you sure you wanna delete this report (${report.name})?`;
+  const handleDeleteGraphic = useCallback(() => {
+    if (graphic) {
+      const message = `Are you sure you wanna delete this graphic (${graphic.name})?`;
       // eslint-disable-next-line no-restricted-globals
       const agree = confirm(message);
       if (agree) {
-        reportSrv.deleteOne(report._id);
-        alert("Report deleted");
-        navigate(`/${ROUTES.REPORTS}`, { replace: true });
+        graphicSrv.deleteOne(graphic._id);
+        alert("Graphic deleted");
+        navigate(`/${ROUTES.GRAPHICS}`, { replace: true });
       }
     }
-  }, [report, reportSrv, navigate]);
+  }, [graphic, graphicSrv, navigate]);
 
   if (initialValues === null) {
     return <NotFound />;
@@ -92,35 +92,35 @@ const EditGraphic = () => {
       </Container>
     );
   } else if (state.deny) {
-    return <Navigate to={`/${ROUTES.REPORTS}`} replace />;
+    return <Navigate to={`/${ROUTES.GRAPHICS}`} replace />;
   }
 
   return (
     <Container>
       <Stack spacing={2.5} direction="column">
         <Typography variant="h3" component="h1">
-          {report?.name}
+          {graphic?.name}
         </Typography>
         <Typography variant="subtitle2">
-          Update the name and/or the description of your report
+          Update the name and/or the description of your graphic
         </Typography>
         <Typography variant="subtitle2">
-          You're about to edit a report of the following order(s)
+          You're about to edit a graphic of the following product(s)
         </Typography>
-        {reportOrders.map((order) => {
+        {graphicProducts.map((product) => {
           return (
-            <Typography key={order._id} variant="subtitle2">
-              {`- Order #${order.orderNumber}`}
+            <Typography key={product._id} variant="subtitle2">
+              {`- Order #${product.name}`}
             </Typography>
           );
         })}
-        <ReportFormCtrl
+        <GraphicFormCtrl
           mode="edit"
           initialValues={initialValues}
-          onDeleteReport={handleDeleteReport}
-          reportId={report?._id || ""}
-          createdAt={report?.createdAt}
-          orders={reportOrders}
+          onDeleteGraphic={handleDeleteGraphic}
+          graphicId={graphic?._id || ""}
+          createdAt={graphic?.createdAt}
+          products={graphicProducts}
         />
       </Stack>
     </Container>

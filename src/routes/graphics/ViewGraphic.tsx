@@ -10,68 +10,19 @@ import { ROUTES } from "../../constants/routes";
 import NotFound from "../NotFound";
 import { UsersSrv } from "../../services/controllers/UserSrv";
 import { StoreSrv } from "../../services/controllers/StoreSrv";
-import OrderDetails from "../../components/OrderDetails";
-import { GridColDef, GridRowIdGetter } from "@mui/x-data-grid";
 
 interface FormValues {
   name: string;
   description: string;
 }
-type TransformedReport = Types.IReportDocument & { totalPrices: number };
-interface SelectedOrder {
-  orderNumber: string;
-  orderOwnerName: string;
-  createdAt: string;
-  orderStoreName: string;
-  totalPrice: number;
-  items: Types.CartItem[];
-}
-const columns: GridColDef[] = [
-  {
-    field: "productName",
-    headerName: "Product name",
-    sortable: false,
-    disableColumnMenu: true,
-  },
-  {
-    field: "productDescription",
-    headerName: "Product description",
-    sortable: false,
-    disableColumnMenu: true,
-  },
-  {
-    field: "quantity",
-    headerName: "Buy Qty",
-    type: "number",
-    sortable: false,
-    disableColumnMenu: true,
-  },
-  {
-    field: "productDetails",
-    headerName: "Unit price",
-    type: "number",
-    sortable: false,
-    disableColumnMenu: true,
-    valueGetter: (productDetails: Partial<Types.IProductDocument>) =>
-      `${productDetails?.unitPrice}$`,
-  },
-  {
-    field: "totalPrice",
-    headerName: "Total price",
-    valueGetter: (key: number) => `${key}$`,
-    type: "number",
-    sortable: false,
-    disableColumnMenu: true,
-  },
-];
 
 const ViewGraphic = () => {
-  const { reportId } = useParams();
+  const { graphicId } = useParams();
   const dispatch = useDispatch();
   const [state, setState] = useState({ deny: false });
 
-  const report = useSelector((state: RootState) => {
-    return state.reports.find((_report) => _report._id === reportId);
+  const graphic = useSelector((state: RootState) => {
+    return state.graphics.find((_graphic) => _graphic._id === graphicId);
   }, shallowEqual);
   const selectedStore = useSelector((state: RootState) => {
     return state.user.selectedStore;
@@ -80,36 +31,20 @@ const ViewGraphic = () => {
     return state.user.connectedUser;
   }, shallowEqual);
 
-  const transformedReport: TransformedReport | undefined = useMemo(() => {
-    if (!report) {
-      return undefined;
-    }
-    let allOrderItems: Types.CartItem[] = [];
-    report?.orders.forEach((ord) => {
-      allOrderItems = [...allOrderItems, ...ord.items];
-    });
-    return {
-      ...report,
-      totalPrices: allOrderItems
-        .map((item) => item.totalPrice || 0)
-        .reduce((a: number, b: number) => a + b, 0),
-      allOrderItems: undefined,
-    };
-  }, [report]);
   const usersSrv = useMemo(() => new UsersSrv(dispatch), [dispatch]);
   const storesSrv = useMemo(() => new StoreSrv(dispatch), [dispatch]);
   const loading = useMemo(() => {
-    if (!report || !selectedStore || !connectedUser) {
+    if (!graphic || !selectedStore || !connectedUser) {
       return true;
     }
     return false;
-  }, [report, selectedStore, connectedUser]);
-  const reportOwnerName = useMemo(() => {
-    if (!connectedUser || !report) {
+  }, [graphic, selectedStore, connectedUser]);
+  const graphicOwnerName = useMemo(() => {
+    if (!connectedUser || !graphic) {
       return null;
     }
     const { error, data } = usersSrv.getOne<Types.IUserDocument>({
-      _id: report.owner,
+      _id: graphic.owner,
     });
     if (error) {
       return null;
@@ -118,13 +53,13 @@ const ViewGraphic = () => {
     } else {
       return null;
     }
-  }, [report, connectedUser, usersSrv]);
-  const reportStoreName = useMemo(() => {
-    if (!connectedUser || !report) {
+  }, [graphic, connectedUser, usersSrv]);
+  const graphicStoreName = useMemo(() => {
+    if (!connectedUser || !graphic) {
       return null;
     }
     const { error, data } = storesSrv.getOne<Types.IStoreDocument>({
-      _id: report.storeId,
+      _id: graphic.storeId,
     });
     if (error) {
       return null;
@@ -133,78 +68,27 @@ const ViewGraphic = () => {
     } else {
       return null;
     }
-  }, [report, connectedUser, storesSrv]);
+  }, [graphic, connectedUser, storesSrv]);
 
   useEffect(() => {
-    if (connectedUser?._id && report?._id) {
-      if (connectedUser._id !== report.owner) {
-        alert("You do not have access to this report");
+    if (connectedUser?._id && graphic?._id) {
+      if (connectedUser._id !== graphic.owner) {
+        alert("You do not have access to this graphic");
         setState((prev) => ({ ...prev, deny: true }));
       }
     }
-  }, [connectedUser, report]);
+  }, [connectedUser, graphic]);
 
   const initialValues: FormValues | null = useMemo(() => {
-    if (!report) {
+    if (!graphic) {
       return null;
     }
     const values: FormValues = {
-      name: report.name,
-      description: report.description,
+      name: graphic.name,
+      description: graphic.description,
     };
     return values;
-  }, [report]);
-
-  const getRowId: GridRowIdGetter<Types.CartItem> | undefined = useCallback(
-    (row: Types.CartItem) => {
-      return row.productId;
-    },
-    []
-  );
-  const renderOrderDetails = useCallback(
-    (orders: Types.IOrderDocument[]) => {
-      return orders.map((order) => {
-        const { data: userData } = usersSrv.getOne<Types.IUserDocument>({
-          _id: order.owner,
-        });
-        const { data: storeData } = storesSrv.getOne<Types.IStoreDocument>({
-          _id: order.storeId,
-        });
-        if (
-          !storeData?.name ||
-          !userData?.profile?.username ||
-          !order.createdAt
-        ) {
-          return null;
-        }
-        const items = order.items.map((item) => {
-          return {
-            ...item,
-            productName: item.productDetails?.name,
-            productDescription: item.productDetails?.description,
-          };
-        });
-        const selectedOrder: SelectedOrder = {
-          orderNumber: order.orderNumber,
-          orderOwnerName: userData?.profile.username,
-          orderStoreName: storeData?.name,
-          createdAt: order.createdAt,
-          totalPrice: order.totalPrice,
-          items,
-        };
-        return (
-          <OrderDetails
-            key={order._id}
-            getRowId={getRowId}
-            columns={columns}
-            selectedOrder={selectedOrder}
-            ordersPagination={undefined}
-          />
-        );
-      });
-    },
-    [usersSrv, storesSrv, getRowId]
-  );
+  }, [graphic]);
 
   if (initialValues === null) {
     return <NotFound />;
@@ -223,26 +107,22 @@ const ViewGraphic = () => {
     <Container>
       <Stack spacing={2.5} direction="column">
         <Typography variant="h3" component="h1">
-          {report?.name}
+          {graphic?.name}
         </Typography>
         <Typography variant="subtitle2">
-          View details about your report
+          View details about your graphic
         </Typography>
         <Typography variant="subtitle2">
-          Requested by: {reportOwnerName}
+          Created by: {graphicOwnerName}
         </Typography>
         <Typography variant="subtitle2">
-          Generated at: {report?.createdAt}
+          Created at: {graphic?.createdAt}
         </Typography>
-        <Typography variant="subtitle2">Store: {reportStoreName}</Typography>
+        <Typography variant="subtitle2">Store: {graphicStoreName}</Typography>
         <Typography variant="subtitle2">
-          Total price: {`${transformedReport?.totalPrices}$`}
+          Description: {graphic?.description}
         </Typography>
-        <Typography variant="subtitle2">
-          Description: {report?.description}
-        </Typography>
-        <Typography variant="subtitle2">ORDERS DETAILS</Typography>
-        {renderOrderDetails(transformedReport?.orders || [])}
+        <Typography variant="subtitle2">PRODUCTS DETAILS</Typography>
       </Stack>
     </Container>
   );

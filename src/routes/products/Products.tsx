@@ -16,8 +16,6 @@ import { ProductSrv } from "../../services/controllers/ProductSrv";
 import { CartSrv } from "../../services/controllers/CartSrv";
 import { Cart, CartItem } from "../../classes/Cart";
 import { GenericError } from "../../classes/GenericError";
-import { GraphicSrv } from "../../services/controllers/Graphic";
-import { Graphic } from "../../classes/Graphic";
 
 const columns: GridColDef[] = [
   {
@@ -84,7 +82,6 @@ function Products() {
 
   const cartSrv = useMemo(() => new CartSrv(dispatch), [dispatch]);
   const productSrv = useMemo(() => new ProductSrv(dispatch), [dispatch]);
-  const graphicSrv = useMemo(() => new GraphicSrv(dispatch), [dispatch]);
 
   const [state, setState] = useState<State>({
     search: "",

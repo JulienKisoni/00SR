@@ -111,4 +111,17 @@ declare namespace Types {
     ownerDetails?: Partial<Types.IUserDocument>;
     products: Types.IProductDocument[];
   }
+
+  export interface IEvolution {
+    date: Date;
+    dateKey: string; // will help group Evolution of different products by dateKey (groupBy)
+    quantity: number;
+  }
+
+  export interface IHistoryDocument extends Timestamps {
+    _v?: number;
+    productId: string;
+    evolutions: Types.IEvolution[];
+    storeId: string;
+  }
 }
