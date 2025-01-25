@@ -28,7 +28,7 @@ interface Props {
   mode?: Types.FormMode;
   onDeleteGraphic?: () => void;
   graphicId: string;
-  products: Types.IProductDocument[];
+  products: Types.IHistoryDocument[];
   createdAt?: string;
 }
 

@@ -10,7 +10,7 @@ interface FormValues {
   description: string;
 }
 interface IState {
-  tempTargetedProducts: Types.IProductDocument[];
+  tempTargetedProducts: Types.IHistoryDocument[];
 }
 
 const initialValues: FormValues = {
@@ -25,8 +25,17 @@ const AddGraphic = () => {
     const payload = localStorage.getItem("tempTargetedProducts");
     if (payload) {
       const products: Types.IProductDocument[] = JSON.parse(payload);
+      const histories: Types.IHistoryDocument[] = products.map((product) => {
+        return {
+          productId: product._id,
+          productName: product.name,
+          evolutions: [] as Types.IEvolution[],
+          storeId: product.storeId,
+          createdAt: "",
+        };
+      });
       if (products?.length) {
-        setState((prev) => ({ ...prev, tempTargetedProducts: products }));
+        setState((prev) => ({ ...prev, tempTargetedProducts: histories }));
       }
     }
   }, []);
@@ -55,8 +64,8 @@ const AddGraphic = () => {
         </Typography>
         {state.tempTargetedProducts.map((product) => {
           return (
-            <Typography key={product._id} variant="subtitle2">
-              {product.name}
+            <Typography key={product.productId} variant="subtitle2">
+              {product.productName}
             </Typography>
           );
         })}

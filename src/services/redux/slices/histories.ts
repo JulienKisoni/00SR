@@ -11,6 +11,9 @@ const createHistoryImpl: CaseReducer<
 > = (state, action) => {
   state.push(action.payload.data);
 };
+const deleteHistoriesImpl: CaseReducer<State> = (state, action) => {
+  return [];
+};
 const updateHistoryImpl: CaseReducer<
   State,
   PayloadAction<{
@@ -49,6 +52,7 @@ const historiesSlice = createSlice({
   reducers: {
     createHistory: createHistoryImpl,
     updateHistory: updateHistoryImpl,
+    deleteHistories: deleteHistoriesImpl,
   },
 });
 

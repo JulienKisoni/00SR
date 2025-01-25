@@ -105,6 +105,7 @@ const ProductFormCtlr = ({
           const history = new History({
             storeId: selectedStore._id,
             productId,
+            productName: newProduct.name,
           });
           history.pushEvolution(payload.quantity);
           historySrv.addOne(history.toObject());

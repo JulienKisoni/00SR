@@ -35,7 +35,7 @@ const EditGraphic = () => {
     return state.user.connectedUser;
   }, shallowEqual);
 
-  const graphicProducts: Types.IProductDocument[] = useMemo(
+  const graphicProducts: Types.IHistoryDocument[] = useMemo(
     () => graphic?.products || [],
     [graphic?.products]
   );
@@ -109,8 +109,8 @@ const EditGraphic = () => {
         </Typography>
         {graphicProducts.map((product) => {
           return (
-            <Typography key={product._id} variant="subtitle2">
-              {`- Order #${product.name}`}
+            <Typography key={product.productId} variant="subtitle2">
+              {`- Order #${product.productName}`}
             </Typography>
           );
         })}

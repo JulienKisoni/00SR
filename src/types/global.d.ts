@@ -109,7 +109,7 @@ declare namespace Types {
     owner: string;
     storeId: string;
     ownerDetails?: Partial<Types.IUserDocument>;
-    products: Types.IProductDocument[];
+    products: Types.IHistoryDocument[];
   }
 
   export interface IEvolution {
@@ -121,6 +121,7 @@ declare namespace Types {
   export interface IHistoryDocument extends Timestamps {
     _v?: number;
     productId: string;
+    productName: string;
     evolutions: Types.IEvolution[];
     storeId: string;
   }

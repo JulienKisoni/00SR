@@ -1,20 +1,29 @@
 interface HistoryArgs {
   storeId: string;
   productId: string;
+  productName: string;
   createdAt?: string;
   evolutions?: Types.IEvolution[];
 }
 
 export class History implements Types.IHistoryDocument {
   productId: string;
+  productName: string;
   storeId: string;
   evolutions: Types.IEvolution[];
   createdAt: string;
 
-  constructor({ storeId, productId, createdAt, evolutions }: HistoryArgs) {
+  constructor({
+    storeId,
+    productId,
+    createdAt,
+    evolutions,
+    productName,
+  }: HistoryArgs) {
     const now = new Date();
     this.storeId = storeId;
     this.productId = productId;
+    this.productName = productName;
     this.evolutions = evolutions || [];
     this.createdAt = createdAt || now.toISOString();
   }
@@ -60,6 +69,7 @@ export class History implements Types.IHistoryDocument {
       storeId: this.storeId,
       createdAt: this.createdAt,
       productId: this.productId,
+      productName: this.productName,
       evolutions: this.evolutions,
     };
   }

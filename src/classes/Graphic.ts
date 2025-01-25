@@ -9,7 +9,7 @@ interface GraphicArgs {
   userId: string;
   name: string;
   description: string;
-  products: Types.IProductDocument[];
+  products: Types.IHistoryDocument[];
   graphicId: string;
   createdAt?: string;
 }
@@ -22,7 +22,7 @@ export class Graphic implements Types.IGraphicDocument {
   updatedAt?: string | undefined;
   name: string;
   description: string;
-  products: Types.IProductDocument[];
+  products: Types.IHistoryDocument[];
 
   constructor({
     storeId,
