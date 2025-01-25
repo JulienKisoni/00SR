@@ -1,7 +1,31 @@
-import React, { useMemo } from "react";
-import BarChart from "@mui/x-charts/BarChart/BarChart";
+import React, { useState, useEffect } from "react";
+import { BarChart } from "@mui/x-charts/BarChart";
 import groupBy from "lodash.groupby";
 import cloneDeep from "lodash.clonedeep";
+
+const getColor = (index: number) => {
+  switch (index) {
+    case 0:
+      return "pink";
+    case 1:
+      return "lightgreen";
+    case 2:
+      return "lightblue";
+    default:
+      return "lightgrey";
+  }
+};
+
+interface Serie extends Types.IHistoryDocument {
+  data: (number | null)[];
+  type: "bar";
+  color: string;
+  label: string;
+}
+interface State {
+  series: Serie[];
+  xAxisData: string[];
+}
 
 interface EnhanceEvolution extends Types.IEvolution {
   productId: string;
@@ -9,8 +33,11 @@ interface EnhanceEvolution extends Types.IEvolution {
 interface Props {
   graphic?: Types.IGraphicDocument;
 }
+
 const Chart = ({ graphic }: Props) => {
-  const series = useMemo(() => {
+  const [state, setState] = useState<State>({ series: [], xAxisData: [] });
+
+  useEffect(() => {
     const histories = graphic?.products || [];
     let allEvolutions: EnhanceEvolution[] = [];
 
@@ -23,25 +50,42 @@ const Chart = ({ graphic }: Props) => {
         })),
       ];
     });
+
     const group = groupBy(allEvolutions, "dateKey");
-    const clonedHistories = cloneDeep(histories);
-    clonedHistories.forEach((history) => {
-      history.evolutions = [];
-      for (const [dateKey, enhancedEvolutions] of Object.entries(group)) {
+
+    const tempSeries: Serie[] = cloneDeep(histories).map((history, idx) => ({
+      ...history,
+      data: [],
+      type: "bar",
+      color: getColor(idx),
+      label: history.productName,
+    }));
+    tempSeries.forEach((serie) => {
+      serie.data = [];
+      serie.evolutions = [];
+      for (const enhancedEvolutions of Object.values(group)) {
         const index = enhancedEvolutions.findIndex(
-          (evolution) => evolution.productId === history.productId
+          (evolution) => evolution.productId === serie.productId
         );
         if (index !== -1) {
-          history.evolutions.push(enhancedEvolutions[index]);
+          serie.data.push(enhancedEvolutions[index].quantity);
+          serie.evolutions.push(enhancedEvolutions[index]);
         } else {
-          history.evolutions.push({} as Types.IEvolution);
+          serie.data.push(null);
+          serie.evolutions.push({} as Types.IEvolution);
         }
       }
     });
-    console.log({ group, clonedHistories });
+    setState({ series: tempSeries, xAxisData: Object.keys(group) });
   }, [graphic]);
 
-  return <div>Chart</div>;
+  return (
+    <BarChart
+      height={400}
+      series={state.series}
+      xAxis={[{ scaleType: "band", data: state.xAxisData }]}
+    />
+  );
 };
 
 export default Chart;
