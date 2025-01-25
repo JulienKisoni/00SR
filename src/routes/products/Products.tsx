@@ -257,7 +257,7 @@ function Products() {
               variant="contained"
               onClick={handleGenerateGraphics}
             >
-              Generate graphic(s)
+              Generate graphic
             </Button>
             <Button variant="contained">Delete product(s)</Button>
           </Stack>

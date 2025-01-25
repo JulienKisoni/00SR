@@ -4,6 +4,7 @@ import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 
 import GraphicFormCtrl from "../../components/controllers/forms/GraphicFormCtrl";
+import store from "../../services/redux/store";
 
 interface FormValues {
   name: string;
@@ -25,11 +26,20 @@ const AddGraphic = () => {
     const payload = localStorage.getItem("tempTargetedProducts");
     if (payload) {
       const products: Types.IProductDocument[] = JSON.parse(payload);
+      const productIDs = products.map((product) => product._id);
+      const _histories = store
+        .getState()
+        .histories.filter((_history) =>
+          productIDs.includes(_history.productId)
+        );
       const histories: Types.IHistoryDocument[] = products.map((product) => {
+        const evolutions =
+          _histories.find((_history) => _history.productId === product._id)
+            ?.evolutions || [];
         return {
           productId: product._id,
           productName: product.name,
-          evolutions: [] as Types.IEvolution[],
+          evolutions,
           storeId: product.storeId,
           createdAt: "",
         };

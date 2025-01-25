@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useState, useCallback } from "react";
+import React, { useMemo, useEffect, useState } from "react";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
@@ -10,6 +10,7 @@ import { ROUTES } from "../../constants/routes";
 import NotFound from "../NotFound";
 import { UsersSrv } from "../../services/controllers/UserSrv";
 import { StoreSrv } from "../../services/controllers/StoreSrv";
+import Chart from "../../components/Chart";
 
 interface FormValues {
   name: string;
@@ -123,6 +124,7 @@ const ViewGraphic = () => {
           Description: {graphic?.description}
         </Typography>
         <Typography variant="subtitle2">PRODUCTS DETAILS</Typography>
+        <Chart graphic={graphic} />
       </Stack>
     </Container>
   );
