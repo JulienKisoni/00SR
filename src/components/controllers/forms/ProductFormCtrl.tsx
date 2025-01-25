@@ -12,6 +12,8 @@ import ProductForm from "../../forms/ProductForm";
 import { Product } from "../../../classes/Product";
 import { ProductSrv } from "../../../services/controllers/ProductSrv";
 import { StoreSrv } from "../../../services/controllers/StoreSrv";
+import { HistorySrv } from "../../../services/controllers/HistorySrv";
+import { History } from "../../../classes/History";
 
 interface FormValues {
   name: string;
@@ -82,6 +84,7 @@ const ProductFormCtlr = ({
       });
 
       const productSrv = new ProductSrv(dispatch);
+      const historySrv = new HistorySrv(dispatch, productSrv);
       const storeSrv = new StoreSrv(dispatch);
       if (mode === "add") {
         const payload = newProduct.toObject();
@@ -98,6 +101,14 @@ const ProductFormCtlr = ({
         }
       } else if (mode === "edit") {
         const payload = newProduct.compareWithOld(initialValues);
+        if (payload.quantity) {
+          const history = new History({
+            storeId: selectedStore._id,
+            productId,
+          });
+          history.pushEvolution(payload.quantity);
+          historySrv.addOne(history.toObject());
+        }
         productSrv.updateOne(productId, payload);
         helpers.resetForm({ values });
         await helpers.validateForm();

@@ -30,7 +30,7 @@ export class Product implements Types.IProductDocument {
   reviews: string[] = [];
   description = "";
   active = true;
-  createdAt?: string | undefined;
+  createdAt: string;
   updatedAt?: string | undefined;
   picture: string = "";
 

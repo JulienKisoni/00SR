@@ -12,7 +12,7 @@ declare namespace Types {
   type FormMode = "readonly" | "edit" | "add";
 
   interface Timestamps {
-    createdAt?: string;
+    createdAt: string;
     updatedAt?: string;
   }
 
@@ -113,7 +113,7 @@ declare namespace Types {
   }
 
   export interface IEvolution {
-    date: Date;
+    date: string;
     dateKey: string; // will help group Evolution of different products by dateKey (groupBy)
     quantity: number;
   }

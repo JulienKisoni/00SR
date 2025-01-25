@@ -24,7 +24,7 @@ export class Store implements Types.IStoreDocument {
   description = "";
   address: Types.Address = {} as Types.Address;
   active = true;
-  createdAt?: string | undefined;
+  createdAt: string;
   updatedAt?: string | undefined;
   picture: string = "";
 
@@ -56,6 +56,7 @@ export class Store implements Types.IStoreDocument {
       active: this.active,
       picture: this.picture,
       address: this.address,
+      createdAt: this.createdAt,
     };
     return store;
   }

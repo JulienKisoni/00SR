@@ -7,7 +7,7 @@ import { useNavigate } from "react-router";
 import { RootState } from "../../../services/redux/rootReducer";
 import { ROUTES } from "../../../constants/routes";
 import GraphicForm from "../../forms/GraphicForm";
-import { GraphicSrv } from "../../../services/controllers/Graphic";
+import { GraphicSrv } from "../../../services/controllers/GraphicSrv";
 import { Graphic } from "../../../classes/Graphic";
 
 interface FormValues {

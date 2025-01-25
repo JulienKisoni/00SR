@@ -43,7 +43,11 @@ const SignUpCtrl = () => {
   const onSubmit = useCallback(
     (values: FormValues) => {
       const usersSrv = new UsersSrv(dispatch);
-      const user = new User({ email: values.email, password: values.password });
+      const user = new User({
+        email: values.email,
+        password: values.password,
+        createdAt: new Date().toISOString(),
+      });
       const { error } = usersSrv.addOne(user);
       if (error) {
         alert(error.publicMessage);

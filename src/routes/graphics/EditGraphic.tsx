@@ -9,7 +9,7 @@ import { RootState } from "../../services/redux/rootReducer";
 import { ROUTES } from "../../constants/routes";
 import NotFound from "../NotFound";
 import GraphicFormCtrl from "../../components/controllers/forms/GraphicFormCtrl";
-import { GraphicSrv } from "../../services/controllers/Graphic";
+import { GraphicSrv } from "../../services/controllers/GraphicSrv";
 
 interface FormValues {
   name: string;

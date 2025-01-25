@@ -16,7 +16,7 @@ import SearchBar from "../../components/SearchBar";
 import ListTable from "../../components/ListTable";
 import { RootState } from "../../services/redux/rootReducer";
 import { ROUTES } from "../../constants/routes";
-import { GraphicSrv } from "../../services/controllers/Graphic";
+import { GraphicSrv } from "../../services/controllers/GraphicSrv";
 
 interface State {
   search: string;

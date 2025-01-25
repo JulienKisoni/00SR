@@ -44,6 +44,7 @@ export class UsersSrv extends Api {
         ...user.profile,
         username,
       },
+      createdAt: user.createdAt,
     };
     this.dispatch(createUser({ data }));
     return { data: undefined, error: undefined };

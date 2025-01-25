@@ -21,7 +21,7 @@ export class Order implements Types.IOrderDocument {
   orderNumber: string;
   status: Types.ORDER_STATUS;
   storeId: string;
-  createdAt?: string | undefined;
+  createdAt: string;
   updatedAt?: string | undefined;
 
   constructor({ storeId, userId, cartItems }: OrderArgs) {

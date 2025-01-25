@@ -18,7 +18,7 @@ export class Graphic implements Types.IGraphicDocument {
   _id: string;
   owner: string;
   storeId: string;
-  createdAt?: string | undefined;
+  createdAt: string;
   updatedAt?: string | undefined;
   name: string;
   description: string;

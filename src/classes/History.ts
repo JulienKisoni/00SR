@@ -1,20 +1,22 @@
 interface HistoryArgs {
   storeId: string;
   productId: string;
+  createdAt?: string;
+  evolutions?: Types.IEvolution[];
 }
 
 export class History implements Types.IHistoryDocument {
   productId: string;
   storeId: string;
   evolutions: Types.IEvolution[];
-  createdAt?: string | undefined;
+  createdAt: string;
 
-  constructor({ storeId, productId }: HistoryArgs) {
+  constructor({ storeId, productId, createdAt, evolutions }: HistoryArgs) {
     const now = new Date();
     this.storeId = storeId;
     this.productId = productId;
-    this.evolutions = [];
-    this.createdAt = now.toISOString();
+    this.evolutions = evolutions || [];
+    this.createdAt = createdAt || now.toISOString();
   }
 
   generateDateKey(date: Date): string {
@@ -25,14 +27,31 @@ export class History implements Types.IHistoryDocument {
     return fullDate;
   }
 
-  addEvolution(quantity: number): Types.IHistoryDocument {
+  isNewDateKey(dateKey: string): boolean {
+    return !this.evolutions.some((evolution) => evolution.dateKey === dateKey);
+  }
+
+  pushEvolution(quantity: number): Types.IHistoryDocument {
     const date = this.createdAt ? new Date(this.createdAt) : new Date();
+    const dateKey = this.generateDateKey(date);
     const evolution: Types.IEvolution = {
-      date,
-      dateKey: this.generateDateKey(date),
+      date: date.toISOString(),
+      dateKey,
       quantity,
     };
-    this.evolutions = [evolution];
+    this.evolutions.push(evolution);
+    return this;
+  }
+  unshiftEvolution(quantity: number, date: Date): Types.IHistoryDocument {
+    const dateKey = this.generateDateKey(date);
+    if (this.isNewDateKey(dateKey)) {
+      const evolution: Types.IEvolution = {
+        date: date.toISOString(),
+        dateKey,
+        quantity,
+      };
+      this.evolutions.unshift(evolution);
+    }
     return this;
   }
 
