@@ -6,24 +6,17 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
-import Grid, { GridSize } from "@mui/system/Grid";
+import Grid from "@mui/system/Grid";
 import { NavLink } from "react-router";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { ResponsiveStyleValue } from "@mui/system";
-import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 
 import { ROUTES } from "../constants/routes";
-import { GridOffset } from "@mui/material";
+import { inputGridSystem } from "../constants";
 
 interface FormValues {
   email: string;
   password: string;
-}
-
-interface GridProps {
-  offset: ResponsiveStyleValue<GridOffset>;
-  size: ResponsiveStyleValue<GridSize>;
 }
 
 interface Props {
@@ -31,23 +24,6 @@ interface Props {
   validationSchema: Yup.ObjectSchema<FormValues>;
   onSubmit: (values: FormValues) => void;
 }
-
-const inputGridSystem: GridProps = {
-  size: {
-    xs: 12,
-    sm: 12,
-    md: 6,
-    lg: 6,
-    xl: 6,
-  },
-  offset: {
-    xs: 0,
-    sm: 0,
-    md: 3,
-    lg: 3,
-    xl: 3,
-  },
-};
 
 const SignIn = ({ initialValues, validationSchema, onSubmit }: Props) => {
   return (
@@ -90,8 +66,8 @@ const SignIn = ({ initialValues, validationSchema, onSubmit }: Props) => {
                     <TextField
                       fullWidth
                       size="small"
-                      id="email-address"
                       margin="normal"
+                      id="email-address"
                       placeholder="johndoe@mail.com"
                       variant="outlined"
                       type="email"
@@ -106,7 +82,7 @@ const SignIn = ({ initialValues, validationSchema, onSubmit }: Props) => {
                 <Grid {...inputGridSystem}>
                   <FormControl fullWidth variant="standard">
                     <InputLabel shrink htmlFor="password">
-                      Email address
+                      Password
                     </InputLabel>
                     <TextField
                       fullWidth
