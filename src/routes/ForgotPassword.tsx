@@ -4,11 +4,15 @@ import Stack from "@mui/material/Stack";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Grid from "@mui/system/Grid";
 import { NavLink } from "react-router";
 import { Formik, FormikHelpers } from "formik";
 import * as Yup from "yup";
 
 import { ROUTES } from "../constants/routes";
+import { inputGridSystem } from "../constants";
 
 interface FormValues {
   email: string;
@@ -26,13 +30,19 @@ const ForgotPassword = ({
 }: Props) => {
   return (
     <Container>
-      <Typography variant="h3" component="h1">
-        Forgot password?
-      </Typography>
-      <Typography variant="subtitle2">
-        Enter the email associated with your account and we weill send you
-        instructions on how to reset your password.
-      </Typography>
+      <Grid mt={10} container direction={"column"} spacing={2}>
+        <Grid {...inputGridSystem}>
+          <Typography variant="h3" component="h1">
+            Forgot password?
+          </Typography>
+        </Grid>
+        <Grid {...inputGridSystem}>
+          <Typography variant="subtitle2">
+            Enter the email associated with your account and we weill send you
+            instructions on how to reset your password.
+          </Typography>
+        </Grid>
+      </Grid>
       <Formik
         validationSchema={validationSchema}
         validateOnMount
@@ -52,30 +62,52 @@ const ForgotPassword = ({
         }) => {
           return (
             <form onSubmit={handleSubmit}>
-              <Stack direction="column" spacing={5}>
-                <TextField
-                  id="email-address"
-                  label="Email address"
-                  variant="outlined"
-                  type="email"
-                  name="email"
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.email && !!errors.email}
-                  helperText={touched.email ? errors.email : undefined}
-                />
-                <Button type="submit" disabled={!isValid} variant="contained">
-                  Recover password
-                </Button>
-                <Stack direction="row">
-                  <Typography component="p">
+              <Grid mt={3} container direction={"column"} spacing={2}>
+                <Grid {...inputGridSystem}>
+                  <FormControl fullWidth variant="standard">
+                    <InputLabel shrink htmlFor="email-address">
+                      Email address
+                    </InputLabel>
+                    <TextField
+                      id="email-address"
+                      placeholder="johndoe@mail.com"
+                      variant="outlined"
+                      type="email"
+                      name="email"
+                      fullWidth
+                      size="small"
+                      margin="normal"
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      error={touched.email && !!errors.email}
+                      helperText={touched.email ? errors.email : undefined}
+                    />
+                  </FormControl>
+                </Grid>
+                <Grid {...inputGridSystem}>
+                  <Button
+                    size="medium"
+                    fullWidth
+                    type="submit"
+                    disabled={!isValid}
+                    variant="contained"
+                  >
+                    Recover password
+                  </Button>
+                </Grid>
+                <Stack
+                  direction="row"
+                  alignItems={"center"}
+                  justifyContent={"center"}
+                >
+                  <Typography variant="subtitle2">
                     Already have an account?
                   </Typography>
                   <NavLink to={`/${ROUTES.SIGNIN}`}>
                     <Button variant="text">Sign in</Button>
                   </NavLink>
                 </Stack>
-              </Stack>
+              </Grid>
             </form>
           );
         }}
