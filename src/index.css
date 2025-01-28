@@ -11,3 +11,7 @@ html {
 body {
   /* font-size: 1.6em; /* default font of 16px */
 }
+
+.css-3b4o5k-MuiButtonBase-root-MuiButton-root {
+  text-decoration: underline !important;
+}
