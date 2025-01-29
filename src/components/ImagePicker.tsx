@@ -1,22 +1,14 @@
-import React, {
-  ChangeEvent,
-  PropsWithChildren,
-  useCallback,
-  useState,
-  useEffect,
-} from "react";
-import Box from "@mui/material/Box";
+import React, { ChangeEvent, useCallback, useState, useEffect } from "react";
 import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import Modal from "@mui/material/Modal";
-import Stack from "@mui/material/Stack";
+import Avatar from "@mui/material/Avatar";
+import CreateIcon from "@mui/icons-material/Create";
 import { styled } from "@mui/material/styles";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import Cropper from "react-easy-crop";
 import type { Area, Point } from "react-easy-crop";
 
 import { FileUpload } from "../classes/FileUpload";
 import { GenericError } from "../classes/GenericError";
+import Modal from "./Modal";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -30,25 +22,6 @@ const VisuallyHiddenInput = styled("input")({
   width: 1,
 });
 
-const modalContentWrapperStyle = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: "70vw",
-  height: "70vh",
-  //   width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-};
-
-interface ModalProps {
-  opened: boolean;
-  onClose: () => void;
-  onSave: () => void;
-}
 interface ImagePickerProps {
   alt: string;
   defaultSrc: string;
@@ -69,37 +42,6 @@ interface PickerState {
 const initialCrop = {
   x: 0,
   y: 0,
-};
-
-const ModalComp = ({
-  children,
-  onClose,
-  onSave,
-  opened,
-}: PropsWithChildren<ModalProps>) => {
-  return (
-    <Modal
-      open={opened}
-      onClose={onClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      <Box sx={modalContentWrapperStyle}>
-        <Stack direction="column">
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Modal header
-          </Typography>
-          {children}
-          <Stack direction="row">
-            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-              Modal footer
-            </Typography>
-            <Button onClick={onSave}>Save</Button>
-          </Stack>
-        </Stack>
-      </Box>
-    </Modal>
-  );
 };
 
 const ImagePicker = ({
@@ -224,34 +166,39 @@ const ImagePicker = ({
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          borderWidth: "3px",
-          borderColor: "black",
-          borderStyle: "solid",
           width: 120,
           height: 120,
           padding: 5,
+          backgroundColor: "lightgrey",
+          borderRadius: "50%",
+          position: "relative",
         }}
       >
-        <img width="100%" height="100%" src={state.finalSrc} alt={alt} />
-      </div>
-      <Button
-        component="label"
-        role={undefined}
-        variant="contained"
-        tabIndex={-1}
-        disabled={disabled}
-        style={{ marginBottom: 20 }}
-        startIcon={<CloudUploadIcon />}
-      >
-        Upload files
-        <VisuallyHiddenInput
-          type="file"
-          onChange={onFileChange}
-          multiple={false}
+        <Avatar
+          sx={{ width: "100%", height: "100%" }}
+          src={state.finalSrc}
+          alt={alt}
         />
-      </Button>
+        <Button
+          size="small"
+          component="label"
+          role={undefined}
+          variant="contained"
+          tabIndex={-1}
+          disabled={disabled}
+          className="btn--upload__icon"
+          sx={{ marginBottom: 2, backgroundColor: "white" }}
+        >
+          <CreateIcon fontSize="small" sx={{ color: "black" }} />
+          <VisuallyHiddenInput
+            type="file"
+            onChange={onFileChange}
+            multiple={false}
+          />
+        </Button>
+      </div>
       {state.showCrop && state.cropSrc && state.file ? (
-        <ModalComp
+        <Modal
           opened={state.showCrop}
           onClose={handleClose}
           onSave={handleSave}
@@ -265,7 +212,7 @@ const ImagePicker = ({
             onCropChange={handleCropping}
             onCropComplete={handleCropComplete}
           />
-        </ModalComp>
+        </Modal>
       ) : null}
     </div>
   );

@@ -22,3 +22,13 @@ body {
 .css-aev0vj-MuiFormHelperText-root {
   color: var(--mui-palette-error-main) !important;
 }
+.btn--upload__icon {
+  position: absolute !important;
+  max-width: 30px !important;
+  max-height: 30px !important;
+  min-width: 30px !important;
+  min-height: 30px !important;
+  border-radius: 50% !important;
+  bottom: 0px !important;
+  right: 0px !important;
+}

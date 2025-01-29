@@ -69,10 +69,8 @@ const AppDrawer = ({ children }: PropsWithChildren) => {
                 const backgroundColor = isActive ? "#D5C7F9" : "inherit";
                 return (
                   <ListItem sx={{ backgroundColor }} disablePadding>
-                    <ListItemButton color="white">
-                      <ListItemIcon color="white">
-                        {renderIcon(route.route)}
-                      </ListItemIcon>
+                    <ListItemButton>
+                      <ListItemIcon>{renderIcon(route.route)}</ListItemIcon>
                     </ListItemButton>
                   </ListItem>
                 );
