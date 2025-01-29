@@ -15,3 +15,10 @@ body {
 .css-3b4o5k-MuiButtonBase-root-MuiButton-root {
   text-decoration: underline !important;
 }
+.css-2c6ikk-MuiFormLabel-root-MuiInputLabel-root {
+  font-weight: 500 !important;
+  color: black !important;
+}
+.css-aev0vj-MuiFormHelperText-root {
+  color: var(--mui-palette-error-main) !important;
+}

@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useCallback, useState } from "react";
 import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
 import Container from "@mui/material/Container";
@@ -7,12 +7,19 @@ import Button from "@mui/material/Button";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import Grid from "@mui/system/Grid";
+import {
+  OutlinedInput,
+  FormHelperText,
+  IconButton,
+  InputAdornment,
+} from "@mui/material";
+import { VisibilityOff, Visibility } from "@mui/icons-material";
 import { NavLink } from "react-router";
 import { Formik } from "formik";
 import * as Yup from "yup";
 
 import { ROUTES } from "../constants/routes";
-import { inputGridSystem } from "../constants";
+import { centeredInputGridSystem } from "../constants";
 
 interface FormValues {
   email: string;
@@ -27,15 +34,30 @@ interface Props {
 }
 
 const SignUp = ({ initialValues, validationSchema, onSubmit }: Props) => {
+  const [state, setState] = useState({
+    showPassword: false,
+    showRepeatPassword: false,
+  });
+
+  const handleClickShowPassword = useCallback(() => {
+    setState((prev) => ({ ...prev, showPassword: !prev.showPassword }));
+  }, []);
+  const handleClickShowRepeatPassword = useCallback(() => {
+    setState((prev) => ({
+      ...prev,
+      showRepeatPassword: !prev.showRepeatPassword,
+    }));
+  }, []);
+
   return (
     <Container>
       <Grid mt={10} container direction={"column"} spacing={2}>
-        <Grid {...inputGridSystem}>
+        <Grid {...centeredInputGridSystem}>
           <Typography variant="h3" component="h1">
             Welcome
           </Typography>
         </Grid>
-        <Grid {...inputGridSystem}>
+        <Grid {...centeredInputGridSystem}>
           <Typography variant="subtitle2">Create a free account</Typography>
         </Grid>
       </Grid>
@@ -59,10 +81,10 @@ const SignUp = ({ initialValues, validationSchema, onSubmit }: Props) => {
           return (
             <form onSubmit={handleSubmit}>
               <Grid mt={3} container direction={"column"} spacing={2}>
-                <Grid {...inputGridSystem}>
+                <Grid {...centeredInputGridSystem}>
                   <FormControl fullWidth variant="standard">
                     <InputLabel shrink htmlFor="email-address">
-                      Email address
+                      Email address*
                     </InputLabel>
                     <TextField
                       id="email-address"
@@ -80,55 +102,81 @@ const SignUp = ({ initialValues, validationSchema, onSubmit }: Props) => {
                     />
                   </FormControl>
                 </Grid>
-                <Grid {...inputGridSystem}>
+                <Grid {...centeredInputGridSystem}>
                   <FormControl fullWidth variant="standard">
-                    <InputLabel shrink htmlFor="password">
-                      Password
+                    <InputLabel margin="dense" shrink htmlFor="password">
+                      Password*
                     </InputLabel>
-                    <TextField
+                    <OutlinedInput
                       id="password"
+                      sx={{ marginTop: 2 }}
                       placeholder="Enter your password"
-                      variant="outlined"
-                      type="password"
+                      type={state.showPassword ? "text" : "password"}
+                      endAdornment={
+                        <InputAdornment position="end">
+                          <IconButton
+                            onClick={handleClickShowPassword}
+                            edge="end"
+                          >
+                            {state.showPassword ? (
+                              <VisibilityOff />
+                            ) : (
+                              <Visibility />
+                            )}
+                          </IconButton>
+                        </InputAdornment>
+                      }
                       name="password"
                       fullWidth
                       size="small"
-                      margin="normal"
+                      margin="dense"
                       onChange={handleChange}
                       onBlur={handleBlur}
                       error={touched.password && !!errors.password}
-                      helperText={
-                        touched.password ? errors.password : undefined
-                      }
                     />
+                    {touched.password ? (
+                      <FormHelperText>{errors.password}</FormHelperText>
+                    ) : null}
                   </FormControl>
                 </Grid>
-                <Grid {...inputGridSystem}>
+                <Grid {...centeredInputGridSystem}>
                   <FormControl fullWidth variant="standard">
-                    <InputLabel shrink htmlFor="repeat-password">
-                      Repeat password
+                    <InputLabel margin="dense" shrink htmlFor="repeat-password">
+                      Repeat password*
                     </InputLabel>
-                    <TextField
+                    <OutlinedInput
                       id="repeat-password"
+                      sx={{ marginTop: 2 }}
                       placeholder="Repeat your password"
-                      variant="outlined"
-                      type="password"
+                      type={state.showRepeatPassword ? "text" : "password"}
+                      endAdornment={
+                        <InputAdornment position="end">
+                          <IconButton
+                            onClick={handleClickShowRepeatPassword}
+                            edge="end"
+                          >
+                            {state.showRepeatPassword ? (
+                              <VisibilityOff />
+                            ) : (
+                              <Visibility />
+                            )}
+                          </IconButton>
+                        </InputAdornment>
+                      }
                       name="repeatPassword"
                       fullWidth
                       size="small"
-                      margin="normal"
+                      margin="dense"
                       onChange={handleChange}
                       onBlur={handleBlur}
                       error={touched.repeatPassword && !!errors.repeatPassword}
-                      helperText={
-                        touched.repeatPassword
-                          ? errors.repeatPassword
-                          : undefined
-                      }
                     />
+                    {touched.repeatPassword ? (
+                      <FormHelperText>{errors.repeatPassword}</FormHelperText>
+                    ) : null}
                   </FormControl>
                 </Grid>
-                <Grid {...inputGridSystem}>
+                <Grid {...centeredInputGridSystem}>
                   <Button
                     fullWidth
                     size="medium"

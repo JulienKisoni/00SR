@@ -12,7 +12,7 @@ import { Formik, FormikHelpers } from "formik";
 import * as Yup from "yup";
 
 import { ROUTES } from "../constants/routes";
-import { inputGridSystem } from "../constants";
+import { centeredInputGridSystem } from "../constants";
 
 interface FormValues {
   email: string;
@@ -31,12 +31,12 @@ const ForgotPassword = ({
   return (
     <Container>
       <Grid mt={10} container direction={"column"} spacing={2}>
-        <Grid {...inputGridSystem}>
+        <Grid {...centeredInputGridSystem}>
           <Typography variant="h3" component="h1">
             Forgot password?
           </Typography>
         </Grid>
-        <Grid {...inputGridSystem}>
+        <Grid {...centeredInputGridSystem}>
           <Typography variant="subtitle2">
             Enter the email associated with your account and we weill send you
             instructions on how to reset your password.
@@ -63,10 +63,10 @@ const ForgotPassword = ({
           return (
             <form onSubmit={handleSubmit}>
               <Grid mt={3} container direction={"column"} spacing={2}>
-                <Grid {...inputGridSystem}>
+                <Grid {...centeredInputGridSystem}>
                   <FormControl fullWidth variant="standard">
                     <InputLabel shrink htmlFor="email-address">
-                      Email address
+                      Email address*
                     </InputLabel>
                     <TextField
                       id="email-address"
@@ -84,7 +84,7 @@ const ForgotPassword = ({
                     />
                   </FormControl>
                 </Grid>
-                <Grid {...inputGridSystem}>
+                <Grid {...centeredInputGridSystem}>
                   <Button
                     size="medium"
                     fullWidth

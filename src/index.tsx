@@ -12,6 +12,7 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
 const theme = createTheme({
+  cssVariables: true,
   palette: {
     primary: {
       main: "#62449d",
