@@ -25,21 +25,21 @@ const AppDrawer = ({ children }: PropsWithChildren) => {
   const renderIcon = useCallback((route: ROUTES): React.JSX.Element => {
     switch (route) {
       case ROUTES.STORES:
-        return <DomainIcon fontSize="large" />;
+        return <DomainIcon sx={{ color: "white" }} fontSize="large" />;
       case ROUTES.PRODUCTS:
-        return <StoreIcon fontSize="large" />;
+        return <StoreIcon sx={{ color: "white" }} fontSize="large" />;
       case ROUTES.CART:
-        return <ShoppingCartIcon fontSize="large" />;
+        return <ShoppingCartIcon sx={{ color: "white" }} fontSize="large" />;
       case ROUTES.ORDERS:
-        return <ReceiptIcon fontSize="large" />;
+        return <ReceiptIcon sx={{ color: "white" }} fontSize="large" />;
       case ROUTES.REPORTS:
-        return <DescriptionIcon fontSize="large" />;
+        return <DescriptionIcon sx={{ color: "white" }} fontSize="large" />;
       case ROUTES.GRAPHICS:
-        return <BarChartIcon fontSize="large" />;
+        return <BarChartIcon sx={{ color: "white" }} fontSize="large" />;
       case ROUTES.SETTINGS:
-        return <SettingsIcon fontSize="large" />;
+        return <SettingsIcon sx={{ color: "white" }} fontSize="large" />;
       default:
-        return <InboxIcon fontSize="large" />;
+        return <InboxIcon sx={{ color: "white" }} fontSize="large" />;
     }
   }, []);
   return (
@@ -57,15 +57,27 @@ const AppDrawer = ({ children }: PropsWithChildren) => {
         variant="permanent"
         anchor="left"
       >
-        <List>
-          {protectedRoutes.map((route, index) => (
-            <ListItem key={route.route} disablePadding>
-              <NavLink to={`/${route.route}`}>
-                <ListItemButton>
-                  <ListItemIcon>{renderIcon(route.route)}</ListItemIcon>
-                </ListItemButton>
-              </NavLink>
-            </ListItem>
+        <List
+          sx={{
+            backgroundColor: "var(--mui-palette-primary-main)",
+            height: "100%",
+          }}
+        >
+          {protectedRoutes.map((route) => (
+            <NavLink key={route.route} to={`/${route.route}`}>
+              {({ isActive }) => {
+                const backgroundColor = isActive ? "#D5C7F9" : "inherit";
+                return (
+                  <ListItem sx={{ backgroundColor }} disablePadding>
+                    <ListItemButton color="white">
+                      <ListItemIcon color="white">
+                        {renderIcon(route.route)}
+                      </ListItemIcon>
+                    </ListItemButton>
+                  </ListItem>
+                );
+              }}
+            </NavLink>
           ))}
         </List>
       </Drawer>
