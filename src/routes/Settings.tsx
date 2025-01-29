@@ -11,6 +11,7 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
+import Grid from "@mui/system/Grid";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
@@ -20,6 +21,7 @@ import { ROUTES } from "../constants/routes";
 import UpdatePasswordCtrl from "../components/controllers/UpdatePasswordCtrl";
 import UpdateProfileCtrl from "../components/controllers/UpdateProfileCtrl";
 import { RootState } from "../services/redux/rootReducer";
+import { inputGridSystem } from "../constants";
 
 const Settings = () => {
   const [state, setState] = useState<{
@@ -82,43 +84,65 @@ const Settings = () => {
       </Stack>
       <Box sx={{ width: "100%", typography: "body1" }}>
         <TabContext value={state.tabIndex}>
-          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-            <TabList onChange={handleChange} aria-label="lab API tabs example">
-              <Tab label="Actions" value={0} />
-              <Tab label="Profile" value={1} />
-              <Tab label="Password" value={2} />
-            </TabList>
-          </Box>
-          <TabPanel value={0}>
-            <Stack direction="column" spacing={5}>
-              <FormControl>
-                <InputLabel id="labelId-selected-store">
-                  Selected store
-                </InputLabel>
-                <Select
-                  id="selected-store"
-                  labelId="labelId-selected-store"
-                  label="Selected store"
-                  variant="outlined"
-                  name="selectedStore"
-                  onChange={onSelectStore}
-                  disabled={!stores.length}
-                  value={state.selectedStore?._id || ""}
+          <Grid container direction={"column"}>
+            <Grid {...inputGridSystem}>
+              <Box
+                sx={{
+                  borderBottom: 1,
+                  borderColor: "divider",
+                  width: "fit-content",
+                }}
+              >
+                <TabList
+                  onChange={handleChange}
+                  aria-label="lab API tabs example"
                 >
-                  {stores.map((state) => (
-                    <MenuItem key={state._id} value={state._id}>
-                      {state.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+                  <Tab label="Actions" value={0} />
+                  <Tab label="Profile" value={1} />
+                  <Tab label="Password" value={2} />
+                </TabList>
+              </Box>
+            </Grid>
+          </Grid>
+          <TabPanel value={0}>
+            <Grid container direction={"column"} spacing={2}>
+              <Grid {...inputGridSystem}>
+                <FormControl fullWidth variant="standard">
+                  <InputLabel id="labelId-selected-store">
+                    Selected store
+                  </InputLabel>
+                  <Select
+                    id="selected-store"
+                    labelId="labelId-selected-store"
+                    size="small"
+                    sx={{ marginTop: 2 }}
+                    variant="outlined"
+                    name="selectedStore"
+                    onChange={onSelectStore}
+                    disabled={!stores.length}
+                    value={state.selectedStore?._id || ""}
+                  >
+                    {stores.map((state) => (
+                      <MenuItem key={state._id} value={state._id}>
+                        {state.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
               <Stack direction="row">
-                <Button variant="outlined" onClick={handleLogout}>
+                <Button color="error" variant="outlined" onClick={handleLogout}>
                   Logout
                 </Button>
-                <Button variant="contained">Delete account</Button>
+                <Button
+                  sx={{ marginLeft: 2 }}
+                  color="error"
+                  variant="contained"
+                >
+                  Delete account
+                </Button>
               </Stack>
-            </Stack>
+            </Grid>
           </TabPanel>
           <TabPanel value={1}>
             <UpdateProfileCtrl />

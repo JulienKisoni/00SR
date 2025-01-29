@@ -93,7 +93,7 @@ const UpdateProfileCtrl = () => {
 
   return (
     <Box>
-      <Stack direction="column" spacing={5}>
+      <Stack direction="column" spacing={2}>
         <ImagePicker
           alt={connectedUser.profile.username}
           defaultSrc={connectedUser.profile.picture}

@@ -11,10 +11,10 @@ import {
   InputLabel,
   OutlinedInput,
 } from "@mui/material";
+import { VisibilityOff, Visibility } from "@mui/icons-material";
 import * as Yup from "yup";
 
 import { inputGridSystem } from "../constants";
-import { VisibilityOff, Visibility } from "@mui/icons-material";
 
 interface FormValues {
   currentPassword: string;
@@ -75,7 +75,11 @@ const UpdatePassword = ({
               <Grid mt={3} container direction={"column"} spacing={2}>
                 <Grid {...inputGridSystem}>
                   <FormControl fullWidth variant="standard">
-                    <InputLabel margin="dense" shrink htmlFor="password">
+                    <InputLabel
+                      margin="dense"
+                      shrink
+                      htmlFor="current-password"
+                    >
                       Current password*
                     </InputLabel>
                     <OutlinedInput
@@ -115,7 +119,7 @@ const UpdatePassword = ({
                 </Grid>
                 <Grid {...inputGridSystem}>
                   <FormControl fullWidth variant="standard">
-                    <InputLabel margin="dense" shrink htmlFor="password">
+                    <InputLabel margin="dense" shrink htmlFor="new-password">
                       New password*
                     </InputLabel>
                     <OutlinedInput
@@ -152,7 +156,11 @@ const UpdatePassword = ({
                 </Grid>
                 <Grid {...inputGridSystem}>
                   <FormControl fullWidth variant="standard">
-                    <InputLabel margin="dense" shrink htmlFor="password">
+                    <InputLabel
+                      margin="dense"
+                      shrink
+                      htmlFor="confirm-password"
+                    >
                       Confirm password*
                     </InputLabel>
                     <OutlinedInput

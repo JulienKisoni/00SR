@@ -1,9 +1,15 @@
 import React from "react";
-import Stack from "@mui/material/Stack";
-import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import Grid from "@mui/system/Grid";
+import {
+  FormControl,
+  FormHelperText,
+  InputLabel,
+  OutlinedInput,
+} from "@mui/material";
 import { Formik, FormikHelpers } from "formik";
 import * as Yup from "yup";
+import { inputGridSystem } from "../constants";
 
 interface FormValues {
   username: string;
@@ -43,34 +49,63 @@ const UpdateProfile = ({
         const disabled = !dirty || !isValid;
         return (
           <form onSubmit={handleSubmit}>
-            <Stack direction="column" spacing={5}>
-              <TextField
-                id="username"
-                label="Username"
-                variant="outlined"
-                name="username"
-                value={values.username}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                error={touched.username && !!errors.username}
-                helperText={touched.username ? errors.username : undefined}
-              />
-              <TextField
-                id="email"
-                label="Email"
-                variant="outlined"
-                type="email"
-                name="email"
-                value={values.email}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                error={touched.email && !!errors.email}
-                helperText={touched.email ? errors.email : undefined}
-              />
-              <Button type="submit" variant="contained" disabled={disabled}>
-                Update profile
-              </Button>
-            </Stack>
+            <Grid container direction={"column"} spacing={2}>
+              <Grid {...inputGridSystem}>
+                <FormControl fullWidth variant="standard">
+                  <InputLabel margin="dense" shrink htmlFor="username">
+                    Username*
+                  </InputLabel>
+                  <OutlinedInput
+                    id="username"
+                    placeholder="Username"
+                    name="username"
+                    size="small"
+                    sx={{ marginTop: 2 }}
+                    margin="dense"
+                    value={values.username}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.username && !!errors.username}
+                  />
+                  {touched.username ? (
+                    <FormHelperText>{errors.username}</FormHelperText>
+                  ) : null}
+                </FormControl>
+              </Grid>
+              <Grid {...inputGridSystem}>
+                <FormControl fullWidth variant="standard">
+                  <InputLabel margin="dense" shrink htmlFor="email">
+                    Email*
+                  </InputLabel>
+                  <OutlinedInput
+                    id="email"
+                    placeholder="Email"
+                    type="email"
+                    name="email"
+                    size="small"
+                    sx={{ marginTop: 2 }}
+                    margin="dense"
+                    value={values.email}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.email && !!errors.email}
+                  />
+                  {touched.email ? (
+                    <FormHelperText>{errors.email}</FormHelperText>
+                  ) : null}
+                </FormControl>
+              </Grid>
+              <Grid {...inputGridSystem}>
+                <Button
+                  fullWidth={false}
+                  type="submit"
+                  variant="contained"
+                  disabled={disabled}
+                >
+                  Update profile
+                </Button>
+              </Grid>
+            </Grid>
           </form>
         );
       }}
