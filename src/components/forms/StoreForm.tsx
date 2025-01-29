@@ -2,13 +2,15 @@ import React, { useMemo } from "react";
 import { Formik, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import Stack from "@mui/material/Stack";
-import TextField from "@mui/material/TextField";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
 import Button from "@mui/material/Button";
+import Grid from "@mui/system/Grid";
+import { inputGridSystem } from "../../constants";
+import StyledInput from "../StyledInput";
 
 interface FormValues {
   line1: string;
@@ -76,102 +78,138 @@ const StoreForm = ({
           const invalid = !dirty || !isValid;
           return (
             <form onSubmit={handleSubmit}>
-              <Stack direction="column" spacing={5}>
-                <TextField
-                  id="store-name"
-                  label="Name"
-                  variant="outlined"
-                  name="name"
-                  disabled={disableAll}
-                  value={values.name}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.name && !!errors.name}
-                  helperText={touched.name ? errors.name : undefined}
-                />
-                <TextField
-                  id="store-description"
-                  label="Description"
-                  variant="outlined"
-                  disabled={disableAll}
-                  name="description"
-                  value={values.description}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.description && !!errors.description}
-                  helperText={
-                    touched.description ? errors.description : undefined
-                  }
-                />
-                <TextField
-                  id="address-line1"
-                  label="Address line 1"
-                  variant="outlined"
-                  name="line1"
-                  disabled={disableAll}
-                  value={values.line1}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.line1 && !!errors.line1}
-                  helperText={touched.line1 ? errors.line1 : undefined}
-                />
-                <TextField
-                  id="address-line2"
-                  label="Address line 2 (optional)"
-                  variant="outlined"
-                  name="line2"
-                  disabled={disableAll}
-                  value={values.line2}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.line2 && !!errors.line2}
-                  helperText={touched.line2 ? errors.line2 : undefined}
-                />
-                <TextField
-                  id="store-country"
-                  label="Country"
-                  variant="outlined"
-                  name="country"
-                  value={values.country}
-                  onChange={handleChange}
-                  disabled
-                />
-                <FormControl>
-                  <InputLabel id="labelId-store-state">State Label</InputLabel>
-                  <Select
-                    id="store-state"
-                    labelId="labelId-store-state"
-                    label="State"
-                    variant="outlined"
-                    name="state"
-                    onChange={handleChange}
+              <Grid marginTop={4} container direction={"column"} spacing={2}>
+                <Grid {...inputGridSystem}>
+                  <StyledInput
+                    id="store-name"
+                    label="Name"
+                    name="name"
+                    size="small"
+                    margin="dense"
+                    sx={{ marginTop: 2 }}
                     disabled={disableAll}
-                    value={values.state}
+                    value={values.name}
+                    onChange={handleChange}
                     onBlur={handleBlur}
-                    error={touched.state && !!errors.state}
-                  >
-                    {states.map((state) => (
-                      <MenuItem key={state.value} value={state.value}>
-                        {state.label}
-                      </MenuItem>
-                    ))}
-                    <FormHelperText>
-                      {touched.state ? errors.state : ""}
-                    </FormHelperText>
-                  </Select>
-                </FormControl>
-                <TextField
-                  id="store-city"
-                  label="City"
-                  variant="outlined"
-                  name="city"
-                  disabled={disableAll}
-                  value={values.city}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.city && !!errors.city}
-                  helperText={touched.city ? errors.city : undefined}
-                />
+                    error={touched.name && !!errors.name}
+                    helperText={touched.name && errors.name ? errors.name : ""}
+                  />
+                </Grid>
+                <Grid {...inputGridSystem}>
+                  <StyledInput
+                    id="store-description"
+                    label="Description"
+                    size="small"
+                    margin="dense"
+                    sx={{ marginTop: 2 }}
+                    disabled={disableAll}
+                    name="description"
+                    value={values.description}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.description && !!errors.description}
+                    helperText={
+                      touched.description && errors.description
+                        ? errors.description
+                        : ""
+                    }
+                  />
+                </Grid>
+                <Grid {...inputGridSystem}>
+                  <StyledInput
+                    id="address-line1"
+                    label="Address line 1"
+                    size="small"
+                    margin="dense"
+                    sx={{ marginTop: 2 }}
+                    name="line1"
+                    disabled={disableAll}
+                    value={values.line1}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.line1 && !!errors.line1}
+                    helperText={
+                      touched.line1 && errors.line1 ? errors.line1 : ""
+                    }
+                  />
+                </Grid>
+                <Grid {...inputGridSystem}>
+                  <StyledInput
+                    id="address-line2"
+                    label="Address line 2 (optional)"
+                    size="small"
+                    margin="dense"
+                    sx={{ marginTop: 2 }}
+                    name="line2"
+                    disabled={disableAll}
+                    value={values.line2}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.line2 && !!errors.line2}
+                    helperText={
+                      touched.line2 && errors.line2 ? errors.line2 : ""
+                    }
+                  />
+                </Grid>
+                <Grid {...inputGridSystem}>
+                  <StyledInput
+                    id="store-country"
+                    label="Country"
+                    size="small"
+                    margin="dense"
+                    sx={{ marginTop: 2 }}
+                    name="country"
+                    value={values.country}
+                    onChange={handleChange}
+                    disabled
+                  />
+                </Grid>
+                <Grid {...inputGridSystem}>
+                  <FormControl fullWidth variant="standard">
+                    <InputLabel margin="dense" shrink id="labelId-store-state">
+                      State*
+                    </InputLabel>
+                    <Select
+                      id="store-state"
+                      labelId="labelId-store-state"
+                      variant="outlined"
+                      name="state"
+                      size="small"
+                      margin="dense"
+                      sx={{ marginTop: 2 }}
+                      onChange={handleChange}
+                      disabled={disableAll}
+                      value={values.state}
+                      onBlur={handleBlur}
+                      error={touched.state && !!errors.state}
+                    >
+                      {states.map((state) => (
+                        <MenuItem key={state.value} value={state.value}>
+                          {state.label}
+                        </MenuItem>
+                      ))}
+                      <FormHelperText>
+                        {touched.state ? errors.state : ""}
+                      </FormHelperText>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid {...inputGridSystem}>
+                  <StyledInput
+                    id="store-city"
+                    label="City"
+                    size="small"
+                    margin="dense"
+                    sx={{ marginTop: 2 }}
+                    name="city"
+                    disabled={disableAll}
+                    value={values.city}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.city && !!errors.city}
+                    helperText={touched.city ? errors.city : undefined}
+                  />
+                </Grid>
                 <Stack direction="row">
                   {mode !== "readonly" ? (
                     <Button
@@ -183,12 +221,16 @@ const StoreForm = ({
                     </Button>
                   ) : null}
                   {mode === "edit" && onDeleteStore ? (
-                    <Button variant="contained" onClick={onDeleteStore}>
+                    <Button
+                      sx={{ marginLeft: 2 }}
+                      variant="contained"
+                      onClick={onDeleteStore}
+                    >
                       Delete store
                     </Button>
                   ) : null}
                 </Stack>
-              </Stack>
+              </Grid>
             </form>
           );
         }}

@@ -3,7 +3,6 @@ import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
-import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
@@ -73,7 +72,7 @@ const Settings = () => {
   );
 
   return (
-    <Container>
+    <React.Fragment>
       <Stack spacing={2.5} direction="column">
         <Typography variant="h3" component="h1">
           Settings
@@ -114,10 +113,10 @@ const Settings = () => {
                   <Select
                     id="selected-store"
                     labelId="labelId-selected-store"
-                    size="small"
-                    sx={{ marginTop: 2 }}
                     variant="outlined"
                     name="selectedStore"
+                    size="small"
+                    sx={{ marginTop: 2 }}
                     onChange={onSelectStore}
                     disabled={!stores.length}
                     value={state.selectedStore?._id || ""}
@@ -152,7 +151,7 @@ const Settings = () => {
           </TabPanel>
         </TabContext>
       </Box>
-    </Container>
+    </React.Fragment>
   );
 };
 

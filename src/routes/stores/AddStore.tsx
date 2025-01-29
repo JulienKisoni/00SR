@@ -1,5 +1,4 @@
 import React from "react";
-import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 
@@ -26,22 +25,20 @@ const initialValues: FormValues = {
 
 const AddStore = () => {
   return (
-    <Container>
-      <Stack spacing={2.5} direction="column">
-        <Typography variant="h3" component="h1">
-          Add store
-        </Typography>
-        <Typography variant="subtitle2">
-          Add a picture and other information about your store
-        </Typography>
-        <StoreFormCtlr
-          mode="add"
-          initialValues={initialValues}
-          defaultImgSrc=""
-          storeId=""
-        />
-      </Stack>
-    </Container>
+    <Stack spacing={2.5} direction="column">
+      <Typography variant="h3" component="h1">
+        Add store
+      </Typography>
+      <Typography variant="subtitle2">
+        Add a picture and other information about your store
+      </Typography>
+      <StoreFormCtlr
+        mode="add"
+        initialValues={initialValues}
+        defaultImgSrc=""
+        storeId=""
+      />
+    </Stack>
   );
 };
 

@@ -1,9 +1,9 @@
 import React, { useMemo } from "react";
-import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import { useParams } from "react-router";
 import { shallowEqual, useSelector } from "react-redux";
+import { Backdrop, CircularProgress } from "@mui/material";
 
 import { RootState } from "../../services/redux/rootReducer";
 import StoreFormCtlr from "../../components/controllers/forms/StoreFormCtrl";
@@ -45,14 +45,17 @@ const ViewStore = () => {
     return <NotFound />;
   } else if (!store?._id) {
     return (
-      <Container>
-        <div>Loading</div>
-      </Container>
+      <Backdrop
+        sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
+        open
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     );
   }
 
   return (
-    <Container>
+    <React.Fragment>
       <Stack spacing={2.5} direction="column">
         <Typography variant="h3" component="h1">
           {store?.name}
@@ -67,7 +70,7 @@ const ViewStore = () => {
           storeId={store?._id || ""}
         />
       </Stack>
-    </Container>
+    </React.Fragment>
   );
 };
 

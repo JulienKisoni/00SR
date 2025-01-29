@@ -3,6 +3,8 @@ import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
 import CreateIcon from "@mui/icons-material/Create";
 import { styled } from "@mui/material/styles";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 import Cropper from "react-easy-crop";
 import type { Area, Point } from "react-easy-crop";
 
@@ -37,6 +39,7 @@ interface PickerState {
   croppedAreaPixels: Area | null;
   file: File | null;
   zoom: number;
+  uploading: boolean;
 }
 
 const initialCrop = {
@@ -59,6 +62,7 @@ const ImagePicker = ({
     file: null,
     croppedAreaPixels: null,
     zoom: 1,
+    uploading: false,
   });
 
   useEffect(() => {
@@ -108,6 +112,7 @@ const ImagePicker = ({
   const handleSave = useCallback(async () => {
     try {
       if (state.croppedAreaPixels && state.file) {
+        setState((prev) => ({ ...prev, uploading: true }));
         const fileUpload = new FileUpload("images");
         const params = {
           imageSrc: state.cropSrc,
@@ -136,6 +141,7 @@ const ImagePicker = ({
                 cropSrc: "",
                 file: null,
                 croppedAreaPixels: null,
+                uploading: false,
               }));
             },
             onSuccess: (data) => {
@@ -148,6 +154,7 @@ const ImagePicker = ({
                 cropSrc: "",
                 file: null,
                 croppedAreaPixels: null,
+                uploading: false,
               }));
             },
           });
@@ -156,14 +163,16 @@ const ImagePicker = ({
     } catch (error: any) {
       const _error = new GenericError(error?.message, "Error cropping image");
       alert(_error.publicMessage);
+      setState((prev) => ({ ...prev, uploading: false }));
     }
   }, [state, onError, onSuccess]);
 
   return (
-    <div>
+    <React.Fragment>
       <div
         style={{
           display: "flex",
+          flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
           width: 120,
@@ -197,7 +206,14 @@ const ImagePicker = ({
           />
         </Button>
       </div>
-      {state.showCrop && state.cropSrc && state.file ? (
+      <Button
+        disabled={disabled}
+        variant="text"
+        sx={{ textDecoration: "underline" }}
+      >
+        Remove picture
+      </Button>
+      {state.showCrop && state.cropSrc && state.file && !state.uploading ? (
         <Modal
           opened={state.showCrop}
           onClose={handleClose}
@@ -214,7 +230,15 @@ const ImagePicker = ({
           />
         </Modal>
       ) : null}
-    </div>
+      {state.uploading ? (
+        <Backdrop
+          sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
+          open
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
+      ) : null}
+    </React.Fragment>
   );
 };
 

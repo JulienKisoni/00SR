@@ -1,10 +1,10 @@
 import React, { useState, useCallback, useMemo } from "react";
-import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import { useSelector, shallowEqual, useDispatch } from "react-redux";
 import type { GridColDef } from "@mui/x-data-grid";
+import Grid from "@mui/system/Grid";
 import { useNavigate } from "react-router";
 
 import ListTable from "../../components/ListTable";
@@ -12,6 +12,7 @@ import { RootState } from "../../services/redux/rootReducer";
 import SearchBar from "../../components/SearchBar";
 import { ROUTES } from "../../constants/routes";
 import { StoreSrv } from "../../services/controllers/StoreSrv";
+import { inputGridSystem } from "../../constants";
 
 const columns: GridColDef[] = [
   {
@@ -19,12 +20,16 @@ const columns: GridColDef[] = [
     headerName: "Name",
     sortable: false,
     disableColumnMenu: true,
+    flex: 1,
+    align: "left",
   },
   {
     field: "description",
     headerName: "Description",
     sortable: false,
     disableColumnMenu: true,
+    flex: 1,
+    align: "left",
   },
   {
     field: "products",
@@ -33,6 +38,9 @@ const columns: GridColDef[] = [
     type: "number",
     sortable: false,
     disableColumnMenu: true,
+    flex: 1,
+    align: "left",
+    headerAlign: "left",
   },
   {
     field: "createdAt",
@@ -41,6 +49,8 @@ const columns: GridColDef[] = [
     valueGetter: (value: string) => new Date(value),
     sortable: false,
     disableColumnMenu: true,
+    flex: 1,
+    align: "left",
   },
 ];
 
@@ -94,37 +104,45 @@ function Stores() {
   }, []);
 
   return (
-    <Container>
-      <Stack spacing={2.5} direction="column">
-        <Stack justifyContent="space-between" direction="row">
-          <Typography variant="h3" component="h1">
-            Stores
-          </Typography>
-          <Button
-            onClick={() => navigate(`/${ROUTES.STORES}/add`)}
-            variant="contained"
-          >
-            Add store
-          </Button>
-        </Stack>
-        <Stack direction="column">
-          <Typography variant="subtitle2">
-            Add, search, manage and select your stores
-          </Typography>
-          <Typography variant="subtitle2">
-            Select your store by clicking on it
-          </Typography>
-        </Stack>
-        <SearchBar onEndTyping={handleEndTyping} placeholder="Search by name" />
-        <ListTable
-          rows={filteredStores}
-          columns={columns}
-          onDeleteClick={handleDeleteClick}
-          onViewClick={handleViewClick}
-          onEditClick={handleEditClick}
-        />
+    <Grid container direction={"column"} spacing={2}>
+      <Stack justifyContent="space-between" direction="row">
+        <Typography variant="h3" component="h1">
+          Stores
+        </Typography>
+        <Button
+          onClick={() => navigate(`/${ROUTES.STORES}/add`)}
+          variant="contained"
+        >
+          Add store
+        </Button>
       </Stack>
-    </Container>
+      <Stack direction="column">
+        <Typography variant="subtitle2">
+          Add, search, manage and select your stores
+        </Typography>
+        <Typography variant="subtitle2">
+          Select your store by clicking on it
+        </Typography>
+      </Stack>
+      <Grid {...inputGridSystem}>
+        <SearchBar
+          size="small"
+          onEndTyping={handleEndTyping}
+          placeholder="Search by name"
+          fullWidth
+        />
+      </Grid>
+      <ListTable
+        rows={filteredStores}
+        columns={columns}
+        onDeleteClick={handleDeleteClick}
+        onViewClick={handleViewClick}
+        onEditClick={handleEditClick}
+        sx={{
+          maxWidth: "100vw",
+        }}
+      />
+    </Grid>
   );
 }
 

@@ -1,9 +1,9 @@
 import React, { useCallback, useMemo } from "react";
-import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import { useNavigate, useParams } from "react-router";
 import { useSelector, shallowEqual, useDispatch } from "react-redux";
+import { Backdrop, CircularProgress } from "@mui/material";
 
 import StoreFormCtlr from "../../components/controllers/forms/StoreFormCtrl";
 import { RootState } from "../../services/redux/rootReducer";
@@ -56,9 +56,14 @@ const EditStore = () => {
   }, [store, dispatch, navigate]);
 
   return (
-    <Container>
+    <React.Fragment>
       {!initialValues ? (
-        <div>Loading</div>
+        <Backdrop
+          sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
+          open
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
       ) : (
         <Stack spacing={2.5} direction="column">
           <Typography variant="h3" component="h1">
@@ -76,7 +81,7 @@ const EditStore = () => {
           />
         </Stack>
       )}
-    </Container>
+    </React.Fragment>
   );
 };
 
