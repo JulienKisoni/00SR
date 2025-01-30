@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useMemo, memo } from "react";
-import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
@@ -12,7 +11,9 @@ import type {
 } from "@mui/x-data-grid";
 import { useGridApiRef } from "@mui/x-data-grid";
 import TextField from "@mui/material/TextField";
+import Input from "@mui/material/Input";
 import debounce from "lodash.debounce";
+import Grid from "@mui/system/Grid";
 
 import SearchBar from "../components/SearchBar";
 import ListTable from "../components/ListTable";
@@ -20,6 +21,8 @@ import { RootState } from "../services/redux/rootReducer";
 import { CartSrv } from "../services/controllers/CartSrv";
 import { OrderSrv } from "../services/controllers/OrderSrv";
 import { Order } from "../classes/Order";
+import { inputGridSystem } from "../constants";
+import { InputBase } from "@mui/material";
 
 interface State {
   search: string;
@@ -71,13 +74,13 @@ const BuyQty = memo((props: BuyQtyProps) => {
   );
 
   return (
-    <TextField
+    <InputBase
       id="buyQty"
-      variant="outlined"
       name="name"
       value={state.value}
       type="number"
       onChange={handleChange}
+      size="small"
     />
   );
 });
@@ -114,12 +117,16 @@ function Cart() {
         headerName: "Product name",
         sortable: false,
         disableColumnMenu: true,
+        flex: 1,
+        align: "left",
       },
       {
         field: "productDescription",
         headerName: "Product description",
         sortable: false,
         disableColumnMenu: true,
+        flex: 1,
+        align: "left",
       },
       {
         field: "quantity",
@@ -127,6 +134,7 @@ function Cart() {
         type: "number",
         sortable: false,
         disableColumnMenu: true,
+        headerAlign: "left",
         renderCell: (params) => {
           return (
             <BuyQty
@@ -143,6 +151,9 @@ function Cart() {
         valueGetter: (productDetails: Partial<Types.IProductDocument>) =>
           `${productDetails?.unitPrice}$`,
         type: "number",
+        flex: 1,
+        align: "left",
+        headerAlign: "left",
         sortable: false,
         disableColumnMenu: true,
       },
@@ -151,6 +162,9 @@ function Cart() {
         headerName: "Total price",
         valueGetter: (key: number) => `${key}$`,
         type: "number",
+        flex: 1,
+        align: "left",
+        headerAlign: "left",
         sortable: false,
         disableColumnMenu: true,
       },
@@ -234,50 +248,59 @@ function Cart() {
   );
 
   return (
-    <Container>
-      <Stack spacing={2.5} direction="column">
-        <Stack justifyContent="space-between" direction="row">
-          <Typography variant="h3" component="h1">
-            Cart
-          </Typography>
-          <Button
-            disabled={!state.selectedProductIDs?.length}
-            onClick={handleGenerateOrder}
-            variant="contained"
-          >
-            Generate Order
-          </Button>
-        </Stack>
-        <Stack direction="column">
-          <Typography variant="subtitle2">
-            Manage your cart items and generate order summaries
-          </Typography>
-        </Stack>
-        <Stack direction="row" justifyContent="space-between">
+    <Grid container direction={"column"} spacing={2}>
+      <Stack justifyContent="space-between" direction="row">
+        <Typography variant="h3" component="h1">
+          Cart
+        </Typography>
+        <Button
+          disabled={!state.selectedProductIDs?.length}
+          onClick={handleGenerateOrder}
+          variant="contained"
+        >
+          Generate Order
+        </Button>
+      </Stack>
+      <Stack direction="column">
+        <Typography variant="subtitle2">
+          Manage your cart items and generate order summaries
+        </Typography>
+      </Stack>
+      <Grid container direction={"row"}>
+        <Grid {...inputGridSystem}>
           <SearchBar
             onEndTyping={handleEndTyping}
             placeholder="Search by product name"
+            fullWidth
+            size="small"
           />
-          <Stack direction="row">
+        </Grid>
+        <Grid {...inputGridSystem}>
+          <Stack direction="row" justifyContent={"flex-end"}>
             <Button
               disabled={!state.selectedProductIDs?.length}
               onClick={handleDeleteItems}
               variant="contained"
+              color="error"
             >
               Delete item(s)
             </Button>
           </Stack>
-        </Stack>
-        <ListTable
-          rows={filteredProducts}
-          columns={columns}
-          onRowSelectionModelChange={onRowSelectionModelChange}
-          apiRef={apiRef}
-          getRowId={getRowId}
-          hideActions
-        />
-      </Stack>
-    </Container>
+        </Grid>
+      </Grid>
+      <ListTable
+        rows={filteredProducts}
+        columns={columns}
+        onRowSelectionModelChange={onRowSelectionModelChange}
+        apiRef={apiRef}
+        getRowId={getRowId}
+        hideActions
+        sx={{
+          maxWidth: "100vw",
+          border: 0,
+        }}
+      />
+    </Grid>
   );
 }
 

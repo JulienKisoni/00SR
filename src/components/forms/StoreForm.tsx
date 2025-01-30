@@ -103,6 +103,9 @@ const StoreForm = ({
                     margin="dense"
                     sx={{ marginTop: 2 }}
                     disabled={disableAll}
+                    multiline
+                    minRows={4}
+                    maxRows={5}
                     name="description"
                     value={values.description}
                     onChange={handleChange}

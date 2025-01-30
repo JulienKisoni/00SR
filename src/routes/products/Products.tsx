@@ -259,10 +259,10 @@ function Products() {
       <Grid container direction={"row"}>
         <Grid {...inputGridSystem}>
           <SearchBar
+            fullWidth
             size="small"
             onEndTyping={handleEndTyping}
             placeholder="Search by name"
-            fullWidth
           />
         </Grid>
         <Grid {...inputGridSystem}>

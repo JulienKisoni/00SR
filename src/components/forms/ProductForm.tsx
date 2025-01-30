@@ -91,6 +91,8 @@ const ProductForm = ({
                     multiline
                     disabled={disableAll}
                     name="description"
+                    minRows={4}
+                    maxRows={5}
                     value={values.description}
                     onChange={handleChange}
                     onBlur={handleBlur}
