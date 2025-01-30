@@ -157,54 +157,52 @@ function Graphics() {
 
   return (
     <Grid container direction={"column"} spacing={2}>
-      <Stack direction="column">
-        <Stack justifyContent="space-between" direction="row">
-          <Typography variant="h3" component="h1">
-            Graphics
-          </Typography>
-        </Stack>
-        <Stack direction="column">
-          <Typography variant="subtitle1">
-            View and manage your graphics
-          </Typography>
-        </Stack>
-        <Grid container direction={"row"}>
-          <Grid {...inputGridSystem}>
-            <SearchBar
-              onEndTyping={handleEndTyping}
-              placeholder="Search by name"
-              fullWidth
-              size="small"
-            />
-          </Grid>
-          <Grid {...inputGridSystem}>
-            <Stack direction="row" justifyContent={"flex-end"}>
-              <Button
-                disabled={!state.selectedGraphicIDs?.length}
-                onClick={handleDeleteItems}
-                variant="contained"
-                color="error"
-              >
-                Delete graphic(s)
-              </Button>
-            </Stack>
-          </Grid>
-        </Grid>
-        <ListTable
-          rows={filteredGraphics}
-          columns={columns}
-          onDeleteClick={handleSingleDelete}
-          onViewClick={handleViewGraphic}
-          onEditClick={handleEditGraphic}
-          onRowSelectionModelChange={onRowSelectionModelChange}
-          apiRef={apiRef}
-          getRowId={getRowId}
-          sx={{
-            maxWidth: "100vw",
-            border: 0,
-          }}
-        />
+      <Stack justifyContent="space-between" direction="row">
+        <Typography variant="h3" component="h1">
+          Graphics
+        </Typography>
       </Stack>
+      <Stack direction="column">
+        <Typography variant="subtitle1">
+          View and manage your graphics
+        </Typography>
+      </Stack>
+      <Grid container direction={"row"}>
+        <Grid {...inputGridSystem}>
+          <SearchBar
+            onEndTyping={handleEndTyping}
+            placeholder="Search by name"
+            fullWidth
+            size="small"
+          />
+        </Grid>
+        <Grid {...inputGridSystem}>
+          <Stack direction="row" justifyContent={"flex-end"}>
+            <Button
+              disabled={!state.selectedGraphicIDs?.length}
+              onClick={handleDeleteItems}
+              variant="contained"
+              color="error"
+            >
+              Delete graphic(s)
+            </Button>
+          </Stack>
+        </Grid>
+      </Grid>
+      <ListTable
+        rows={filteredGraphics}
+        columns={columns}
+        onDeleteClick={handleSingleDelete}
+        onViewClick={handleViewGraphic}
+        onEditClick={handleEditGraphic}
+        onRowSelectionModelChange={onRowSelectionModelChange}
+        apiRef={apiRef}
+        getRowId={getRowId}
+        sx={{
+          maxWidth: "100vw",
+          border: 0,
+        }}
+      />
     </Grid>
   );
 }
