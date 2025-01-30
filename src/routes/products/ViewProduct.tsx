@@ -1,5 +1,4 @@
 import React, { useMemo, useEffect, useState } from "react";
-import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import { Navigate, useParams } from "react-router";
@@ -9,6 +8,7 @@ import { RootState } from "../../services/redux/rootReducer";
 import ProductFormCtlr from "../../components/controllers/forms/ProductFormCtrl";
 import { ROUTES } from "../../constants/routes";
 import NotFound from "../NotFound";
+import { Backdrop, CircularProgress } from "@mui/material";
 
 interface FormValues {
   name: string;
@@ -64,31 +64,32 @@ const ViewProduct = () => {
   }
   if (loading) {
     return (
-      <Container>
-        <div>Loading</div>
-      </Container>
+      <Backdrop
+        sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
+        open
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     );
   } else if (state.deny) {
     return <Navigate to={`/${ROUTES.PRODUCTS}`} replace />;
   }
 
   return (
-    <Container>
-      <Stack spacing={2.5} direction="column">
-        <Typography variant="h3" component="h1">
-          {product?.name}
-        </Typography>
-        <Typography variant="subtitle2">
-          View picture and other information about your product
-        </Typography>
-        <ProductFormCtlr
-          mode="readonly"
-          initialValues={initialValues}
-          defaultImgSrc={product?.picture || ""}
-          productId={product?._id || ""}
-        />
-      </Stack>
-    </Container>
+    <Stack spacing={2.5} direction="column">
+      <Typography variant="h3" component="h1">
+        {product?.name}
+      </Typography>
+      <Typography variant="subtitle1">
+        View picture and other information about your product
+      </Typography>
+      <ProductFormCtlr
+        mode="readonly"
+        initialValues={initialValues}
+        defaultImgSrc={product?.picture || ""}
+        productId={product?._id || ""}
+      />
+    </Stack>
   );
 };
 

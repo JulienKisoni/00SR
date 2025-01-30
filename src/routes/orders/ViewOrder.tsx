@@ -26,12 +26,18 @@ const columns: GridColDef[] = [
     headerName: "Product name",
     sortable: false,
     disableColumnMenu: true,
+    flex: 1,
+    align: "left",
+    headerAlign: "left",
   },
   {
     field: "productDescription",
     headerName: "Product description",
     sortable: false,
     disableColumnMenu: true,
+    flex: 1,
+    align: "left",
+    headerAlign: "left",
   },
   {
     field: "quantity",
@@ -39,6 +45,9 @@ const columns: GridColDef[] = [
     type: "number",
     sortable: false,
     disableColumnMenu: true,
+    flex: 1,
+    align: "left",
+    headerAlign: "left",
   },
   {
     field: "productDetails",
@@ -48,6 +57,9 @@ const columns: GridColDef[] = [
     disableColumnMenu: true,
     valueGetter: (productDetails: Partial<Types.IProductDocument>) =>
       `${productDetails?.unitPrice}$`,
+    flex: 1,
+    align: "left",
+    headerAlign: "left",
   },
   {
     field: "totalPrice",
@@ -56,6 +68,9 @@ const columns: GridColDef[] = [
     type: "number",
     sortable: false,
     disableColumnMenu: true,
+    flex: 1,
+    align: "left",
+    headerAlign: "left",
   },
 ];
 
@@ -182,16 +197,14 @@ function ViewOrder() {
   }
 
   return (
-    <Container>
-      <OrderDetails
-        subtitle="View details about your order"
-        getRowId={getRowId}
-        columns={columns}
-        handleDeleteOrder={handleDeleteOrder}
-        selectedOrder={selectedOrder}
-        ordersPagination
-      />
-    </Container>
+    <OrderDetails
+      subtitle="View details about your order"
+      getRowId={getRowId}
+      columns={columns}
+      handleDeleteOrder={handleDeleteOrder}
+      selectedOrder={selectedOrder}
+      ordersPagination
+    />
   );
 }
 

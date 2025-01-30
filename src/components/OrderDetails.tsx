@@ -38,28 +38,30 @@ const OrderDetails = ({
           Order {`#${selectedOrder.orderNumber}`}
         </Typography>
         {handleDeleteOrder ? (
-          <Button onClick={handleDeleteOrder} variant="contained">
+          <Button color="error" onClick={handleDeleteOrder} variant="contained">
             Delete order
           </Button>
         ) : null}
       </Stack>
       <Stack direction="column">
         {subtitle ? (
-          <Typography variant="subtitle2">{subtitle}</Typography>
+          <Typography variant="subtitle1">{subtitle}</Typography>
         ) : null}
-        <Typography variant="subtitle2">
+        <Typography variant="subtitle1">
           Ordered by: {selectedOrder.orderOwnerName}
         </Typography>
-        <Typography variant="subtitle2">
+        <Typography variant="subtitle1">
           Ordered at: {selectedOrder.createdAt}
         </Typography>
-        <Typography variant="subtitle2">
+        <Typography variant="subtitle1">
           Store: {selectedOrder.orderStoreName}
         </Typography>
-        <Typography variant="subtitle2">
+        <Typography variant="subtitle1">
           Total price: {`${selectedOrder.totalPrice}$`}
         </Typography>
-        <Typography variant="subtitle2">ITEMS DETAILS</Typography>
+        <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+          ITEMS DETAILS
+        </Typography>
       </Stack>
       <ListTable
         rows={selectedOrder.items}
@@ -68,6 +70,11 @@ const OrderDetails = ({
         hideActions
         checkboxSelection={false}
         pagination={ordersPagination}
+        hideFooterPagination={!ordersPagination}
+        sx={{
+          maxWidth: "100vw",
+          border: 0,
+        }}
       />
     </Stack>
   );

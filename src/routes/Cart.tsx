@@ -10,8 +10,6 @@ import type {
   GridRowSelectionModel,
 } from "@mui/x-data-grid";
 import { useGridApiRef } from "@mui/x-data-grid";
-import TextField from "@mui/material/TextField";
-import Input from "@mui/material/Input";
 import debounce from "lodash.debounce";
 import Grid from "@mui/system/Grid";
 
@@ -262,7 +260,7 @@ function Cart() {
         </Button>
       </Stack>
       <Stack direction="column">
-        <Typography variant="subtitle2">
+        <Typography variant="subtitle1">
           Manage your cart items and generate order summaries
         </Typography>
       </Stack>

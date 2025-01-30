@@ -117,19 +117,19 @@ function Stores() {
         </Button>
       </Stack>
       <Stack direction="column">
-        <Typography variant="subtitle2">
+        <Typography variant="subtitle1">
           Add, search, manage and select your stores
         </Typography>
-        <Typography variant="subtitle2">
+        <Typography variant="subtitle1">
           Select your store by clicking on it
         </Typography>
       </Stack>
       <Grid {...inputGridSystem}>
         <SearchBar
           size="small"
+          fullWidth
           onEndTyping={handleEndTyping}
           placeholder="Search by name"
-          fullWidth
         />
       </Grid>
       <ListTable

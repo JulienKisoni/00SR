@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useMemo } from "react";
-import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
@@ -11,6 +10,7 @@ import type {
 } from "@mui/x-data-grid";
 import { useGridApiRef } from "@mui/x-data-grid";
 import { useNavigate } from "react-router";
+import Grid from "@mui/system/Grid";
 
 import SearchBar from "../../components/SearchBar";
 import ListTable from "../../components/ListTable";
@@ -19,6 +19,7 @@ import { RootState } from "../../services/redux/rootReducer";
 import { UsersSrv } from "../../services/controllers/UserSrv";
 import { ROUTES } from "../../constants/routes";
 import { GenericError } from "../../classes/GenericError";
+import { inputGridSystem } from "../../constants";
 
 interface State {
   search: string;
@@ -31,6 +32,8 @@ const columns: GridColDef[] = [
     headerName: "Order number",
     sortable: false,
     disableColumnMenu: true,
+    flex: 1,
+    align: "left",
   },
   {
     field: "ownerDetails",
@@ -40,6 +43,8 @@ const columns: GridColDef[] = [
     },
     sortable: false,
     disableColumnMenu: true,
+    flex: 1,
+    align: "left",
   },
   {
     field: "createdAt",
@@ -48,6 +53,8 @@ const columns: GridColDef[] = [
     sortable: false,
     disableColumnMenu: true,
     valueGetter: (value: string) => new Date(value),
+    flex: 1,
+    align: "left",
   },
   {
     field: "items",
@@ -56,6 +63,9 @@ const columns: GridColDef[] = [
     type: "number",
     sortable: false,
     disableColumnMenu: true,
+    flex: 1,
+    align: "left",
+    headerAlign: "left",
   },
   {
     field: "totalPrice",
@@ -64,6 +74,9 @@ const columns: GridColDef[] = [
     type: "number",
     sortable: false,
     disableColumnMenu: true,
+    flex: 1,
+    align: "left",
+    headerAlign: "left",
   },
 ];
 
@@ -198,51 +211,60 @@ function Orders() {
   );
 
   return (
-    <Container>
-      <Stack spacing={2.5} direction="column">
-        <Stack justifyContent="space-between" direction="row">
-          <Typography variant="h3" component="h1">
-            Order summaries
-          </Typography>
-          <Button
-            disabled={!state.selectedOrderIDs?.length}
-            onClick={handleGenerateReport}
-            variant="contained"
-          >
-            Generate report
-          </Button>
-        </Stack>
-        <Stack direction="column">
-          <Typography variant="subtitle2">
-            Manage your order summaries and generate reports
-          </Typography>
-        </Stack>
-        <Stack direction="row" justifyContent="space-between">
+    <Grid container direction={"column"} spacing={2}>
+      <Stack justifyContent="space-between" direction="row">
+        <Typography variant="h3" component="h1">
+          Order summaries
+        </Typography>
+        <Button
+          disabled={!state.selectedOrderIDs?.length}
+          onClick={handleGenerateReport}
+          variant="contained"
+        >
+          Generate report
+        </Button>
+      </Stack>
+      <Stack direction="column">
+        <Typography variant="subtitle1">
+          Manage your order summaries and generate reports
+        </Typography>
+      </Stack>
+      <Grid direction="row" container>
+        <Grid {...inputGridSystem}>
           <SearchBar
             onEndTyping={handleEndTyping}
             placeholder="Search by order number"
+            size="small"
+            fullWidth
           />
-          <Stack direction="row">
+        </Grid>
+        <Grid {...inputGridSystem}>
+          <Stack direction="row" justifyContent={"flex-end"}>
             <Button
               disabled={!state.selectedOrderIDs?.length}
               onClick={handleDeleteItems}
               variant="contained"
+              color="error"
             >
               Delete orders(s)
             </Button>
           </Stack>
-        </Stack>
-        <ListTable
-          rows={filteredOrders}
-          columns={columns}
-          onDeleteClick={handleSingleDelete}
-          onViewClick={handleViewOrder}
-          onRowSelectionModelChange={onRowSelectionModelChange}
-          apiRef={apiRef}
-          getRowId={getRowId}
-        />
-      </Stack>
-    </Container>
+        </Grid>
+      </Grid>
+      <ListTable
+        rows={filteredOrders}
+        columns={columns}
+        onDeleteClick={handleSingleDelete}
+        onViewClick={handleViewOrder}
+        onRowSelectionModelChange={onRowSelectionModelChange}
+        apiRef={apiRef}
+        getRowId={getRowId}
+        sx={{
+          maxWidth: "100vw",
+          border: 0,
+        }}
+      />
+    </Grid>
   );
 }
 

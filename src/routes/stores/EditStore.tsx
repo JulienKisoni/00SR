@@ -69,7 +69,7 @@ const EditStore = () => {
           <Typography variant="h3" component="h1">
             Update store
           </Typography>
-          <Typography variant="subtitle2">
+          <Typography variant="subtitle1">
             Edit picture and other information about your store
           </Typography>
           <StoreFormCtlr

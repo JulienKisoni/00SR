@@ -252,7 +252,7 @@ function Products() {
         </Button>
       </Stack>
       <Stack direction="column">
-        <Typography variant="subtitle2">
+        <Typography variant="subtitle1">
           Add, search, manage and select your products
         </Typography>
       </Stack>

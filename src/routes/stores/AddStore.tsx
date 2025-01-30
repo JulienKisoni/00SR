@@ -29,7 +29,7 @@ const AddStore = () => {
       <Typography variant="h3" component="h1">
         Add store
       </Typography>
-      <Typography variant="subtitle2">
+      <Typography variant="subtitle1">
         Add a picture and other information about your store
       </Typography>
       <StoreFormCtlr

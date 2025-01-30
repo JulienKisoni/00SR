@@ -60,7 +60,7 @@ const ViewStore = () => {
         <Typography variant="h3" component="h1">
           {store?.name}
         </Typography>
-        <Typography variant="subtitle2">
+        <Typography variant="subtitle1">
           View picture and other information about your store
         </Typography>
         <StoreFormCtlr
