@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useMemo } from "react";
-import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
@@ -7,6 +6,7 @@ import { useSelector, shallowEqual, useDispatch } from "react-redux";
 import type { GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
 import { useNavigate } from "react-router";
 import { useGridApiRef } from "@mui/x-data-grid";
+import Grid from "@mui/system/Grid";
 
 import ListTable from "../../components/ListTable";
 import { RootState } from "../../services/redux/rootReducer";
@@ -16,6 +16,7 @@ import { ProductSrv } from "../../services/controllers/ProductSrv";
 import { CartSrv } from "../../services/controllers/CartSrv";
 import { Cart, CartItem } from "../../classes/Cart";
 import { GenericError } from "../../classes/GenericError";
+import { inputGridSystem } from "../../constants";
 
 const columns: GridColDef[] = [
   {
@@ -23,12 +24,16 @@ const columns: GridColDef[] = [
     headerName: "Name",
     sortable: false,
     disableColumnMenu: true,
+    flex: 1,
+    align: "left",
   },
   {
     field: "description",
     headerName: "Description",
     sortable: false,
     disableColumnMenu: true,
+    flex: 1,
+    align: "left",
   },
   {
     field: "key",
@@ -36,6 +41,8 @@ const columns: GridColDef[] = [
     sortable: false,
     disableColumnMenu: true,
     valueGetter: (key: string) => `#${key}`,
+    flex: 1,
+    align: "left",
   },
   {
     field: "unitPrice",
@@ -44,6 +51,9 @@ const columns: GridColDef[] = [
     type: "number",
     sortable: false,
     disableColumnMenu: true,
+    flex: 1,
+    align: "left",
+    headerAlign: "left",
   },
   {
     field: "quantity",
@@ -51,6 +61,9 @@ const columns: GridColDef[] = [
     type: "number",
     sortable: false,
     disableColumnMenu: true,
+    flex: 1,
+    align: "left",
+    headerAlign: "left",
   },
   {
     field: "minQuantity",
@@ -58,6 +71,9 @@ const columns: GridColDef[] = [
     type: "number",
     sortable: false,
     disableColumnMenu: true,
+    flex: 1,
+    align: "left",
+    headerAlign: "left",
   },
   {
     field: "createdAt",
@@ -66,6 +82,8 @@ const columns: GridColDef[] = [
     valueGetter: (value: string) => new Date(value),
     sortable: false,
     disableColumnMenu: true,
+    flex: 1,
+    align: "left",
   },
 ];
 
@@ -221,34 +239,40 @@ function Products() {
   ]);
 
   return (
-    <Container>
-      <Stack spacing={2.5} direction="column">
-        <Stack justifyContent="space-between" direction="row">
-          <Typography variant="h3" component="h1">
-            Products
-          </Typography>
-          <Button
-            onClick={() => navigate(`/${ROUTES.PRODUCTS}/add`)}
-            variant="contained"
-          >
-            Add Product
-          </Button>
-        </Stack>
-        <Stack direction="column">
-          <Typography variant="subtitle2">
-            Add, search, manage and select your products
-          </Typography>
-        </Stack>
-        <Stack direction="row" justifyContent="space-between">
+    <Grid container direction={"column"} spacing={2}>
+      <Stack justifyContent="space-between" direction="row">
+        <Typography variant="h3" component="h1">
+          Products
+        </Typography>
+        <Button
+          onClick={() => navigate(`/${ROUTES.PRODUCTS}/add`)}
+          variant="contained"
+        >
+          Add Product
+        </Button>
+      </Stack>
+      <Stack direction="column">
+        <Typography variant="subtitle2">
+          Add, search, manage and select your products
+        </Typography>
+      </Stack>
+      <Grid container direction={"row"}>
+        <Grid {...inputGridSystem}>
           <SearchBar
+            size="small"
             onEndTyping={handleEndTyping}
             placeholder="Search by name"
+            fullWidth
           />
-          <Stack direction="row">
+        </Grid>
+        <Grid {...inputGridSystem}>
+          <Stack direction="row" spacing={2} justifyContent={"flex-end"}>
             <Button
               disabled={!state.selectedProductIDs.length}
               onClick={onAddToCart}
               variant="contained"
+              color="secondary"
+              sx={{ color: "white" }}
             >
               Add to cart
             </Button>
@@ -256,23 +280,34 @@ function Products() {
               disabled={!state.selectedProductIDs.length}
               variant="contained"
               onClick={handleGenerateGraphics}
+              color="success"
             >
               Generate graphic
             </Button>
-            <Button variant="contained">Delete product(s)</Button>
+            <Button
+              disabled={!state.selectedProductIDs.length}
+              variant="contained"
+              color="error"
+            >
+              Delete product(s)
+            </Button>
           </Stack>
-        </Stack>
-        <ListTable
-          rows={filteredProducts}
-          columns={columns}
-          onDeleteClick={handleDeleteClick}
-          onViewClick={handleViewClick}
-          onEditClick={handleEditClick}
-          onRowSelectionModelChange={onRowSelectionModelChange}
-          apiRef={apiRef}
-        />
-      </Stack>
-    </Container>
+        </Grid>
+      </Grid>
+      <ListTable
+        rows={filteredProducts}
+        columns={columns}
+        onDeleteClick={handleDeleteClick}
+        onViewClick={handleViewClick}
+        onEditClick={handleEditClick}
+        onRowSelectionModelChange={onRowSelectionModelChange}
+        apiRef={apiRef}
+        sx={{
+          maxWidth: "100vw",
+          border: 0,
+        }}
+      />
+    </Grid>
   );
 }
 

@@ -140,6 +140,7 @@ function Stores() {
         onEditClick={handleEditClick}
         sx={{
           maxWidth: "100vw",
+          border: 0,
         }}
       />
     </Grid>

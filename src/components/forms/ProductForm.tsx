@@ -2,8 +2,11 @@ import React, { useMemo } from "react";
 import { Formik, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import Stack from "@mui/material/Stack";
-import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import Grid from "@mui/system/Grid";
+
+import StyledInput from "../StyledInput";
+import { inputGridSystem } from "../../constants";
 
 interface FormValues {
   name: string;
@@ -67,76 +70,83 @@ const ProductForm = ({
           const invalid = !dirty || !isValid;
           return (
             <form onSubmit={handleSubmit}>
-              <Stack direction="column" spacing={5}>
-                <TextField
-                  id="product-name"
-                  label="Name"
-                  variant="outlined"
-                  name="name"
-                  disabled={disableAll}
-                  value={values.name}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.name && !!errors.name}
-                  helperText={touched.name ? errors.name : undefined}
-                />
-                <TextField
-                  id="product-description"
-                  label="Description"
-                  variant="outlined"
-                  multiline
-                  disabled={disableAll}
-                  name="description"
-                  value={values.description}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.description && !!errors.description}
-                  helperText={
-                    touched.description ? errors.description : undefined
-                  }
-                />
-                <TextField
-                  id="product-minQuantity"
-                  label="Minimum quantity"
-                  variant="outlined"
-                  name="minQuantity"
-                  disabled={disableAll}
-                  type="number"
-                  value={values.minQuantity || ""}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.minQuantity && !!errors.minQuantity}
-                  helperText={
-                    touched.minQuantity ? errors.minQuantity : undefined
-                  }
-                />
-                <TextField
-                  id="product-quantity"
-                  label="Quantity"
-                  variant="outlined"
-                  name="quantity"
-                  disabled={disableAll}
-                  type="number"
-                  value={values.quantity || ""}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.quantity && !!errors.quantity}
-                  helperText={touched.quantity ? errors.quantity : undefined}
-                />
-                <TextField
-                  id="product-unitPrice"
-                  label="Price (CAD)"
-                  variant="outlined"
-                  name="unitPrice"
-                  disabled={disableAll}
-                  type="number"
-                  value={values.unitPrice || ""}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.unitPrice && !!errors.unitPrice}
-                  helperText={touched.unitPrice ? errors.unitPrice : undefined}
-                />
-                <Stack direction="row">
+              <Grid marginTop={4} container direction={"column"} spacing={2}>
+                <Grid {...inputGridSystem}>
+                  <StyledInput
+                    id="product-name"
+                    label="Name"
+                    name="name"
+                    disabled={disableAll}
+                    value={values.name}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.name && !!errors.name}
+                    helperText={touched.name ? errors.name : undefined}
+                  />
+                </Grid>
+                <Grid {...inputGridSystem}>
+                  <StyledInput
+                    id="product-description"
+                    label="Description"
+                    multiline
+                    disabled={disableAll}
+                    name="description"
+                    value={values.description}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.description && !!errors.description}
+                    helperText={
+                      touched.description ? errors.description : undefined
+                    }
+                  />
+                </Grid>
+                <Grid {...inputGridSystem}>
+                  <StyledInput
+                    id="product-minQuantity"
+                    label="Minimum quantity"
+                    name="minQuantity"
+                    disabled={disableAll}
+                    type="number"
+                    value={values.minQuantity || ""}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.minQuantity && !!errors.minQuantity}
+                    helperText={
+                      touched.minQuantity ? errors.minQuantity : undefined
+                    }
+                  />
+                </Grid>
+                <Grid {...inputGridSystem}>
+                  <StyledInput
+                    id="product-quantity"
+                    label="Quantity"
+                    name="quantity"
+                    disabled={disableAll}
+                    type="number"
+                    value={values.quantity || ""}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.quantity && !!errors.quantity}
+                    helperText={touched.quantity ? errors.quantity : undefined}
+                  />
+                </Grid>
+                <Grid {...inputGridSystem}>
+                  <StyledInput
+                    id="product-unitPrice"
+                    label="Price (CAD)"
+                    name="unitPrice"
+                    disabled={disableAll}
+                    type="number"
+                    value={values.unitPrice || ""}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.unitPrice && !!errors.unitPrice}
+                    helperText={
+                      touched.unitPrice ? errors.unitPrice : undefined
+                    }
+                  />
+                </Grid>
+                <Stack direction="row" spacing={2}>
                   {mode !== "readonly" ? (
                     <Button
                       type="submit"
@@ -152,7 +162,7 @@ const ProductForm = ({
                     </Button>
                   ) : null}
                 </Stack>
-              </Stack>
+              </Grid>
             </form>
           );
         }}

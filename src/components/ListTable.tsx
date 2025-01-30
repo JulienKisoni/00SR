@@ -142,7 +142,6 @@ const ListTable = (props: Props) => {
       columns={displayedColumns}
       checkboxSelection
       getRowId={(row: any) => row._id}
-      sx={{ border: 0 }}
       disableRowSelectionOnClick
       {...restProps}
     />

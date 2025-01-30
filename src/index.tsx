@@ -20,6 +20,12 @@ const theme = createTheme({
     secondary: {
       main: "#D5C7F9",
     },
+    success: {
+      main: "#029988",
+    },
+    error: {
+      main: "#AB1819",
+    },
   },
   typography: {
     h3: {
