@@ -2,8 +2,11 @@ import React, { useMemo } from "react";
 import { Formik, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import Stack from "@mui/material/Stack";
-import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import Grid from "@mui/system/Grid";
+
+import { inputGridSystem } from "../../constants";
+import StyledInput from "../StyledInput";
 
 interface FormValues {
   name: string;
@@ -64,35 +67,39 @@ const GraphicForm = ({
           const invalid = !dirty || !isValid;
           return (
             <form onSubmit={handleSubmit}>
-              <Stack direction="column" spacing={5}>
-                <TextField
-                  id="graphic-name"
-                  label="Name"
-                  variant="outlined"
-                  name="name"
-                  disabled={disableAll}
-                  value={values.name}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.name && !!errors.name}
-                  helperText={touched.name ? errors.name : undefined}
-                />
-                <TextField
-                  id="graphic-description"
-                  label="Description"
-                  variant="outlined"
-                  multiline
-                  disabled={disableAll}
-                  name="description"
-                  value={values.description}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.description && !!errors.description}
-                  helperText={
-                    touched.description ? errors.description : undefined
-                  }
-                />
-                <Stack direction="row">
+              <Grid container direction={"column"} spacing={2}>
+                <Grid {...inputGridSystem}>
+                  <StyledInput
+                    id="graphic-name"
+                    label="Name"
+                    name="name"
+                    disabled={disableAll}
+                    value={values.name}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.name && !!errors.name}
+                    helperText={touched.name ? errors.name : undefined}
+                  />
+                </Grid>
+                <Grid {...inputGridSystem}>
+                  <StyledInput
+                    id="graphic-description"
+                    label="Description"
+                    multiline
+                    disabled={disableAll}
+                    name="description"
+                    minRows={4}
+                    maxRows={5}
+                    value={values.description}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.description && !!errors.description}
+                    helperText={
+                      touched.description ? errors.description : undefined
+                    }
+                  />
+                </Grid>
+                <Stack direction="row" spacing={2}>
                   {mode !== "readonly" ? (
                     <Button
                       type="submit"
@@ -103,12 +110,16 @@ const GraphicForm = ({
                     </Button>
                   ) : null}
                   {mode === "edit" && onDeleteGraphic ? (
-                    <Button variant="contained" onClick={onDeleteGraphic}>
+                    <Button
+                      color="error"
+                      variant="contained"
+                      onClick={onDeleteGraphic}
+                    >
                       Delete graphic
                     </Button>
                   ) : null}
                 </Stack>
-              </Stack>
+              </Grid>
             </form>
           );
         }}

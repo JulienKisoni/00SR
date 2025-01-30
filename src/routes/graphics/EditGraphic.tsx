@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import { Navigate, useNavigate, useParams } from "react-router";
 import { useSelector, shallowEqual, useDispatch } from "react-redux";
+import { Backdrop, CircularProgress } from "@mui/material";
 
 import { RootState } from "../../services/redux/rootReducer";
 import { ROUTES } from "../../constants/routes";
@@ -87,43 +87,44 @@ const EditGraphic = () => {
   }
   if (loading) {
     return (
-      <Container>
-        <div>Loading</div>
-      </Container>
+      <Backdrop
+        sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
+        open
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     );
   } else if (state.deny) {
     return <Navigate to={`/${ROUTES.GRAPHICS}`} replace />;
   }
 
   return (
-    <Container>
-      <Stack spacing={2.5} direction="column">
-        <Typography variant="h3" component="h1">
-          {graphic?.name}
-        </Typography>
-        <Typography variant="subtitle2">
-          Update the name and/or the description of your graphic
-        </Typography>
-        <Typography variant="subtitle2">
-          You're about to edit a graphic of the following product(s)
-        </Typography>
-        {graphicProducts.map((product) => {
-          return (
-            <Typography key={product.productId} variant="subtitle2">
-              {`- Order #${product.productName}`}
-            </Typography>
-          );
-        })}
-        <GraphicFormCtrl
-          mode="edit"
-          initialValues={initialValues}
-          onDeleteGraphic={handleDeleteGraphic}
-          graphicId={graphic?._id || ""}
-          createdAt={graphic?.createdAt}
-          products={graphicProducts}
-        />
-      </Stack>
-    </Container>
+    <Stack direction="column">
+      <Typography variant="h3" component="h1">
+        {graphic?.name}
+      </Typography>
+      <Typography variant="subtitle1">
+        Update the name and/or the description of your graphic
+      </Typography>
+      <Typography variant="subtitle1">
+        You're about to edit a graphic of the following product(s)
+      </Typography>
+      {graphicProducts.map((product) => {
+        return (
+          <Typography key={product.productId} variant="subtitle1">
+            {`- Order #${product.productName}`}
+          </Typography>
+        );
+      })}
+      <GraphicFormCtrl
+        mode="edit"
+        initialValues={initialValues}
+        onDeleteGraphic={handleDeleteGraphic}
+        graphicId={graphic?._id || ""}
+        createdAt={graphic?.createdAt}
+        products={graphicProducts}
+      />
+    </Stack>
   );
 };
 

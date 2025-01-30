@@ -32,7 +32,7 @@ const OrderDetails = ({
   ordersPagination,
 }: Props) => {
   return (
-    <Stack spacing={2.5} direction="column">
+    <Stack direction="column">
       <Stack justifyContent="space-between" direction="row">
         <Typography variant="h3" component="h1">
           Order {`#${selectedOrder.orderNumber}`}

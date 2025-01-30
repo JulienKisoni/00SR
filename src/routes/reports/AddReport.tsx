@@ -34,7 +34,7 @@ const AddReport = () => {
   if (!state.tempTargetedOrders.length) {
     return (
       <Container>
-        <Stack spacing={2.5} direction="column">
+        <Stack direction="column">
           <Typography variant="h3" component="h1">
             Error
           </Typography>
@@ -45,7 +45,7 @@ const AddReport = () => {
   }
 
   return (
-    <Stack spacing={2.5} direction="column">
+    <Stack direction="column">
       <Typography variant="h3" component="h1">
         Create report
       </Typography>

@@ -53,7 +53,7 @@ const AddGraphic = () => {
   if (!state.tempTargetedProducts.length) {
     return (
       <Container>
-        <Stack spacing={2.5} direction="column">
+        <Stack direction="column">
           <Typography variant="h3" component="h1">
             Error
           </Typography>
@@ -64,29 +64,27 @@ const AddGraphic = () => {
   }
 
   return (
-    <Container>
-      <Stack spacing={2.5} direction="column">
-        <Typography variant="h3" component="h1">
-          Create graphic
-        </Typography>
-        <Typography variant="subtitle2">
-          You're about to create a graphic for the following product(s)
-        </Typography>
-        {state.tempTargetedProducts.map((product) => {
-          return (
-            <Typography key={product.productId} variant="subtitle2">
-              {product.productName}
-            </Typography>
-          );
-        })}
-        <GraphicFormCtrl
-          mode="add"
-          initialValues={initialValues}
-          graphicId=""
-          products={state.tempTargetedProducts}
-        />
-      </Stack>
-    </Container>
+    <Stack direction="column">
+      <Typography variant="h3" component="h1">
+        Create graphic
+      </Typography>
+      <Typography variant="subtitle1">
+        You're about to create a graphic for the following product(s)
+      </Typography>
+      {state.tempTargetedProducts.map((product) => {
+        return (
+          <Typography key={product.productId} variant="subtitle1">
+            {product.productName}
+          </Typography>
+        );
+      })}
+      <GraphicFormCtrl
+        mode="add"
+        initialValues={initialValues}
+        graphicId=""
+        products={state.tempTargetedProducts}
+      />
+    </Stack>
   );
 };
 

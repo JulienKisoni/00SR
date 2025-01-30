@@ -25,7 +25,7 @@ const initialValues: FormValues = {
 
 const AddStore = () => {
   return (
-    <Stack spacing={2.5} direction="column">
+    <Stack direction="column">
       <Typography variant="h3" component="h1">
         Add store
       </Typography>

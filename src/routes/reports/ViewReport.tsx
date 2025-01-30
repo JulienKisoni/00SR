@@ -239,7 +239,7 @@ const ViewReport = () => {
   }
 
   return (
-    <Stack spacing={2.5} direction="column">
+    <Stack direction="column">
       <Stack direction={"row"} justifyContent={"space-between"}>
         <Typography variant="h3" component="h1">
           {report?.name}

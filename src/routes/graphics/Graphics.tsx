@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useMemo } from "react";
-import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
@@ -11,12 +10,14 @@ import type {
 } from "@mui/x-data-grid";
 import { useGridApiRef } from "@mui/x-data-grid";
 import { useNavigate } from "react-router";
+import Grid from "@mui/system/Grid";
 
 import SearchBar from "../../components/SearchBar";
 import ListTable from "../../components/ListTable";
 import { RootState } from "../../services/redux/rootReducer";
 import { ROUTES } from "../../constants/routes";
 import { GraphicSrv } from "../../services/controllers/GraphicSrv";
+import { inputGridSystem } from "../../constants";
 
 interface State {
   search: string;
@@ -29,12 +30,18 @@ const columns: GridColDef[] = [
     headerName: "Name",
     sortable: false,
     disableColumnMenu: true,
+    flex: 1,
+    align: "left",
+    headerAlign: "left",
   },
   {
     field: "description",
     headerName: "Description",
     sortable: false,
     disableColumnMenu: true,
+    flex: 1,
+    align: "left",
+    headerAlign: "left",
   },
   {
     field: "createdAt",
@@ -43,6 +50,9 @@ const columns: GridColDef[] = [
     sortable: false,
     disableColumnMenu: true,
     valueGetter: (value: string) => new Date(value),
+    flex: 1,
+    align: "left",
+    headerAlign: "left",
   },
   {
     field: "products",
@@ -51,6 +61,9 @@ const columns: GridColDef[] = [
     valueGetter: (products: Types.IProductDocument[]) => products.length,
     sortable: false,
     disableColumnMenu: true,
+    flex: 1,
+    align: "left",
+    headerAlign: "left",
   },
 ];
 
@@ -143,33 +156,40 @@ function Graphics() {
   );
 
   return (
-    <Container>
-      <Stack spacing={2.5} direction="column">
+    <Grid container direction={"column"} spacing={2}>
+      <Stack direction="column">
         <Stack justifyContent="space-between" direction="row">
           <Typography variant="h3" component="h1">
             Graphics
           </Typography>
         </Stack>
         <Stack direction="column">
-          <Typography variant="subtitle2">
+          <Typography variant="subtitle1">
             View and manage your graphics
           </Typography>
         </Stack>
-        <Stack direction="row" justifyContent="space-between">
-          <SearchBar
-            onEndTyping={handleEndTyping}
-            placeholder="Search by name"
-          />
-          <Stack direction="row">
-            <Button
-              disabled={!state.selectedGraphicIDs?.length}
-              onClick={handleDeleteItems}
-              variant="contained"
-            >
-              Delete graphic(s)
-            </Button>
-          </Stack>
-        </Stack>
+        <Grid container direction={"row"}>
+          <Grid {...inputGridSystem}>
+            <SearchBar
+              onEndTyping={handleEndTyping}
+              placeholder="Search by name"
+              fullWidth
+              size="small"
+            />
+          </Grid>
+          <Grid {...inputGridSystem}>
+            <Stack direction="row" justifyContent={"flex-end"}>
+              <Button
+                disabled={!state.selectedGraphicIDs?.length}
+                onClick={handleDeleteItems}
+                variant="contained"
+                color="error"
+              >
+                Delete graphic(s)
+              </Button>
+            </Stack>
+          </Grid>
+        </Grid>
         <ListTable
           rows={filteredGraphics}
           columns={columns}
@@ -179,9 +199,13 @@ function Graphics() {
           onRowSelectionModelChange={onRowSelectionModelChange}
           apiRef={apiRef}
           getRowId={getRowId}
+          sx={{
+            maxWidth: "100vw",
+            border: 0,
+          }}
         />
       </Stack>
-    </Container>
+    </Grid>
   );
 }
 
