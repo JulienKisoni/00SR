@@ -38,36 +38,34 @@ const AddReport = () => {
           <Typography variant="h3" component="h1">
             Error
           </Typography>
-          <Typography variant="subtitle2">No order(s) selected</Typography>
+          <Typography variant="subtitle1">No order(s) selected</Typography>
         </Stack>
       </Container>
     );
   }
 
   return (
-    <Container>
-      <Stack spacing={2.5} direction="column">
-        <Typography variant="h3" component="h1">
-          Create report
-        </Typography>
-        <Typography variant="subtitle2">
-          You're about to create a report for the following order(s)
-        </Typography>
-        {state.tempTargetedOrders.map((order) => {
-          return (
-            <Typography key={order._id} variant="subtitle2">
-              {`- Order #${order.orderNumber}`}
-            </Typography>
-          );
-        })}
-        <ReportFormCtrl
-          mode="add"
-          initialValues={initialValues}
-          reportId=""
-          orders={state.tempTargetedOrders}
-        />
-      </Stack>
-    </Container>
+    <Stack spacing={2.5} direction="column">
+      <Typography variant="h3" component="h1">
+        Create report
+      </Typography>
+      <Typography variant="subtitle1">
+        You're about to create a report for the following order(s)
+      </Typography>
+      {state.tempTargetedOrders.map((order) => {
+        return (
+          <Typography key={order._id} variant="subtitle1">
+            {`- Order #${order.orderNumber}`}
+          </Typography>
+        );
+      })}
+      <ReportFormCtrl
+        mode="add"
+        initialValues={initialValues}
+        reportId=""
+        orders={state.tempTargetedOrders}
+      />
+    </Stack>
   );
 };
 

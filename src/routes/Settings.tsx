@@ -77,7 +77,7 @@ const Settings = () => {
         <Typography variant="h3" component="h1">
           Settings
         </Typography>
-        <Typography variant="subtitle2">
+        <Typography variant="subtitle1">
           Update your profile information and perform some actions.
         </Typography>
       </Stack>

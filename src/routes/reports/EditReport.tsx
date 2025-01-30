@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import { Navigate, useNavigate, useParams } from "react-router";
 import { useSelector, shallowEqual, useDispatch } from "react-redux";
+import { Backdrop, CircularProgress } from "@mui/material";
 
 import { RootState } from "../../services/redux/rootReducer";
 import { ROUTES } from "../../constants/routes";
@@ -87,43 +87,44 @@ const EditReport = () => {
   }
   if (loading) {
     return (
-      <Container>
-        <div>Loading</div>
-      </Container>
+      <Backdrop
+        sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
+        open
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     );
   } else if (state.deny) {
     return <Navigate to={`/${ROUTES.REPORTS}`} replace />;
   }
 
   return (
-    <Container>
-      <Stack spacing={2.5} direction="column">
-        <Typography variant="h3" component="h1">
-          {report?.name}
-        </Typography>
-        <Typography variant="subtitle2">
-          Update the name and/or the description of your report
-        </Typography>
-        <Typography variant="subtitle2">
-          You're about to edit a report of the following order(s)
-        </Typography>
-        {reportOrders.map((order) => {
-          return (
-            <Typography key={order._id} variant="subtitle2">
-              {`- Order #${order.orderNumber}`}
-            </Typography>
-          );
-        })}
-        <ReportFormCtrl
-          mode="edit"
-          initialValues={initialValues}
-          onDeleteReport={handleDeleteReport}
-          reportId={report?._id || ""}
-          createdAt={report?.createdAt}
-          orders={reportOrders}
-        />
-      </Stack>
-    </Container>
+    <Stack spacing={2.5} direction="column">
+      <Typography variant="h3" component="h1">
+        {report?.name}
+      </Typography>
+      <Typography variant="subtitle1">
+        Update the name and/or the description of your report
+      </Typography>
+      <Typography variant="subtitle1">
+        You're about to edit a report of the following order(s)
+      </Typography>
+      {reportOrders.map((order) => {
+        return (
+          <Typography key={order._id} variant="subtitle1">
+            {`- Order #${order.orderNumber}`}
+          </Typography>
+        );
+      })}
+      <ReportFormCtrl
+        mode="edit"
+        initialValues={initialValues}
+        onDeleteReport={handleDeleteReport}
+        reportId={report?._id || ""}
+        createdAt={report?.createdAt}
+        orders={reportOrders}
+      />
+    </Stack>
   );
 };
 

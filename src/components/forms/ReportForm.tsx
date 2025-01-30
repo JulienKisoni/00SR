@@ -2,8 +2,11 @@ import React, { useMemo } from "react";
 import { Formik, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import Stack from "@mui/material/Stack";
-import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import Grid from "@mui/system/Grid";
+
+import StyledInput from "../StyledInput";
+import { inputGridSystem } from "../../constants";
 
 interface FormValues {
   name: string;
@@ -64,35 +67,39 @@ const ReportForm = ({
           const invalid = !dirty || !isValid;
           return (
             <form onSubmit={handleSubmit}>
-              <Stack direction="column" spacing={5}>
-                <TextField
-                  id="report-name"
-                  label="Name"
-                  variant="outlined"
-                  name="name"
-                  disabled={disableAll}
-                  value={values.name}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.name && !!errors.name}
-                  helperText={touched.name ? errors.name : undefined}
-                />
-                <TextField
-                  id="report-description"
-                  label="Description"
-                  variant="outlined"
-                  multiline
-                  disabled={disableAll}
-                  name="description"
-                  value={values.description}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.description && !!errors.description}
-                  helperText={
-                    touched.description ? errors.description : undefined
-                  }
-                />
-                <Stack direction="row">
+              <Grid container direction={"column"} spacing={2}>
+                <Grid {...inputGridSystem}>
+                  <StyledInput
+                    id="report-name"
+                    label="Name"
+                    name="name"
+                    disabled={disableAll}
+                    value={values.name}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.name && !!errors.name}
+                    helperText={touched.name ? errors.name : undefined}
+                  />
+                </Grid>
+                <Grid {...inputGridSystem}>
+                  <StyledInput
+                    id="report-description"
+                    label="Description"
+                    multiline
+                    minRows={4}
+                    maxRows={5}
+                    disabled={disableAll}
+                    name="description"
+                    value={values.description}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.description && !!errors.description}
+                    helperText={
+                      touched.description ? errors.description : undefined
+                    }
+                  />
+                </Grid>
+                <Stack direction="row" spacing={2}>
                   {mode !== "readonly" ? (
                     <Button
                       type="submit"
@@ -103,12 +110,16 @@ const ReportForm = ({
                     </Button>
                   ) : null}
                   {mode === "edit" && onDeleteReport ? (
-                    <Button variant="contained" onClick={onDeleteReport}>
+                    <Button
+                      color="error"
+                      variant="contained"
+                      onClick={onDeleteReport}
+                    >
                       Delete report
                     </Button>
                   ) : null}
                 </Stack>
-              </Stack>
+              </Grid>
             </form>
           );
         }}

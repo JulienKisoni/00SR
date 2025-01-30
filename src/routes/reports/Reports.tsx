@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo } from "react";
-import Container from "@mui/material/Container";
+import Grid from "@mui/system/Grid";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
@@ -16,8 +16,8 @@ import SearchBar from "../../components/SearchBar";
 import ListTable from "../../components/ListTable";
 import { RootState } from "../../services/redux/rootReducer";
 import { ROUTES } from "../../constants/routes";
-import { GenericError } from "../../classes/GenericError";
 import { ReportSrv } from "../../services/controllers/ReportSrv";
+import { inputGridSystem } from "../../constants";
 
 interface State {
   search: string;
@@ -30,12 +30,18 @@ const columns: GridColDef[] = [
     headerName: "Name",
     sortable: false,
     disableColumnMenu: true,
+    flex: 1,
+    align: "left",
+    headerAlign: "left",
   },
   {
     field: "description",
     headerName: "Description",
     sortable: false,
     disableColumnMenu: true,
+    flex: 1,
+    align: "left",
+    headerAlign: "left",
   },
   {
     field: "createdAt",
@@ -44,6 +50,9 @@ const columns: GridColDef[] = [
     sortable: false,
     disableColumnMenu: true,
     valueGetter: (value: string) => new Date(value),
+    flex: 1,
+    align: "left",
+    headerAlign: "left",
   },
   {
     field: "totalItems",
@@ -51,6 +60,9 @@ const columns: GridColDef[] = [
     type: "number",
     sortable: false,
     disableColumnMenu: true,
+    flex: 1,
+    align: "left",
+    headerAlign: "left",
   },
   {
     field: "orders",
@@ -59,6 +71,9 @@ const columns: GridColDef[] = [
     type: "number",
     sortable: false,
     disableColumnMenu: true,
+    flex: 1,
+    align: "left",
+    headerAlign: "left",
   },
   {
     field: "totalPrices",
@@ -67,6 +82,9 @@ const columns: GridColDef[] = [
     type: "number",
     sortable: false,
     disableColumnMenu: true,
+    flex: 1,
+    align: "left",
+    headerAlign: "left",
   },
 ];
 
@@ -167,14 +185,7 @@ function Reports() {
     } finally {
       apiRef.current.setRowSelectionModel([]);
     } */
-  }, [
-    selectedStoreId,
-    connectedUserId,
-    apiRef,
-    state.selectedReportIDs,
-    filteredReports,
-    navigate,
-  ]);
+  }, [selectedStoreId, connectedUserId, state.selectedReportIDs]);
   const getRowId: GridRowIdGetter<Types.IReportDocument> | undefined =
     useCallback((row: Types.IReportDocument) => {
       return row._id;
@@ -212,31 +223,35 @@ function Reports() {
   );
 
   return (
-    <Container>
-      <Stack spacing={2.5} direction="column">
-        <Stack justifyContent="space-between" direction="row">
-          <Typography variant="h3" component="h1">
-            Reports
-          </Typography>
-          <Button
-            disabled={!state.selectedReportIDs?.length}
-            onClick={handleDownloadReports}
-            variant="contained"
-          >
-            Download report(s)
-          </Button>
-        </Stack>
-        <Stack direction="column">
-          <Typography variant="subtitle2">
-            Manage and download your reports
-          </Typography>
-        </Stack>
-        <Stack direction="row" justifyContent="space-between">
+    <Grid container direction={"column"} spacing={2}>
+      <Stack justifyContent="space-between" direction="row">
+        <Typography variant="h3" component="h1">
+          Reports
+        </Typography>
+        <Button
+          disabled={!state.selectedReportIDs?.length}
+          onClick={handleDownloadReports}
+          variant="contained"
+        >
+          Download report(s)
+        </Button>
+      </Stack>
+      <Stack direction="column">
+        <Typography variant="subtitle1">
+          Manage and download your reports
+        </Typography>
+      </Stack>
+      <Grid container direction={"row"}>
+        <Grid {...inputGridSystem}>
           <SearchBar
+            fullWidth
+            size="small"
             onEndTyping={handleEndTyping}
             placeholder="Search by name"
           />
-          <Stack direction="row">
+        </Grid>
+        <Grid {...inputGridSystem}>
+          <Stack direction="row" justifyContent={"flex-end"}>
             <Button
               disabled={!state.selectedReportIDs?.length}
               onClick={handleDeleteItems}
@@ -245,19 +260,23 @@ function Reports() {
               Delete report(s)
             </Button>
           </Stack>
-        </Stack>
-        <ListTable
-          rows={filteredReports}
-          columns={columns}
-          onDeleteClick={handleSingleDelete}
-          onViewClick={handleViewReport}
-          onEditClick={handleEditReport}
-          onRowSelectionModelChange={onRowSelectionModelChange}
-          apiRef={apiRef}
-          getRowId={getRowId}
-        />
-      </Stack>
-    </Container>
+        </Grid>
+      </Grid>
+      <ListTable
+        rows={filteredReports}
+        columns={columns}
+        onDeleteClick={handleSingleDelete}
+        onViewClick={handleViewReport}
+        onEditClick={handleEditReport}
+        onRowSelectionModelChange={onRowSelectionModelChange}
+        apiRef={apiRef}
+        getRowId={getRowId}
+        sx={{
+          maxWidth: "100vw",
+          border: 0,
+        }}
+      />
+    </Grid>
   );
 }
 

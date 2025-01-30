@@ -1,9 +1,11 @@
 import React, { useMemo, useEffect, useState, useCallback } from "react";
-import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
+import Button from "@mui/material/Button";
 import { Navigate, useParams } from "react-router";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
+import { GridColDef, GridRowIdGetter } from "@mui/x-data-grid";
+import { Backdrop, CircularProgress } from "@mui/material";
 
 import { RootState } from "../../services/redux/rootReducer";
 import { ROUTES } from "../../constants/routes";
@@ -11,7 +13,6 @@ import NotFound from "../NotFound";
 import { UsersSrv } from "../../services/controllers/UserSrv";
 import { StoreSrv } from "../../services/controllers/StoreSrv";
 import OrderDetails from "../../components/OrderDetails";
-import { GridColDef, GridRowIdGetter } from "@mui/x-data-grid";
 
 interface FormValues {
   name: string;
@@ -32,12 +33,18 @@ const columns: GridColDef[] = [
     headerName: "Product name",
     sortable: false,
     disableColumnMenu: true,
+    flex: 1,
+    align: "left",
+    headerAlign: "left",
   },
   {
     field: "productDescription",
     headerName: "Product description",
     sortable: false,
     disableColumnMenu: true,
+    flex: 1,
+    align: "left",
+    headerAlign: "left",
   },
   {
     field: "quantity",
@@ -45,6 +52,9 @@ const columns: GridColDef[] = [
     type: "number",
     sortable: false,
     disableColumnMenu: true,
+    flex: 1,
+    align: "left",
+    headerAlign: "left",
   },
   {
     field: "productDetails",
@@ -54,6 +64,9 @@ const columns: GridColDef[] = [
     disableColumnMenu: true,
     valueGetter: (productDetails: Partial<Types.IProductDocument>) =>
       `${productDetails?.unitPrice}$`,
+    flex: 1,
+    align: "left",
+    headerAlign: "left",
   },
   {
     field: "totalPrice",
@@ -62,6 +75,9 @@ const columns: GridColDef[] = [
     type: "number",
     sortable: false,
     disableColumnMenu: true,
+    flex: 1,
+    align: "left",
+    headerAlign: "left",
   },
 ];
 
@@ -211,40 +227,48 @@ const ViewReport = () => {
   }
   if (loading) {
     return (
-      <Container>
-        <div>Loading</div>
-      </Container>
+      <Backdrop
+        sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
+        open
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     );
   } else if (state.deny) {
     return <Navigate to={`/${ROUTES.REPORTS}`} replace />;
   }
 
   return (
-    <Container>
-      <Stack spacing={2.5} direction="column">
+    <Stack spacing={2.5} direction="column">
+      <Stack direction={"row"} justifyContent={"space-between"}>
         <Typography variant="h3" component="h1">
           {report?.name}
         </Typography>
-        <Typography variant="subtitle2">
-          View details about your report
-        </Typography>
-        <Typography variant="subtitle2">
-          Requested by: {reportOwnerName}
-        </Typography>
-        <Typography variant="subtitle2">
-          Generated at: {report?.createdAt}
-        </Typography>
-        <Typography variant="subtitle2">Store: {reportStoreName}</Typography>
-        <Typography variant="subtitle2">
-          Total price: {`${transformedReport?.totalPrices}$`}
-        </Typography>
-        <Typography variant="subtitle2">
-          Description: {report?.description}
-        </Typography>
-        <Typography variant="subtitle2">ORDERS DETAILS</Typography>
-        {renderOrderDetails(transformedReport?.orders || [])}
+        <Button color="error" variant="contained">
+          Delete report
+        </Button>
       </Stack>
-    </Container>
+      <Typography variant="subtitle1">
+        View details about your report
+      </Typography>
+      <Typography variant="subtitle1">
+        Requested by: {reportOwnerName}
+      </Typography>
+      <Typography variant="subtitle1">
+        Generated at: {report?.createdAt}
+      </Typography>
+      <Typography variant="subtitle1">Store: {reportStoreName}</Typography>
+      <Typography variant="subtitle1">
+        Total price: {`${transformedReport?.totalPrices}$`}
+      </Typography>
+      <Typography variant="subtitle1">
+        Description: {report?.description}
+      </Typography>
+      <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+        ORDERS DETAILS
+      </Typography>
+      {renderOrderDetails(transformedReport?.orders || [])}
+    </Stack>
   );
 };
 
