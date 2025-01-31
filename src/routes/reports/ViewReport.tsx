@@ -7,6 +7,7 @@ import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { GridColDef, GridRowIdGetter } from "@mui/x-data-grid";
 import { Backdrop, CircularProgress } from "@mui/material";
 import Grid from "@mui/system/Grid";
+import { usePDF, Resolution, Margin, Options } from "react-to-pdf";
 
 import { RootState } from "../../services/redux/rootReducer";
 import { ROUTES } from "../../constants/routes";
@@ -15,6 +16,7 @@ import { UsersSrv } from "../../services/controllers/UserSrv";
 import { StoreSrv } from "../../services/controllers/StoreSrv";
 import OrderDetails from "../../components/OrderDetails";
 import { centeredTableGridSystem } from "../../constants";
+// const pfrWorker = require("../../services/workers/pdf");
 
 interface FormValues {
   name: string;
@@ -87,6 +89,8 @@ const ViewReport = () => {
   const { reportId } = useParams();
   const dispatch = useDispatch();
   const [state, setState] = useState({ deny: false });
+  const [worker, setWorker] = useState<Worker>();
+  const { toPDF, targetRef } = usePDF({ filename: "page.pdf" });
 
   const report = useSelector((state: RootState) => {
     return state.reports.find((_report) => _report._id === reportId);
@@ -162,6 +166,22 @@ const ViewReport = () => {
     }
   }, [connectedUser, report]);
 
+  useEffect(() => {
+    // Create a new web worker
+    // const myWorker: any = {};
+    // // const myWorker = new Worker(pfrWorker);
+    // // Set up event listener for messages from the worker
+    // myWorker.onmessage = function (event: any) {
+    //   console.log("Received result from worker:", event.data);
+    // };
+    // // Save the worker instance to state
+    // setWorker(myWorker);
+    // // Clean up the worker when the component unmounts
+    // return () => {
+    //   myWorker.terminate();
+    // };
+  }, []);
+
   const initialValues: FormValues | null = useMemo(() => {
     if (!report) {
       return null;
@@ -172,6 +192,28 @@ const ViewReport = () => {
     };
     return values;
   }, [report]);
+
+  const onDownloadReport = useCallback(() => {
+    try {
+      const options: Options = {
+        method: "save",
+        resolution: Resolution.MEDIUM,
+        page: {
+          // margin is in MM, default is Margin.NONE = 0
+          margin: Margin.LARGE,
+          format: "A4",
+          orientation: "portrait",
+        },
+        canvas: {
+          mimeType: "image/jpeg",
+          qualityRatio: 1,
+        },
+      };
+      toPDF(options);
+    } catch (error) {
+      console.log("Error ", error);
+    }
+  }, [toPDF]);
 
   const getRowId: GridRowIdGetter<Types.CartItem> | undefined = useCallback(
     (row: Types.CartItem) => {
@@ -244,12 +286,12 @@ const ViewReport = () => {
   }
 
   return (
-    <Stack direction="column">
+    <Stack ref={targetRef} direction="column">
       <Stack direction={"row"} justifyContent={"space-between"}>
         <Typography variant="h3" component="h1">
           {report?.name}
         </Typography>
-        <Button color="error" variant="contained">
+        <Button onClick={onDownloadReport} color="error" variant="contained">
           Delete report
         </Button>
       </Stack>

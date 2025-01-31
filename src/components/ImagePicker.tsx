@@ -5,6 +5,8 @@ import CreateIcon from "@mui/icons-material/Create";
 import { styled } from "@mui/material/styles";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 import Cropper from "react-easy-crop";
 import type { Area, Point } from "react-easy-crop";
 import { useNotifications } from "@toolpad/core";
@@ -12,6 +14,12 @@ import { useNotifications } from "@toolpad/core";
 import { FileUpload } from "../classes/FileUpload";
 import { GenericError } from "../classes/GenericError";
 import Modal from "./Modal";
+
+const getDevices = async () => {
+  const mediaDevices = await navigator.mediaDevices.enumerateDevices();
+  const videoDevices = mediaDevices.filter(({ kind }) => kind === "videoinput");
+  console.log({ mediaDevices, videoDevices });
+};
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -41,6 +49,8 @@ interface PickerState {
   file: File | null;
   zoom: number;
   uploading: boolean;
+  menuOpen: boolean;
+  anchorEl: (EventTarget & HTMLButtonElement) | null;
 }
 
 const initialCrop = {
@@ -64,6 +74,8 @@ const ImagePicker = ({
     croppedAreaPixels: null,
     zoom: 1,
     uploading: false,
+    menuOpen: false,
+    anchorEl: null,
   });
   const notifications = useNotifications();
 
@@ -73,6 +85,9 @@ const ImagePicker = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultSrc]);
+  useEffect(() => {
+    getDevices();
+  }, []);
 
   const handleClose = useCallback(() => {
     setState((prev) => ({
@@ -171,6 +186,23 @@ const ImagePicker = ({
       setState((prev) => ({ ...prev, uploading: false }));
     }
   }, [state, onError, onSuccess, notifications]);
+  const handleMenuBtnClick = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+      setState((prev) => ({
+        ...prev,
+        menuOpen: true,
+        anchorEl: event.currentTarget,
+      }));
+    },
+    []
+  );
+  const closeMenu = useCallback(() => {
+    setState((prev) => ({
+      ...prev,
+      menuOpen: false,
+      anchorEl: null,
+    }));
+  }, []);
 
   return (
     <React.Fragment>
@@ -195,21 +227,45 @@ const ImagePicker = ({
         />
         <Button
           size="small"
-          component="label"
           role={undefined}
           variant="contained"
           tabIndex={-1}
           disabled={disabled}
           className="btn--upload__icon"
           sx={{ marginBottom: 2, backgroundColor: "white" }}
+          onClick={handleMenuBtnClick}
         >
           <CreateIcon fontSize="small" sx={{ color: "black" }} />
-          <VisuallyHiddenInput
-            type="file"
-            onChange={onFileChange}
-            multiple={false}
-          />
         </Button>
+        <Menu
+          id="basic-menu"
+          anchorEl={state.anchorEl}
+          open={state.menuOpen}
+          onClose={() => {
+            setState((prev) => ({ ...prev, menuOpen: false }));
+          }}
+          MenuListProps={{
+            "aria-labelledby": "basic-button",
+          }}
+        >
+          <MenuItem>
+            <Button
+              component="label"
+              role={undefined}
+              variant="text"
+              tabIndex={-1}
+              sx={{ padding: 0, color: "black" }}
+            >
+              Pick from Gallery
+              <VisuallyHiddenInput
+                type="file"
+                onChange={onFileChange}
+                multiple={false}
+              />
+            </Button>
+          </MenuItem>
+          <MenuItem onClick={closeMenu}>Take a picture</MenuItem>
+        </Menu>
       </div>
       <Button
         disabled={disabled}
