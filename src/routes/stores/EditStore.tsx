@@ -65,7 +65,7 @@ const EditStore = () => {
           <CircularProgress color="inherit" />
         </Backdrop>
       ) : (
-        <Stack direction="column">
+        <Stack spacing={2} direction="column">
           <Typography variant="h3" component="h1">
             Update store
           </Typography>

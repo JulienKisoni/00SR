@@ -228,6 +228,7 @@ const StoreForm = ({
                       sx={{ marginLeft: 2 }}
                       variant="contained"
                       onClick={onDeleteStore}
+                      color="error"
                     >
                       Delete store
                     </Button>

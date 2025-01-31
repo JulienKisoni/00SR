@@ -15,6 +15,7 @@ import ReceiptIcon from "@mui/icons-material/Receipt";
 import DescriptionIcon from "@mui/icons-material/Description";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import SettingsIcon from "@mui/icons-material/Settings";
+import WidgetsIcon from "@mui/icons-material/Widgets";
 import { NavLink } from "react-router";
 
 import { protectedRoutes, ROUTES } from "../constants/routes";
@@ -63,6 +64,13 @@ const AppDrawer = ({ children }: PropsWithChildren) => {
             height: "100%",
           }}
         >
+          <ListItem disablePadding>
+            <ListItemButton>
+              <ListItemIcon>
+                <WidgetsIcon sx={{ color: "white" }} fontSize="large" />
+              </ListItemIcon>
+            </ListItemButton>
+          </ListItem>
           {protectedRoutes.map((route) => (
             <NavLink key={route.route} to={`/${route.route}`}>
               {({ isActive }) => {

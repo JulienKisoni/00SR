@@ -6,6 +6,7 @@ import { Navigate, useParams } from "react-router";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { GridColDef, GridRowIdGetter } from "@mui/x-data-grid";
 import { Backdrop, CircularProgress } from "@mui/material";
+import Grid from "@mui/system/Grid";
 
 import { RootState } from "../../services/redux/rootReducer";
 import { ROUTES } from "../../constants/routes";
@@ -13,6 +14,7 @@ import NotFound from "../NotFound";
 import { UsersSrv } from "../../services/controllers/UserSrv";
 import { StoreSrv } from "../../services/controllers/StoreSrv";
 import OrderDetails from "../../components/OrderDetails";
+import { centeredTableGridSystem } from "../../constants";
 
 interface FormValues {
   name: string;
@@ -209,13 +211,16 @@ const ViewReport = () => {
           items,
         };
         return (
-          <OrderDetails
-            key={order._id}
-            getRowId={getRowId}
-            columns={columns}
-            selectedOrder={selectedOrder}
-            ordersPagination={undefined}
-          />
+          <Grid key={order._id} direction="row" {...centeredTableGridSystem}>
+            <OrderDetails
+              variant="small"
+              getRowId={getRowId}
+              columns={columns}
+              selectedOrder={selectedOrder}
+              ordersPagination={undefined}
+              listSx={{ border: 0, maxWidth: "70vw" }}
+            />
+          </Grid>
         );
       });
     },
@@ -248,10 +253,10 @@ const ViewReport = () => {
           Delete report
         </Button>
       </Stack>
-      <Typography variant="subtitle1">
+      <Typography mt={2} variant="subtitle1">
         View details about your report
       </Typography>
-      <Typography variant="subtitle1">
+      <Typography mt={2} variant="subtitle1">
         Requested by: {reportOwnerName}
       </Typography>
       <Typography variant="subtitle1">
@@ -264,10 +269,12 @@ const ViewReport = () => {
       <Typography variant="subtitle1">
         Description: {report?.description}
       </Typography>
-      <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+      <Typography mt={2} variant="subtitle1" sx={{ fontWeight: "bold" }}>
         ORDERS DETAILS
       </Typography>
-      {renderOrderDetails(transformedReport?.orders || [])}
+      <Grid mt={7} container direction="column">
+        {renderOrderDetails(transformedReport?.orders || [])}
+      </Grid>
     </Stack>
   );
 };

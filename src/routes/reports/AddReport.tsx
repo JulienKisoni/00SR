@@ -49,12 +49,14 @@ const AddReport = () => {
       <Typography variant="h3" component="h1">
         Create report
       </Typography>
-      <Typography variant="subtitle1">
-        You're about to create a report for the following order(s)
+      <Typography mt={2} variant="subtitle1">
+        You're about to create a report for the following order(s):
       </Typography>
-      {state.tempTargetedOrders.map((order) => {
+      {state.tempTargetedOrders.map((order, idx) => {
+        const lastIndex = idx === state.tempTargetedOrders.length - 1;
+        const mb = lastIndex ? 4 : 0;
         return (
-          <Typography key={order._id} variant="subtitle1">
+          <Typography mb={mb} ml={3} key={order._id} variant="subtitle1">
             {`- Order #${order.orderNumber}`}
           </Typography>
         );

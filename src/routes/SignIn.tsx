@@ -15,6 +15,7 @@ import Grid from "@mui/system/Grid";
 import { NavLink } from "react-router";
 import { Formik } from "formik";
 import * as Yup from "yup";
+import WidgetsIcon from "@mui/icons-material/Widgets";
 
 import { ROUTES } from "../constants/routes";
 import { centeredInputGridSystem } from "../constants";
@@ -39,6 +40,12 @@ const SignIn = ({ initialValues, validationSchema, onSubmit }: Props) => {
 
   return (
     <Container>
+      <Stack mt={4} direction={"row"} alignItems="center">
+        <WidgetsIcon fontSize="large" color="primary" />
+        <Typography ml={2} component="h1" variant="h5">
+          My Inventory Manager
+        </Typography>
+      </Stack>
       <Grid mt={10} container direction={"column"} spacing={2}>
         <Grid {...centeredInputGridSystem}>
           <Typography variant="h3" component="h1">
@@ -130,7 +137,12 @@ const SignIn = ({ initialValues, validationSchema, onSubmit }: Props) => {
                 <Grid {...centeredInputGridSystem}>
                   <Stack direction={"row"} justifyContent={"flex-end"}>
                     <NavLink to={`/${ROUTES.FORGOT_PASSWORD}`}>
-                      <Button variant="text">Forgot password</Button>
+                      <Button
+                        sx={{ textDecoration: "underline" }}
+                        variant="text"
+                      >
+                        Forgot password
+                      </Button>
                     </NavLink>
                   </Stack>
                 </Grid>
@@ -155,7 +167,12 @@ const SignIn = ({ initialValues, validationSchema, onSubmit }: Props) => {
                       Don't have an account?
                     </Typography>
                     <NavLink to={`/${ROUTES.SIGNUP}`}>
-                      <Button variant="text">Sign up</Button>
+                      <Button
+                        sx={{ textDecoration: "underline" }}
+                        variant="text"
+                      >
+                        Sign up
+                      </Button>
                     </NavLink>
                   </Stack>
                 </Grid>

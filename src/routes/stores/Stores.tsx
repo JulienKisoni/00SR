@@ -138,6 +138,7 @@ function Stores() {
         onDeleteClick={handleDeleteClick}
         onViewClick={handleViewClick}
         onEditClick={handleEditClick}
+        checkboxSelection={false}
         sx={{
           maxWidth: "100vw",
           border: 0,

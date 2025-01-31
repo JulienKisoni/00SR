@@ -27,6 +27,22 @@ export const centeredInputGridSystem: GridProps = {
     xl: 3,
   },
 };
+export const centeredTableGridSystem: GridProps = {
+  size: {
+    xs: 12,
+    sm: 12,
+    md: 8,
+    lg: 8,
+    xl: 8,
+  },
+  offset: {
+    xs: 0,
+    sm: 0,
+    md: 2,
+    lg: 2,
+    xl: 2,
+  },
+};
 export const inputGridSystem: GridProps = {
   size: {
     xs: 12,

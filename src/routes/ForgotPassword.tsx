@@ -10,6 +10,7 @@ import Grid from "@mui/system/Grid";
 import { NavLink } from "react-router";
 import { Formik, FormikHelpers } from "formik";
 import * as Yup from "yup";
+import WidgetsIcon from "@mui/icons-material/Widgets";
 
 import { ROUTES } from "../constants/routes";
 import { centeredInputGridSystem } from "../constants";
@@ -30,6 +31,12 @@ const ForgotPassword = ({
 }: Props) => {
   return (
     <Container>
+      <Stack mt={4} direction={"row"} alignItems="center">
+        <WidgetsIcon fontSize="large" color="primary" />
+        <Typography ml={2} component="h1" variant="h5">
+          My Inventory Manager
+        </Typography>
+      </Stack>
       <Grid mt={10} container direction={"column"} spacing={2}>
         <Grid {...centeredInputGridSystem}>
           <Typography variant="h3" component="h1">
@@ -104,7 +111,9 @@ const ForgotPassword = ({
                     Already have an account?
                   </Typography>
                   <NavLink to={`/${ROUTES.SIGNIN}`}>
-                    <Button variant="text">Sign in</Button>
+                    <Button sx={{ textDecoration: "underline" }} variant="text">
+                      Sign in
+                    </Button>
                   </NavLink>
                 </Stack>
               </Grid>

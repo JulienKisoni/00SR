@@ -103,15 +103,22 @@ const EditGraphic = () => {
       <Typography variant="h3" component="h1">
         {graphic?.name}
       </Typography>
-      <Typography variant="subtitle1">
+      <Typography mt={2} variant="subtitle1">
         Update the name and/or the description of your graphic
       </Typography>
       <Typography variant="subtitle1">
         You're about to edit a graphic of the following product(s)
       </Typography>
-      {graphicProducts.map((product) => {
+      {graphicProducts.map((product, idx) => {
+        const lastIndex = idx === graphicProducts.length - 1;
+        const mb = lastIndex ? 4 : 0;
         return (
-          <Typography key={product.productId} variant="subtitle1">
+          <Typography
+            mb={mb}
+            ml={3}
+            key={product.productId}
+            variant="subtitle1"
+          >
             {`- Order #${product.productName}`}
           </Typography>
         );

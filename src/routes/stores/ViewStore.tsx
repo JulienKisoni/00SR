@@ -56,7 +56,7 @@ const ViewStore = () => {
 
   return (
     <React.Fragment>
-      <Stack direction="column">
+      <Stack spacing={2} direction="column">
         <Typography variant="h3" component="h1">
           {store?.name}
         </Typography>

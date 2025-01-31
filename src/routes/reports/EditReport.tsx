@@ -103,15 +103,17 @@ const EditReport = () => {
       <Typography variant="h3" component="h1">
         {report?.name}
       </Typography>
-      <Typography variant="subtitle1">
-        Update the name and/or the description of your report
+      <Typography mt={2} variant="subtitle1">
+        Update the name and/or the description of your report.
       </Typography>
       <Typography variant="subtitle1">
-        You're about to edit a report of the following order(s)
+        You're about to edit a report of the following order(s):
       </Typography>
-      {reportOrders.map((order) => {
+      {reportOrders.map((order, idx) => {
+        const lastIndex = idx === reportOrders.length - 1;
+        const mb = lastIndex ? 4 : 0;
         return (
-          <Typography key={order._id} variant="subtitle1">
+          <Typography mb={mb} ml={3} key={order._id} variant="subtitle1">
             {`- Order #${order.orderNumber}`}
           </Typography>
         );

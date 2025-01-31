@@ -1,9 +1,10 @@
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
-import React from "react";
+import React, { useMemo } from "react";
 import ListTable from "./ListTable";
 import { GridColDef, GridRowIdGetter } from "@mui/x-data-grid";
+import { SxProps, Theme } from "@mui/material";
 
 interface SelectedOrder {
   orderNumber: string;
@@ -21,6 +22,8 @@ interface Props {
   getRowId: GridRowIdGetter<Types.CartItem> | undefined;
   handleDeleteOrder?: () => void;
   ordersPagination: true | undefined;
+  listSx?: SxProps<Theme>;
+  variant?: "small";
 }
 
 const OrderDetails = ({
@@ -30,11 +33,42 @@ const OrderDetails = ({
   getRowId,
   handleDeleteOrder,
   ordersPagination,
+  listSx,
+  variant,
 }: Props) => {
+  const titleSx = useMemo(() => {
+    if (!variant) {
+      return undefined;
+    }
+    return {
+      fontSize: 17,
+      fontWeight: "bold",
+    };
+  }, [variant]);
+  const title2Sx = useMemo(() => {
+    if (!variant) {
+      return {
+        fontWeight: "bold",
+      };
+    }
+    return {
+      fontSize: 14,
+      fontWeight: "bold",
+    };
+  }, [variant]);
+  const subtitleSx = useMemo(() => {
+    if (!variant) {
+      return undefined;
+    }
+    return {
+      fontSize: 15,
+      lineHeight: 1.2,
+    };
+  }, [variant]);
   return (
     <Stack direction="column">
       <Stack justifyContent="space-between" direction="row">
-        <Typography variant="h3" component="h1">
+        <Typography sx={titleSx} variant="h3" component="h1">
           Order {`#${selectedOrder.orderNumber}`}
         </Typography>
         {handleDeleteOrder ? (
@@ -45,21 +79,23 @@ const OrderDetails = ({
       </Stack>
       <Stack direction="column">
         {subtitle ? (
-          <Typography variant="subtitle1">{subtitle}</Typography>
+          <Typography mt={2} variant="subtitle1">
+            {subtitle}
+          </Typography>
         ) : null}
-        <Typography variant="subtitle1">
+        <Typography sx={subtitleSx} variant="subtitle1">
           Ordered by: {selectedOrder.orderOwnerName}
         </Typography>
-        <Typography variant="subtitle1">
+        <Typography sx={subtitleSx} variant="subtitle1">
           Ordered at: {selectedOrder.createdAt}
         </Typography>
-        <Typography variant="subtitle1">
+        <Typography sx={subtitleSx} variant="subtitle1">
           Store: {selectedOrder.orderStoreName}
         </Typography>
-        <Typography variant="subtitle1">
+        <Typography sx={subtitleSx} variant="subtitle1">
           Total price: {`${selectedOrder.totalPrice}$`}
         </Typography>
-        <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+        <Typography mt={2} variant="subtitle1" sx={title2Sx}>
           ITEMS DETAILS
         </Typography>
       </Stack>
@@ -74,6 +110,7 @@ const OrderDetails = ({
         sx={{
           maxWidth: "100vw",
           border: 0,
+          ...listSx,
         }}
       />
     </Stack>

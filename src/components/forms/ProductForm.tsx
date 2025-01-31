@@ -159,7 +159,11 @@ const ProductForm = ({
                     </Button>
                   ) : null}
                   {mode === "edit" && onDeleteProduct ? (
-                    <Button variant="contained" onClick={onDeleteProduct}>
+                    <Button
+                      color="error"
+                      variant="contained"
+                      onClick={onDeleteProduct}
+                    >
                       Delete store
                     </Button>
                   ) : null}

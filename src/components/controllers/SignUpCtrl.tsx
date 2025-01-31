@@ -1,13 +1,21 @@
-import React, { useCallback, memo } from "react";
+import React, { useCallback, memo, useState } from "react";
 import * as Yup from "yup";
 import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
+import Alert from "@mui/material/Alert";
 
 import SignUp from "../../routes/SignUp";
 import { UsersSrv } from "../../services/controllers/UserSrv";
 import { User } from "../../classes/User";
 import { ROUTES } from "../../constants/routes";
 import { regex } from "../../constants";
+
+interface State {
+  alert: {
+    severity: "success" | "error";
+    message: string;
+  };
+}
 
 interface FormValues {
   email: string;
@@ -39,6 +47,9 @@ const signupSchema = Yup.object().shape({
 const SignUpCtrl = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [state, setState] = useState<State>({
+    alert: { severity: "success", message: "" },
+  });
 
   const onSubmit = useCallback(
     (values: FormValues) => {
@@ -50,6 +61,10 @@ const SignUpCtrl = () => {
       });
       const { error } = usersSrv.addOne(user);
       if (error) {
+        setState((prev) => ({
+          ...prev,
+          alert: { message: error.publicMessage, severity: "error" },
+        }));
         alert(error.publicMessage);
         return;
       }
@@ -59,11 +74,26 @@ const SignUpCtrl = () => {
   );
 
   return (
-    <SignUp
-      initialValues={initialValues}
-      validationSchema={signupSchema}
-      onSubmit={onSubmit}
-    />
+    <React.Fragment>
+      {state.alert.message ? (
+        <Alert
+          severity={state.alert.severity}
+          onClose={() => {
+            setState((prev) => ({
+              ...prev,
+              alert: { severity: "success", message: "" },
+            }));
+          }}
+        >
+          {state.alert.message}
+        </Alert>
+      ) : null}
+      <SignUp
+        initialValues={initialValues}
+        validationSchema={signupSchema}
+        onSubmit={onSubmit}
+      />
+    </React.Fragment>
   );
 };
 

@@ -49,7 +49,7 @@ const UpdateProfile = ({
         const disabled = !dirty || !isValid;
         return (
           <form onSubmit={handleSubmit}>
-            <Grid container direction={"column"} spacing={2}>
+            <Grid mt={3} container direction={"column"} spacing={2}>
               <Grid {...inputGridSystem}>
                 <FormControl fullWidth variant="standard">
                   <InputLabel margin="dense" shrink htmlFor="username">

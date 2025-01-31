@@ -114,7 +114,7 @@ const ViewGraphic = () => {
       <Typography variant="h3" component="h1">
         {graphic?.name}
       </Typography>
-      <Typography variant="subtitle1">
+      <Typography mt={2} variant="subtitle1">
         View details about your graphic
       </Typography>
       <Typography variant="subtitle1">
@@ -127,7 +127,7 @@ const ViewGraphic = () => {
       <Typography variant="subtitle1">
         Description: {graphic?.description}
       </Typography>
-      <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+      <Typography mt={2} variant="subtitle1" sx={{ fontWeight: "bold" }}>
         PRODUCTS DETAILS
       </Typography>
       <Grid container direction={"row"}>

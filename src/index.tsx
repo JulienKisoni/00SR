@@ -32,6 +32,10 @@ const theme = createTheme({
       fontSize: "2rem",
       fontWeight: 500,
     },
+    subtitle1: {
+      lineHeight: 1.3,
+      fontWeight: 400,
+    },
     subtitle2: {
       color: "rgb(141, 139, 139)",
       fontWeight: 300,

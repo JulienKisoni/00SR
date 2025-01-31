@@ -68,13 +68,20 @@ const AddGraphic = () => {
       <Typography variant="h3" component="h1">
         Create graphic
       </Typography>
-      <Typography variant="subtitle1">
-        You're about to create a graphic for the following product(s)
+      <Typography mt={2} variant="subtitle1">
+        You're about to create a graphic for the following product(s):
       </Typography>
-      {state.tempTargetedProducts.map((product) => {
+      {state.tempTargetedProducts.map((product, idx) => {
+        const lastIndex = idx === state.tempTargetedProducts.length - 1;
+        const mb = lastIndex ? 4 : 0;
         return (
-          <Typography key={product.productId} variant="subtitle1">
-            {product.productName}
+          <Typography
+            mb={mb}
+            key={product.productId}
+            variant="subtitle1"
+            ml={3}
+          >
+            {`- ${product.productName}`}
           </Typography>
         );
       })}

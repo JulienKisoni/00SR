@@ -256,6 +256,7 @@ function Reports() {
               disabled={!state.selectedReportIDs?.length}
               onClick={handleDeleteItems}
               variant="contained"
+              color="error"
             >
               Delete report(s)
             </Button>
