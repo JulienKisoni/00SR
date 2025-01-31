@@ -3,6 +3,7 @@ import { FormikHelpers } from "formik";
 import * as Yup from "yup";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
+import { useNotifications } from "@toolpad/core";
 
 import ImagePicker from "../../ImagePicker";
 import { GenericError } from "../../../classes/GenericError";
@@ -51,6 +52,7 @@ const ProductFormCtlr = ({
 }: Props) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const notifications = useNotifications();
 
   const connectedUser = useSelector((state: RootState) => {
     return state.user.connectedUser;
@@ -64,10 +66,16 @@ const ProductFormCtlr = ({
   const onSubmit = useCallback(
     async (values: FormValues, helpers: FormikHelpers<FormValues>) => {
       if (!connectedUser) {
-        alert("No connected user");
+        notifications.show("No connected user", {
+          autoHideDuration: 5000,
+          severity: "error",
+        });
         return;
       } else if (!selectedStore) {
-        alert("No selected store");
+        notifications.show("No selected store", {
+          autoHideDuration: 5000,
+          severity: "error",
+        });
         return;
       }
       const newProduct = new Product({
@@ -90,13 +98,19 @@ const ProductFormCtlr = ({
         const payload = newProduct.toObject();
         const { error } = productSrv.addOne<Types.IProductDocument>(payload);
         if (error) {
-          alert(error.publicMessage);
+          notifications.show(error.publicMessage, {
+            autoHideDuration: 5000,
+            severity: "error",
+          });
           return;
         } else {
           storeSrv.addProductToStore(selectedStore._id || "", newProduct._id);
           helpers.resetForm();
           await helpers.validateForm();
-          alert("Product created");
+          notifications.show("Product created", {
+            autoHideDuration: 5000,
+            severity: "success",
+          });
           navigate(`/${ROUTES.PRODUCTS}`, { replace: true });
         }
       } else if (mode === "edit") {
@@ -113,7 +127,10 @@ const ProductFormCtlr = ({
         productSrv.updateOne(productId, payload);
         helpers.resetForm({ values });
         await helpers.validateForm();
-        alert("Product updated");
+        notifications.show("Product updated", {
+          autoHideDuration: 5000,
+          severity: "success",
+        });
       }
     },
     [
@@ -125,11 +142,18 @@ const ProductFormCtlr = ({
       productId,
       selectedStore,
       navigate,
+      notifications,
     ]
   );
-  const onFileUploadError = useCallback((error: GenericError) => {
-    alert(error.publicMessage);
-  }, []);
+  const onFileUploadError = useCallback(
+    (error: GenericError) => {
+      notifications.show(error.publicMessage, {
+        autoHideDuration: 5000,
+        severity: "error",
+      });
+    },
+    [notifications]
+  );
   const onFileUploadSuccess = useCallback(
     ({ downloadURL }: { downloadURL: string }) => {
       setState((prev) => ({ ...prev, picture: downloadURL }));

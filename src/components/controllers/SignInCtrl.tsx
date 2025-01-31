@@ -2,6 +2,7 @@ import React, { useCallback, memo } from "react";
 import * as Yup from "yup";
 import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
+import { useNotifications } from "@toolpad/core/useNotifications";
 
 import SignIn from "../../routes/SignIn";
 import { UsersSrv } from "../../services/controllers/UserSrv";
@@ -29,18 +30,22 @@ const signinSchema = Yup.object().shape({
 const SignInCtrl = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const notifications = useNotifications();
 
   const onSubmit = useCallback(
     (values: FormValues) => {
       const usersSrv = new UsersSrv(dispatch);
       const { error } = usersSrv.login(values);
       if (error) {
-        alert(error.publicMessage);
+        notifications.show(error.publicMessage, {
+          severity: "error",
+          autoHideDuration: 5000,
+        });
         return;
       }
       navigate(`/${ROUTES.STORES}`);
     },
-    [navigate, dispatch]
+    [navigate, dispatch, notifications]
   );
   return (
     <SignIn

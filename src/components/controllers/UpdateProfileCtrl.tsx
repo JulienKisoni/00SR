@@ -3,6 +3,7 @@ import * as Yup from "yup";
 import { FormikHelpers } from "formik";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import Box from "@mui/material/Box";
+import { useNotifications } from "@toolpad/core";
 
 import { UsersSrv } from "../../services/controllers/UserSrv";
 import { RootState } from "../../services/redux/rootReducer";
@@ -29,6 +30,7 @@ const UpdateProfileCtrl = () => {
     return state.user.connectedUser;
   }, shallowEqual);
   const dispatch = useDispatch();
+  const notifications = useNotifications();
 
   const initialValues = useMemo(() => {
     const data = {
@@ -38,16 +40,28 @@ const UpdateProfileCtrl = () => {
     return data;
   }, [connectedUser]);
 
-  const onFileUploadError = useCallback((error: GenericError) => {
-    alert(error.publicMessage);
-  }, []);
+  const onFileUploadError = useCallback(
+    (error: GenericError) => {
+      notifications.show(error.publicMessage, {
+        autoHideDuration: 5000,
+        severity: "error",
+      });
+    },
+    [notifications]
+  );
   const onFileUploadSuccess = useCallback(
     ({ downloadURL }: { downloadURL: string }) => {
       if (!connectedUser) {
-        alert("No connected user");
+        notifications.show("No connected user", {
+          autoHideDuration: 5000,
+          severity: "error",
+        });
         return;
       }
-      alert("Upload success");
+      notifications.show("Upload success", {
+        autoHideDuration: 5000,
+        severity: "success",
+      });
       const usersSrv = new UsersSrv(dispatch);
       const userId = connectedUser?._id || "";
       const profile = connectedUser?.profile || {};
@@ -59,7 +73,7 @@ const UpdateProfileCtrl = () => {
       };
       usersSrv.updateOne(userId, payload);
     },
-    [dispatch, connectedUser]
+    [dispatch, connectedUser, notifications]
   );
 
   const onSubmit = useCallback(
@@ -77,13 +91,16 @@ const UpdateProfileCtrl = () => {
         const usersSrv = new UsersSrv(dispatch);
         const { error } = usersSrv.updateOne(userId, payload);
         if (error) {
-          alert(error.publicMessage);
+          notifications.show(error.publicMessage, {
+            autoHideDuration: 5000,
+            severity: "error",
+          });
           return;
         }
         helpers.resetForm({ values });
       }
     },
-    [dispatch, connectedUser]
+    [dispatch, connectedUser, notifications]
   );
 
   if (!connectedUser || !initialValues.email || !initialValues.username) {

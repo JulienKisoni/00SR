@@ -3,6 +3,7 @@ import { FormikHelpers } from "formik";
 import * as Yup from "yup";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
+import { useNotifications } from "@toolpad/core";
 
 import { RootState } from "../../../services/redux/rootReducer";
 import { ROUTES } from "../../../constants/routes";
@@ -42,6 +43,7 @@ const ReportFormCtrl = ({
 }: Props) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const notifications = useNotifications();
 
   const connectedUser = useSelector((state: RootState) => {
     return state.user.connectedUser;
@@ -55,10 +57,16 @@ const ReportFormCtrl = ({
   const onSubmit = useCallback(
     async (values: FormValues, helpers: FormikHelpers<FormValues>) => {
       if (!connectedUser) {
-        alert("No connected user");
+        notifications.show("No connected user", {
+          autoHideDuration: 5000,
+          severity: "error",
+        });
         return;
       } else if (!selectedStore) {
-        alert("No selected store");
+        notifications.show("No selected store", {
+          autoHideDuration: 5000,
+          severity: "error",
+        });
         return;
       }
       // TODO: create report with max 4 orders
@@ -75,13 +83,19 @@ const ReportFormCtrl = ({
         const payload = newReport.toObject();
         const { error } = reportSrv.addOne<Types.IReportDocument>(payload);
         if (error) {
-          alert(error.publicMessage);
+          notifications.show(error.publicMessage, {
+            autoHideDuration: 5000,
+            severity: "error",
+          });
           return;
         } else {
           localStorage.removeItem("tempTargetedOrders");
           helpers.resetForm();
           await helpers.validateForm();
-          alert("Report created");
+          notifications.show("Report created", {
+            autoHideDuration: 5000,
+            severity: "success",
+          });
           navigate(`/${ROUTES.REPORTS}`, { replace: true });
         }
       } else if (mode === "edit") {
@@ -89,7 +103,10 @@ const ReportFormCtrl = ({
         reportSrv.updateOne(reportId, payload);
         helpers.resetForm({ values });
         await helpers.validateForm();
-        alert("Report updated");
+        notifications.show("Report updated", {
+          autoHideDuration: 5000,
+          severity: "success",
+        });
       }
     },
     [
@@ -102,6 +119,7 @@ const ReportFormCtrl = ({
       reportId,
       reportSrv,
       orders,
+      notifications,
     ]
   );
 

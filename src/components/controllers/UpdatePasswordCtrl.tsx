@@ -2,6 +2,7 @@ import React, { useCallback } from "react";
 import * as Yup from "yup";
 import { FormikHelpers } from "formik";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
+import { useNotifications } from "@toolpad/core";
 
 import UpdatePassword from "../UpdatePassword";
 import { UsersSrv } from "../../services/controllers/UserSrv";
@@ -40,6 +41,7 @@ const UpdatePasswordCtrl = () => {
     return { userId: user?._id || "", email: user?.email || "" };
   }, shallowEqual);
   const dispatch = useDispatch();
+  const notifications = useNotifications();
 
   const onSubmit = useCallback(
     (values: FormValues, helpers: FormikHelpers<FormValues>) => {
@@ -51,12 +53,15 @@ const UpdatePasswordCtrl = () => {
         newPassword: values.newPassword,
       });
       if (error) {
-        alert(error.publicMessage);
+        notifications.show(error.publicMessage, {
+          autoHideDuration: 5000,
+          severity: "error",
+        });
         return;
       }
       helpers.resetForm();
     },
-    [dispatch, userId, email]
+    [dispatch, userId, email, notifications]
   );
 
   return (

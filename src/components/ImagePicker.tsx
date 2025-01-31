@@ -7,6 +7,7 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import Cropper from "react-easy-crop";
 import type { Area, Point } from "react-easy-crop";
+import { useNotifications } from "@toolpad/core";
 
 import { FileUpload } from "../classes/FileUpload";
 import { GenericError } from "../classes/GenericError";
@@ -64,6 +65,7 @@ const ImagePicker = ({
     zoom: 1,
     uploading: false,
   });
+  const notifications = useNotifications();
 
   useEffect(() => {
     if (defaultSrc && defaultSrc !== state.finalSrc) {
@@ -162,10 +164,13 @@ const ImagePicker = ({
       }
     } catch (error: any) {
       const _error = new GenericError(error?.message, "Error cropping image");
-      alert(_error.publicMessage);
+      notifications.show(_error.publicMessage, {
+        autoHideDuration: 5000,
+        severity: "error",
+      });
       setState((prev) => ({ ...prev, uploading: false }));
     }
-  }, [state, onError, onSuccess]);
+  }, [state, onError, onSuccess, notifications]);
 
   return (
     <React.Fragment>
