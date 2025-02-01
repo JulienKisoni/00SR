@@ -12,12 +12,16 @@ interface ModalProps {
   opened: boolean;
   onClose: () => void;
   onSave: () => void;
+  saveLabel?: string;
+  modalHeaderText?: string;
 }
 const Modal = ({
   children,
   onClose,
   onSave,
   opened,
+  saveLabel = "Save",
+  modalHeaderText = "Resize your picture",
 }: PropsWithChildren<ModalProps>) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
@@ -32,7 +36,7 @@ const Modal = ({
       fullWidth
     >
       <Toolbar sx={{ backgroundColor: "var(--mui-palette-primary-main)" }}>
-        <DialogTitle color="white">Resize your picture</DialogTitle>
+        <DialogTitle color="white">{modalHeaderText}</DialogTitle>
       </Toolbar>
       <DialogContent sx={{ height: "70vh", padding: 0 }}>
         <div
@@ -50,7 +54,7 @@ const Modal = ({
           Cancel
         </Button>
         <Button variant="contained" onClick={onSave} autoFocus>
-          Save
+          {saveLabel}
         </Button>
       </DialogActions>
     </Dialog>

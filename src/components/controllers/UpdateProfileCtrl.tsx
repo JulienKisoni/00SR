@@ -116,6 +116,7 @@ const UpdateProfileCtrl = () => {
           onError={onFileUploadError}
           onSuccess={onFileUploadSuccess}
           disabled={false}
+          allowTakePicture
         />
         <UpdateProfile
           initialValues={initialValues}

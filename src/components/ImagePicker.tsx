@@ -1,4 +1,11 @@
-import React, { ChangeEvent, useCallback, useState, useEffect } from "react";
+import React, {
+  ChangeEvent,
+  useCallback,
+  useState,
+  useEffect,
+  useRef,
+  useMemo,
+} from "react";
 import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
 import CreateIcon from "@mui/icons-material/Create";
@@ -10,16 +17,12 @@ import MenuItem from "@mui/material/MenuItem";
 import Cropper from "react-easy-crop";
 import type { Area, Point } from "react-easy-crop";
 import { useNotifications } from "@toolpad/core";
+import type Webcam from "react-webcam";
 
 import { FileUpload } from "../classes/FileUpload";
 import { GenericError } from "../classes/GenericError";
 import Modal from "./Modal";
-
-const getDevices = async () => {
-  const mediaDevices = await navigator.mediaDevices.enumerateDevices();
-  const videoDevices = mediaDevices.filter(({ kind }) => kind === "videoinput");
-  console.log({ mediaDevices, videoDevices });
-};
+import PeripheralCam from "./PeripheralCam";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -39,9 +42,11 @@ interface ImagePickerProps {
   onSuccess: ({ downloadURL }: { downloadURL: string }) => void;
   onError: (error: GenericError) => void;
   disabled: boolean;
+  allowTakePicture?: boolean;
 }
 interface PickerState {
   finalSrc: string;
+  showPeripheralCam: boolean;
   showCrop: boolean;
   cropSrc: string;
   crop: Point;
@@ -64,6 +69,7 @@ const ImagePicker = ({
   onError,
   onSuccess,
   disabled = false,
+  allowTakePicture = false,
 }: ImagePickerProps) => {
   const [state, setState] = useState<PickerState>({
     finalSrc: defaultSrc || "https://placehold.co/400",
@@ -76,8 +82,11 @@ const ImagePicker = ({
     uploading: false,
     menuOpen: false,
     anchorEl: null,
+    showPeripheralCam: false,
   });
   const notifications = useNotifications();
+  const webcamRef: React.Ref<Webcam> | undefined = useRef(null);
+  const fileUpload = useMemo(() => new FileUpload("images"), []);
 
   useEffect(() => {
     if (defaultSrc && defaultSrc !== state.finalSrc) {
@@ -85,9 +94,6 @@ const ImagePicker = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultSrc]);
-  useEffect(() => {
-    getDevices();
-  }, []);
 
   const handleClose = useCallback(() => {
     setState((prev) => ({
@@ -96,6 +102,12 @@ const ImagePicker = ({
       file: null,
       cropSrc: "",
       crop: initialCrop,
+    }));
+  }, []);
+  const handleClosePeripheral = useCallback(() => {
+    setState((prev) => ({
+      ...prev,
+      showPeripheralCam: false,
     }));
   }, []);
   const handleZoomChange = useCallback((z: number) => {
@@ -126,11 +138,41 @@ const ImagePicker = ({
       reader.readAsDataURL(file);
     }
   }, []);
+  const onUploadError = useCallback(
+    (err: GenericError) => {
+      onError(err);
+      setState((prev) => ({
+        ...prev,
+        showCrop: false,
+        crop: initialCrop,
+        cropSrc: "",
+        file: null,
+        croppedAreaPixels: null,
+        uploading: false,
+      }));
+    },
+    [onError]
+  );
+  const onUploadSuccess = useCallback(
+    (data: { downloadURL: string }) => {
+      console.log({ url: data.downloadURL });
+      onSuccess(data);
+      setState((prev) => ({
+        ...prev,
+        showCrop: false,
+        crop: initialCrop,
+        cropSrc: "",
+        file: null,
+        croppedAreaPixels: null,
+        uploading: false,
+      }));
+    },
+    [onSuccess]
+  );
   const handleSave = useCallback(async () => {
     try {
       if (state.croppedAreaPixels && state.file) {
         setState((prev) => ({ ...prev, uploading: true }));
-        const fileUpload = new FileUpload("images");
         const params = {
           imageSrc: state.cropSrc,
           crop: state.croppedAreaPixels,
@@ -149,31 +191,8 @@ const ImagePicker = ({
           fileUpload.upload({
             file: image,
             filename: state.file.name,
-            onError: (err) => {
-              onError(err);
-              setState((prev) => ({
-                ...prev,
-                showCrop: false,
-                crop: initialCrop,
-                cropSrc: "",
-                file: null,
-                croppedAreaPixels: null,
-                uploading: false,
-              }));
-            },
-            onSuccess: (data) => {
-              console.log({ url: data.downloadURL });
-              onSuccess(data);
-              setState((prev) => ({
-                ...prev,
-                showCrop: false,
-                crop: initialCrop,
-                cropSrc: "",
-                file: null,
-                croppedAreaPixels: null,
-                uploading: false,
-              }));
-            },
+            onError: onUploadError,
+            onSuccess: onUploadSuccess,
           });
         }
       }
@@ -185,7 +204,7 @@ const ImagePicker = ({
       });
       setState((prev) => ({ ...prev, uploading: false }));
     }
-  }, [state, onError, onSuccess, notifications]);
+  }, [state, notifications, fileUpload, onUploadSuccess, onUploadError]);
   const handleMenuBtnClick = useCallback(
     (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
       setState((prev) => ({
@@ -196,13 +215,65 @@ const ImagePicker = ({
     },
     []
   );
-  const closeMenu = useCallback(() => {
-    setState((prev) => ({
-      ...prev,
-      menuOpen: false,
-      anchorEl: null,
-    }));
-  }, []);
+  const onTakePicture = useCallback(async () => {
+    const mediaDevices = await navigator.mediaDevices.enumerateDevices();
+    const videoDevices = mediaDevices.filter(
+      ({ kind }) => kind === "videoinput"
+    );
+    if (videoDevices?.length) {
+      setState((prev) => ({
+        ...prev,
+        menuOpen: false,
+        anchorEl: null,
+        showPeripheralCam: true,
+      }));
+    } else {
+      notifications.show("No video peripheral available", {
+        autoHideDuration: 5000,
+        severity: "error",
+      });
+    }
+  }, [notifications]);
+  const capture = useCallback(async () => {
+    if (webcamRef?.current) {
+      const imageSrc = webcamRef.current.getScreenshot();
+      console.log({ imageSrc });
+      setState((prev) => ({
+        ...prev,
+        showPeripheralCam: false,
+        uploading: true,
+      }));
+      try {
+        const blob = await fileUpload.base64ToBlob(imageSrc || "");
+        console.log({ blob });
+        if (!blob) {
+          notifications.show("Could not upload your picture", {
+            autoHideDuration: 5000,
+            severity: "error",
+          });
+          setState((prev) => ({ ...prev, uploading: false }));
+          return;
+        }
+        fileUpload.upload({
+          file: blob,
+          filename: "selfie",
+          onError: onUploadError,
+          onSuccess: onUploadSuccess,
+        });
+      } catch (error) {
+        notifications.show("Could not upload your picture", {
+          autoHideDuration: 5000,
+          severity: "error",
+        });
+        setState((prev) => ({ ...prev, uploading: false }));
+      }
+    } else {
+      notifications.show("Could not take a picture", {
+        autoHideDuration: 5000,
+        severity: "error",
+      });
+    }
+  }, [webcamRef, notifications, onUploadError, onUploadSuccess, fileUpload]);
 
   return (
     <React.Fragment>
@@ -264,7 +335,9 @@ const ImagePicker = ({
               />
             </Button>
           </MenuItem>
-          <MenuItem onClick={closeMenu}>Take a picture</MenuItem>
+          {allowTakePicture ? (
+            <MenuItem onClick={onTakePicture}>Take a picture</MenuItem>
+          ) : null}
         </Menu>
       </div>
       <Button
@@ -289,6 +362,17 @@ const ImagePicker = ({
             onCropChange={handleCropping}
             onCropComplete={handleCropComplete}
           />
+        </Modal>
+      ) : null}
+      {!state.showCrop && !state.uploading && state.showPeripheralCam ? (
+        <Modal
+          opened={state.showPeripheralCam}
+          onClose={handleClosePeripheral}
+          onSave={capture}
+          saveLabel="Take picture"
+          modalHeaderText="Take a selfie of you"
+        >
+          <PeripheralCam webcamRef={webcamRef} />
         </Modal>
       ) : null}
       {state.uploading ? (
