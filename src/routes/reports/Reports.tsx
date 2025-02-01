@@ -169,7 +169,11 @@ function Reports() {
     ) {
       return;
     }
-    // TODO: download a maximum of 4 reports
+    // TODO: download a maximum of 3 reports
+    const reportId = state.selectedReportIDs[0];
+    window.open(`/${ROUTES.REPORTS}/${reportId}/download`, "_blank");
+    apiRef.current.setRowSelectionModel([]);
+
     /* const tempTargetedOrders: Types.IReportDocument[] = filteredReports.filter(
       (order) => state.selectedReportIDs.includes(order._id)
     );
@@ -185,7 +189,7 @@ function Reports() {
     } finally {
       apiRef.current.setRowSelectionModel([]);
     } */
-  }, [selectedStoreId, connectedUserId, state.selectedReportIDs]);
+  }, [selectedStoreId, connectedUserId, state.selectedReportIDs, apiRef]);
   const getRowId: GridRowIdGetter<Types.IReportDocument> | undefined =
     useCallback((row: Types.IReportDocument) => {
       return row._id;

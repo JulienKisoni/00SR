@@ -1,12 +1,12 @@
 import React, { useMemo, useEffect, useState, useCallback } from "react";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
 import { Navigate, useParams } from "react-router";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { GridColDef, GridRowIdGetter } from "@mui/x-data-grid";
 import { Backdrop, CircularProgress } from "@mui/material";
 import Grid from "@mui/system/Grid";
+import { usePDF, Resolution, Margin, Options } from "react-to-pdf";
 
 import { RootState } from "../../services/redux/rootReducer";
 import { ROUTES } from "../../constants/routes";
@@ -15,6 +15,7 @@ import { UsersSrv } from "../../services/controllers/UserSrv";
 import { StoreSrv } from "../../services/controllers/StoreSrv";
 import OrderDetails from "../../components/OrderDetails";
 import { centeredTableGridSystem } from "../../constants";
+// const pfrWorker = require("../../services/workers/pdf");
 
 interface FormValues {
   name: string;
@@ -83,10 +84,12 @@ const columns: GridColDef[] = [
   },
 ];
 
-const ViewReport = () => {
+const DownloadReport = () => {
   const { reportId } = useParams();
   const dispatch = useDispatch();
   const [state, setState] = useState({ deny: false });
+  const [worker, setWorker] = useState<Worker>();
+  const { toPDF, targetRef } = usePDF({ filename: "page.pdf" });
 
   const report = useSelector((state: RootState) => {
     return state.reports.find((_report) => _report._id === reportId);
@@ -173,8 +176,66 @@ const ViewReport = () => {
     return values;
   }, [report]);
 
-  const onDeleteReport = useCallback(() => {
-    // TODO: delete report
+  const onDownloadReport = useCallback(() => {
+    if (state.deny) {
+      alert("You do not have access to this report");
+      return;
+    } else if (
+      loading ||
+      !transformedReport?.orders?.length ||
+      initialValues === null
+    ) {
+      console.log({
+        loading,
+        initialValues,
+        length: transformedReport?.orders?.length,
+      });
+      alert("Something went wrong");
+      return;
+    }
+    try {
+      const options: Options = {
+        method: "save",
+        resolution: Resolution.MEDIUM,
+        page: {
+          // margin is in MM, default is Margin.NONE = 0
+          margin: Margin.LARGE,
+          format: "A4",
+          orientation: "portrait",
+        },
+        canvas: {
+          mimeType: "image/jpeg",
+          qualityRatio: 1,
+        },
+      };
+      toPDF(options);
+      setTimeout(() => {
+        window.close();
+      }, 1500);
+    } catch (error) {
+      console.log("Error ", error);
+    }
+  }, [toPDF, state.deny, transformedReport?.orders, initialValues, loading]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      console.log("called");
+      onDownloadReport();
+    }, 1500);
+    // Create a new web worker
+    // const myWorker: any = {};
+    // // const myWorker = new Worker(pfrWorker);
+    // // Set up event listener for messages from the worker
+    // myWorker.onmessage = function (event: any) {
+    //   console.log("Received result from worker:", event.data);
+    // };
+    // // Save the worker instance to state
+    // setWorker(myWorker);
+    // // Clean up the worker when the component unmounts
+    // return () => {
+    //   myWorker.terminate();
+    // };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getRowId: GridRowIdGetter<Types.CartItem> | undefined = useCallback(
@@ -248,14 +309,11 @@ const ViewReport = () => {
   }
 
   return (
-    <Stack direction="column">
+    <Stack paddingX={5} paddingY={5} ref={targetRef} direction="column">
       <Stack direction={"row"} justifyContent={"space-between"}>
         <Typography variant="h3" component="h1">
           {report?.name}
         </Typography>
-        <Button onClick={onDeleteReport} color="error" variant="contained">
-          Delete report
-        </Button>
       </Stack>
       <Typography mt={2} variant="subtitle1">
         View details about your report
@@ -283,4 +341,4 @@ const ViewReport = () => {
   );
 };
 
-export default ViewReport;
+export default DownloadReport;

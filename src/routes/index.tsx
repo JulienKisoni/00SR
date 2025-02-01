@@ -27,6 +27,7 @@ import Graphics from "./graphics/Graphics";
 import AddGraphic from "./graphics/AddGraphic";
 import ViewGraphic from "./graphics/ViewGraphic";
 import EditGraphic from "./graphics/EditGraphic";
+import DownloadReport from "./reports/DownloadReport";
 
 export const ConnectedNavigation = () => {
   return (
@@ -157,6 +158,14 @@ export const ConnectedNavigation = () => {
         element={
           <ProtectedRoute>
             <EditReport />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={`/${ROUTES.REPORTS}/:reportId/download`}
+        element={
+          <ProtectedRoute>
+            <DownloadReport />
           </ProtectedRoute>
         }
       />
