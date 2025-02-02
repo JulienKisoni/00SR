@@ -161,35 +161,7 @@ function Reports() {
       reportSrv.deleteMany(state.selectedReportIDs);
     }
   }, [state.selectedReportIDs, selectedStoreId, connectedUserId, reportSrv]);
-  const handleDownloadReports = useCallback(() => {
-    if (
-      !connectedUserId ||
-      !selectedStoreId ||
-      !state.selectedReportIDs.length
-    ) {
-      return;
-    }
-    // TODO: download a maximum of 3 reports
-    const reportId = state.selectedReportIDs[0];
-    window.open(`/${ROUTES.REPORTS}/${reportId}/download`, "_blank");
-    apiRef.current.setRowSelectionModel([]);
 
-    /* const tempTargetedOrders: Types.IReportDocument[] = filteredReports.filter(
-      (order) => state.selectedReportIDs.includes(order._id)
-    );
-    try {
-      const payload: string = JSON.stringify(tempTargetedOrders);
-      localStorage.setItem("tempTargetedOrders", payload);
-      navigate(`/${ROUTES.REPORTS}/add`);
-    } catch (err: any) {
-      const error = new GenericError(
-        err.message || err.reason || "Something went wrong"
-      );
-      alert(error.message);
-    } finally {
-      apiRef.current.setRowSelectionModel([]);
-    } */
-  }, [selectedStoreId, connectedUserId, state.selectedReportIDs, apiRef]);
   const getRowId: GridRowIdGetter<Types.IReportDocument> | undefined =
     useCallback((row: Types.IReportDocument) => {
       return row._id;
@@ -232,13 +204,6 @@ function Reports() {
         <Typography variant="h3" component="h1">
           Reports
         </Typography>
-        <Button
-          disabled={!state.selectedReportIDs?.length}
-          onClick={handleDownloadReports}
-          variant="contained"
-        >
-          Download report(s)
-        </Button>
       </Stack>
       <Stack direction="column">
         <Typography variant="subtitle1">

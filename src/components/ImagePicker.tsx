@@ -23,6 +23,14 @@ import { FileUpload } from "../classes/FileUpload";
 import { GenericError } from "../classes/GenericError";
 import Modal from "./Modal";
 import PeripheralCam from "./PeripheralCam";
+import createWorker from "../services/workers/wrapper";
+
+interface EventData {
+  folderRef: string;
+  type: string;
+  file: Blob | File;
+  filename: string;
+}
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -56,6 +64,7 @@ interface PickerState {
   uploading: boolean;
   menuOpen: boolean;
   anchorEl: (EventTarget & HTMLButtonElement) | null;
+  uploadWorker: Worker | null;
 }
 
 const initialCrop = {
@@ -83,6 +92,7 @@ const ImagePicker = ({
     menuOpen: false,
     anchorEl: null,
     showPeripheralCam: false,
+    uploadWorker: null,
   });
   const notifications = useNotifications();
   const webcamRef: React.Ref<Webcam> | undefined = useRef(null);
@@ -94,6 +104,15 @@ const ImagePicker = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultSrc]);
+
+  useEffect(() => {
+    // Cleanup worker on component unmount
+    return () => {
+      if (state.uploadWorker) {
+        state.uploadWorker.terminate();
+      }
+    };
+  }, [state.uploadWorker]);
 
   const handleClose = useCallback(() => {
     setState((prev) => ({
@@ -130,6 +149,7 @@ const ImagePicker = ({
           file,
           showCrop: true,
           cropSrc: reader.result?.toString() || "",
+          menuOpen: false,
         }));
       });
       reader.addEventListener("error", (error) => {
@@ -183,17 +203,33 @@ const ImagePicker = ({
         const image = await fileUpload.getCroppedImg(params);
         if (image) {
           const croppedImageURL = URL.createObjectURL(image); // Preview cropped image
-          console.log({ croppedImageURL });
+          // Create the worker
+          const worker = createWorker();
           setState((prev) => ({
             ...prev,
             finalSrc: croppedImageURL,
+            uploadWorker: worker,
           }));
-          fileUpload.upload({
+          const workerData: EventData = {
+            folderRef: "images",
+            type: "INIT_FILE_UPLOAD",
             file: image,
             filename: state.file.name,
-            onError: onUploadError,
-            onSuccess: onUploadSuccess,
-          });
+          };
+          worker.postMessage(workerData);
+
+          // Listen for results from the worker
+          worker.onmessage = (event: any) => {
+            const { type, errorMsg, downloadURL } = event.data;
+            switch (type) {
+              case "ERROR_FILE_UPLOAD":
+                onUploadError(new GenericError(errorMsg));
+                break;
+              case "FINISH_FILE_UPLOAD":
+                onUploadSuccess({ downloadURL });
+                break;
+            }
+          };
         }
       }
     } catch (error: any) {
@@ -237,7 +273,6 @@ const ImagePicker = ({
   const capture = useCallback(async () => {
     if (webcamRef?.current) {
       const imageSrc = webcamRef.current.getScreenshot();
-      console.log({ imageSrc });
       setState((prev) => ({
         ...prev,
         showPeripheralCam: false,
@@ -245,7 +280,6 @@ const ImagePicker = ({
       }));
       try {
         const blob = await fileUpload.base64ToBlob(imageSrc || "");
-        console.log({ blob });
         if (!blob) {
           notifications.show("Could not upload your picture", {
             autoHideDuration: 5000,

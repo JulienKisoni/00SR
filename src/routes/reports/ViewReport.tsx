@@ -176,6 +176,9 @@ const ViewReport = () => {
   const onDeleteReport = useCallback(() => {
     // TODO: delete report
   }, []);
+  const onDownloadReport = useCallback(() => {
+    window.open(`/${ROUTES.REPORTS}/${reportId}/download`, "_blank");
+  }, [reportId]);
 
   const getRowId: GridRowIdGetter<Types.CartItem> | undefined = useCallback(
     (row: Types.CartItem) => {
@@ -253,9 +256,14 @@ const ViewReport = () => {
         <Typography variant="h3" component="h1">
           {report?.name}
         </Typography>
-        <Button onClick={onDeleteReport} color="error" variant="contained">
-          Delete report
-        </Button>
+        <Stack spacing={2} direction={"row"}>
+          <Button onClick={onDownloadReport} variant="contained">
+            Download report
+          </Button>
+          <Button onClick={onDeleteReport} color="error" variant="contained">
+            Delete report
+          </Button>
+        </Stack>
       </Stack>
       <Typography mt={2} variant="subtitle1">
         View details about your report

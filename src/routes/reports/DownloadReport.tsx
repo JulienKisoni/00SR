@@ -15,7 +15,6 @@ import { UsersSrv } from "../../services/controllers/UserSrv";
 import { StoreSrv } from "../../services/controllers/StoreSrv";
 import OrderDetails from "../../components/OrderDetails";
 import { centeredTableGridSystem } from "../../constants";
-// const pfrWorker = require("../../services/workers/pdf");
 
 interface FormValues {
   name: string;
@@ -30,6 +29,7 @@ interface SelectedOrder {
   totalPrice: number;
   items: Types.CartItem[];
 }
+
 const columns: GridColDef[] = [
   {
     field: "productName",
@@ -88,7 +88,6 @@ const DownloadReport = () => {
   const { reportId } = useParams();
   const dispatch = useDispatch();
   const [state, setState] = useState({ deny: false });
-  const [worker, setWorker] = useState<Worker>();
   const { toPDF, targetRef } = usePDF({ filename: "page.pdf" });
 
   const report = useSelector((state: RootState) => {
@@ -176,7 +175,22 @@ const DownloadReport = () => {
     return values;
   }, [report]);
 
-  const onDownloadReport = useCallback(() => {
+  useEffect(() => {
+    const options: Options = {
+      method: "save",
+      resolution: Resolution.MEDIUM,
+      page: {
+        // margin is in MM, default is Margin.NONE = 0
+        margin: Margin.LARGE,
+        format: "A4",
+        orientation: "portrait",
+      },
+      canvas: {
+        mimeType: "image/jpeg",
+        qualityRatio: 1,
+      },
+    };
+
     if (state.deny) {
       alert("You do not have access to this report");
       return;
@@ -185,58 +199,27 @@ const DownloadReport = () => {
       !transformedReport?.orders?.length ||
       initialValues === null
     ) {
-      console.log({
-        loading,
-        initialValues,
-        length: transformedReport?.orders?.length,
-      });
       alert("Something went wrong");
       return;
     }
     try {
-      const options: Options = {
-        method: "save",
-        resolution: Resolution.MEDIUM,
-        page: {
-          // margin is in MM, default is Margin.NONE = 0
-          margin: Margin.LARGE,
-          format: "A4",
-          orientation: "portrait",
-        },
-        canvas: {
-          mimeType: "image/jpeg",
-          qualityRatio: 1,
-        },
-      };
-      toPDF(options);
       setTimeout(() => {
-        window.close();
+        toPDF(options);
+        setTimeout(() => {
+          window.close();
+        }, 1500);
       }, 1500);
     } catch (error) {
-      console.log("Error ", error);
+      alert("Something went wrong");
     }
-  }, [toPDF, state.deny, transformedReport?.orders, initialValues, loading]);
-
-  useEffect(() => {
-    setTimeout(() => {
-      console.log("called");
-      onDownloadReport();
-    }, 1500);
-    // Create a new web worker
-    // const myWorker: any = {};
-    // // const myWorker = new Worker(pfrWorker);
-    // // Set up event listener for messages from the worker
-    // myWorker.onmessage = function (event: any) {
-    //   console.log("Received result from worker:", event.data);
-    // };
-    // // Save the worker instance to state
-    // setWorker(myWorker);
-    // // Clean up the worker when the component unmounts
-    // return () => {
-    //   myWorker.terminate();
-    // };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [
+    state.deny,
+    loading,
+    transformedReport?.orders,
+    initialValues,
+    toPDF,
+    targetRef,
+  ]);
 
   const getRowId: GridRowIdGetter<Types.CartItem> | undefined = useCallback(
     (row: Types.CartItem) => {
