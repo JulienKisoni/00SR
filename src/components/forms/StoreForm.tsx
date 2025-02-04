@@ -140,6 +140,7 @@ const StoreForm = ({
                   <StyledInput
                     id="address-line2"
                     label="Address line 2 (optional)"
+                    optional
                     size="small"
                     margin="dense"
                     sx={{ marginTop: 2 }}

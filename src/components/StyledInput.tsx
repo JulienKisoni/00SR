@@ -5,11 +5,12 @@ import {
   OutlinedInput,
   OutlinedInputProps,
 } from "@mui/material";
-import React from "react";
+import React, { useMemo } from "react";
 
 type TxtFieldProps = Omit<OutlinedInputProps, "variant">;
 interface Props extends TxtFieldProps {
   helperText?: string;
+  optional?: boolean;
 }
 
 const StyledInput: React.FC<Props> = ({
@@ -25,12 +26,19 @@ const StyledInput: React.FC<Props> = ({
   margin,
   label,
   helperText,
+  optional = false,
   ...restProps
 }): React.JSX.Element => {
+  const displayedLabel = useMemo(() => {
+    if (optional) {
+      return label;
+    }
+    return `${label}*`;
+  }, [label, optional]);
   return (
     <FormControl fullWidth variant="standard">
       <InputLabel margin="dense" shrink htmlFor={id}>
-        {label}*
+        {displayedLabel}
       </InputLabel>
       <OutlinedInput
         id={id}
