@@ -69,7 +69,7 @@ const GraphicFormCtrl = ({
         });
         return;
       }
-      // TODO: create report with max 4 products
+      // TODO: create graphic with max 3 products
       const newGraphic = new Graphic({
         ...values,
         userId: connectedUser._id,
