@@ -6,7 +6,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "jest",
+    "test": "jest --coverage false",
+    "test:coverage": "jest",
     "eject": "react-scripts eject"
   },
   "dependencies": {
