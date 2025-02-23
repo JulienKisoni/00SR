@@ -35,7 +35,7 @@ export class CartSrv extends Api {
     T extends
       | Types.IUserDocument
       | Types.IStoreDocument
-      | Types.IProductDocument
+      | Types.IProductDocument,
   >(payload: T): GenericResponse<void> {
     return { error: undefined };
   }
@@ -44,7 +44,7 @@ export class CartSrv extends Api {
       | Types.IUserDocument
       | Types.IStoreDocument
       | Types.IProductDocument
-      | Types.Cart
+      | Types.Cart,
   >({
     userId,
     storeId,

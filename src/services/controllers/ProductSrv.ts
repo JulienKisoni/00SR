@@ -24,7 +24,7 @@ export class ProductSrv extends Api {
     T extends
       | Types.IUserDocument
       | Types.IStoreDocument
-      | Types.IProductDocument
+      | Types.IProductDocument,
   >(payload: T): GenericResponse<void> {
     const currentStore: Types.IStoreDocument | undefined = store
       .getState()
@@ -41,7 +41,7 @@ export class ProductSrv extends Api {
     T extends
       | Types.IUserDocument
       | Types.IStoreDocument
-      | Types.IProductDocument
+      | Types.IProductDocument,
   >({ productId }: { productId: string }): GenericResponse<T> {
     const product = store
       .getState()
@@ -60,8 +60,8 @@ export class ProductSrv extends Api {
     const { error, data: product } = this.getOne<Types.IProductDocument>({
       productId: id,
     });
-    if (error) {
-      return { error };
+    if (error || !product) {
+      return { error: error || new GenericError("No product found") };
     }
     const storeId = product?.storeId || "";
     this.dispatch(deleteProduct({ productId: id }));

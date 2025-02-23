@@ -25,7 +25,7 @@ export class ReportSrv extends Api {
       | Types.IUserDocument
       | Types.IStoreDocument
       | Types.IProductDocument
-      | Types.IReportDocument
+      | Types.IReportDocument,
   >(payload: T): GenericResponse<void> {
     const _report = store.getState().reports.find((r) => r._id === payload._id);
     if (_report) {
@@ -42,7 +42,7 @@ export class ReportSrv extends Api {
       | Types.IUserDocument
       | Types.IStoreDocument
       | Types.IProductDocument
-      | Types.IReportDocument
+      | Types.IReportDocument,
   >({ reportId }: { reportId: string }): GenericResponse<T> {
     const report = store.getState().reports.find((rep) => rep._id === reportId);
     return { error: undefined, data: report as T };
@@ -56,11 +56,11 @@ export class ReportSrv extends Api {
   }
 
   deleteOne(id: string): GenericResponse<void> {
-    const { error } = this.getOne<Types.IReportDocument>({
+    const { error, data } = this.getOne<Types.IReportDocument>({
       reportId: id,
     });
-    if (error) {
-      return { error };
+    if (error || !data) {
+      return { error: error || new GenericError("No existing order") };
     }
     this.dispatch(deleteReport({ reportId: id }));
     return { error: undefined };

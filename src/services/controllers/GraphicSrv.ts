@@ -25,7 +25,7 @@ export class GraphicSrv extends Api {
       | Types.IUserDocument
       | Types.IStoreDocument
       | Types.IProductDocument
-      | Types.IGraphicDocument
+      | Types.IGraphicDocument,
   >(payload: T): GenericResponse<void> {
     const _graphic = store
       .getState()
@@ -44,12 +44,15 @@ export class GraphicSrv extends Api {
       | Types.IUserDocument
       | Types.IStoreDocument
       | Types.IProductDocument
-      | Types.IGraphicDocument
+      | Types.IGraphicDocument,
   >({ graphicId }: { graphicId: string }): GenericResponse<T> {
     const graphic = store
       .getState()
       .graphics.find((gr) => gr._id === graphicId);
-    return { error: undefined, data: graphic as T };
+    if (graphic) {
+      return { error: undefined, data: graphic as T };
+    }
+    return { error: new GenericError("No graphic found") };
   }
   updateOne<T extends Types.IUserDocument | Types.IStoreDocument>(
     id: string,
