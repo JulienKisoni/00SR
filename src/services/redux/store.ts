@@ -8,7 +8,7 @@ import {
   REGISTER,
 } from "redux-persist";
 
-import rootReducer from "./rootReducer";
+import rootReducer, { RootState } from "./rootReducer";
 
 const store = configureStore({
   reducer: rootReducer,
@@ -20,5 +20,14 @@ const store = configureStore({
     }),
   devTools: true,
 });
+
+export const setupStore = (preloadedState?: RootState) => {
+  return configureStore({
+    reducer: rootReducer,
+    preloadedState,
+  });
+};
+
+export type AppStore = ReturnType<typeof setupStore>;
 
 export default store;
