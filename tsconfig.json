@@ -15,7 +15,13 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "typeRoots": ["./src/types/global.d.ts"]
+    "typeRoots": ["./src/types/global.d.ts", "node_modules/@types"],
+    "types": ["jest", "@testing-library/jest-dom"]
   },
-  "include": ["src"]
+  "include": [
+    "src",
+    "tests",
+    "./tests/jestEnv.setup.ts",
+    "./tests/jest.setup.ts"
+  ]
 }

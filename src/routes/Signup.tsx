@@ -95,6 +95,11 @@ const SignUp = ({ initialValues, validationSchema, onSubmit }: Props) => {
                     </InputLabel>
                     <TextField
                       id="email-address"
+                      slotProps={{
+                        htmlInput: {
+                          "data-testid": "email-address",
+                        },
+                      }}
                       placeholder="johndoe@mail.com"
                       variant="outlined"
                       type="email"
