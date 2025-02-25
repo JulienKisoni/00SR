@@ -4,7 +4,7 @@ import cloneDeep from "lodash.clonedeep";
 
 import { Api, GenericResponse } from "../../classes/Api";
 import { setCart } from "../redux/slices/cart";
-import store from "../redux/store";
+import { getStore } from "../redux/store";
 import { GenericError } from "../../classes/GenericError";
 import { ProductSrv } from "./ProductSrv";
 import { Cart } from "../../classes/Cart";
@@ -20,6 +20,8 @@ interface RemoveProductsParams {
   userId: string;
   productIDs: string[];
 }
+
+const store = getStore();
 
 export class CartSrv extends Api {
   dispatch: Dispatch<UnknownAction>;

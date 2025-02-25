@@ -58,6 +58,10 @@ const SignUpCtrl = () => {
         });
         return;
       }
+      notifications.show("Account created successfully", {
+        autoHideDuration: 5000,
+        severity: "success",
+      });
       navigate(`/${ROUTES.SIGNIN}`);
     },
     [navigate, dispatch, notifications]

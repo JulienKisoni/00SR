@@ -121,6 +121,9 @@ const SignUp = ({ initialValues, validationSchema, onSubmit }: Props) => {
                     </InputLabel>
                     <OutlinedInput
                       id="password"
+                      inputProps={{
+                        "data-testid": "password",
+                      }}
                       sx={{ marginTop: 2 }}
                       placeholder="Enter your password"
                       type={state.showPassword ? "text" : "password"}
@@ -158,6 +161,9 @@ const SignUp = ({ initialValues, validationSchema, onSubmit }: Props) => {
                     </InputLabel>
                     <OutlinedInput
                       id="repeat-password"
+                      inputProps={{
+                        "data-testid": "repeat-password",
+                      }}
                       sx={{ marginTop: 2 }}
                       placeholder="Repeat your password"
                       type={state.showRepeatPassword ? "text" : "password"}
@@ -195,6 +201,7 @@ const SignUp = ({ initialValues, validationSchema, onSubmit }: Props) => {
                     type="submit"
                     disabled={!isValid}
                     variant="contained"
+                    data-testid="signup-btn"
                   >
                     Sign up
                   </Button>

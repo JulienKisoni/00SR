@@ -5,8 +5,9 @@ import { Dispatch, UnknownAction } from "@reduxjs/toolkit";
 
 import { ProductSrv } from "../../../src/services/controllers/ProductSrv";
 import { HistorySrv } from "../../../src/services/controllers/HistorySrv";
-import store from "../../../src/services/redux/store";
+import { getStore } from "../../../src/services/redux/store";
 
+const store = getStore();
 let mockDispatch: Dispatch<UnknownAction>;
 let productSrv: ProductSrv;
 

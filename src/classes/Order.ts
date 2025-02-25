@@ -1,7 +1,9 @@
 import { v4 as uuidv4 } from "uuid";
 import ShortUniqueId from "short-unique-id";
 
-import store from "../services/redux/store";
+import { getStore } from "../services/redux/store";
+
+const store = getStore();
 
 interface OrderArgs {
   storeId: string;

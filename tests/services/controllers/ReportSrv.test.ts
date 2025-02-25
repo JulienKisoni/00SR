@@ -3,9 +3,10 @@
 import { describe, expect, test, jest, beforeEach } from "@jest/globals";
 import { Dispatch, UnknownAction } from "@reduxjs/toolkit";
 
-import store from "../../../src/services/redux/store";
+import { getStore } from "../../../src/services/redux/store";
 import { ReportSrv } from "../../../src/services/controllers/ReportSrv";
 
+const store = getStore();
 let mockDispatch: Dispatch<UnknownAction>;
 
 describe("ReportSrv class", () => {

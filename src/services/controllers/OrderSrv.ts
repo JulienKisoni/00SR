@@ -1,9 +1,11 @@
 import { Dispatch, UnknownAction } from "@reduxjs/toolkit";
 
 import { Api, GenericResponse } from "../../classes/Api";
-import store from "../redux/store";
+import { getStore } from "../redux/store";
 import { GenericError } from "../../classes/GenericError";
 import { deleteOrder, createOrder, deleteOrders } from "../redux/slices/orders";
+
+const store = getStore();
 
 export class OrderSrv extends Api {
   dispatch: Dispatch<UnknownAction>;
@@ -20,7 +22,7 @@ export class OrderSrv extends Api {
       | Types.IUserDocument
       | Types.IStoreDocument
       | Types.IProductDocument
-      | Types.IOrderDocument
+      | Types.IOrderDocument,
   >(payload: T): GenericResponse<void> {
     this.dispatch(createOrder({ data: payload as Types.IOrderDocument }));
     return { data: null, error: undefined };
@@ -30,7 +32,7 @@ export class OrderSrv extends Api {
       | Types.IUserDocument
       | Types.IStoreDocument
       | Types.IProductDocument
-      | Types.IOrderDocument
+      | Types.IOrderDocument,
   >({ orderId }: { orderId: string }): GenericResponse<T> {
     const order = store
       .getState()

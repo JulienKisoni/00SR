@@ -8,8 +8,10 @@ import {
   deleteStore,
   updateStore,
 } from "../redux/slices/stores";
-import store from "../redux/store";
+import { getStore } from "../redux/store";
 import { GenericError } from "../../classes/GenericError";
+
+const store = getStore();
 
 export class StoreSrv extends Api {
   dispatch: Dispatch<UnknownAction>;
@@ -25,7 +27,7 @@ export class StoreSrv extends Api {
     T extends
       | Types.IUserDocument
       | Types.IStoreDocument
-      | Types.IProductDocument
+      | Types.IProductDocument,
   >(payload: T): GenericResponse<void> {
     const _id = uuidv4();
     const body = {
@@ -40,7 +42,7 @@ export class StoreSrv extends Api {
     T extends
       | Types.IUserDocument
       | Types.IStoreDocument
-      | Types.IProductDocument
+      | Types.IProductDocument,
   >(filters: { [key: string]: string }): GenericResponse<T> {
     const { _id } = filters;
     if (_id) {

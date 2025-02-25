@@ -7,8 +7,10 @@ import {
   updateProduct,
 } from "../redux/slices/products";
 import { removeStoreProduct } from "../redux/slices/stores";
-import store from "../redux/store";
+import { getStore } from "../redux/store";
 import { GenericError } from "../../classes/GenericError";
+
+const store = getStore();
 
 export class ProductSrv extends Api {
   dispatch: Dispatch<UnknownAction>;

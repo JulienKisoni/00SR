@@ -2,10 +2,12 @@ import { Dispatch, UnknownAction } from "@reduxjs/toolkit";
 
 import { Api, GenericResponse } from "../../classes/Api";
 import { createHistory, updateHistory } from "../redux/slices/histories";
-import store from "../redux/store";
+import { getStore } from "../redux/store";
 import { GenericError } from "../../classes/GenericError";
 import { ProductSrv } from "./ProductSrv";
 import { History } from "../../classes/History";
+
+const store = getStore();
 
 export class HistorySrv extends Api {
   deleteOne(id: string, ...extraArgs: any[]): GenericResponse<void> {
@@ -31,7 +33,7 @@ export class HistorySrv extends Api {
       | Types.IUserDocument
       | Types.IStoreDocument
       | Types.IProductDocument
-      | Types.IHistoryDocument
+      | Types.IHistoryDocument,
   >(_payload: T): GenericResponse<void> {
     const payload = _payload as Types.IHistoryDocument;
     const { data: historyData } = this.getOne({ productId: payload.productId });
@@ -66,7 +68,7 @@ export class HistorySrv extends Api {
       | Types.IUserDocument
       | Types.IStoreDocument
       | Types.IProductDocument
-      | Types.IHistoryDocument
+      | Types.IHistoryDocument,
   >({ productId }: { productId: string }): GenericResponse<T> {
     const history = store
       .getState()
@@ -77,7 +79,7 @@ export class HistorySrv extends Api {
     T extends
       | Types.IUserDocument
       | Types.IStoreDocument
-      | { dateKey: string; data: Types.IEvolution }
+      | { dateKey: string; data: Types.IEvolution },
   >(productId: string, payload: Partial<T>): GenericResponse<T> {
     const _payload = payload as Partial<{
       dateKey: string;

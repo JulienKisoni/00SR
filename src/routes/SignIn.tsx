@@ -86,6 +86,11 @@ const SignIn = ({ initialValues, validationSchema, onSubmit }: Props) => {
                       size="small"
                       margin="normal"
                       id="email-address"
+                      slotProps={{
+                        htmlInput: {
+                          "data-testid": "email-address",
+                        },
+                      }}
                       placeholder="johndoe@mail.com"
                       variant="outlined"
                       type="email"
@@ -108,6 +113,9 @@ const SignIn = ({ initialValues, validationSchema, onSubmit }: Props) => {
                       margin="dense"
                       sx={{ marginTop: 2 }}
                       id="password"
+                      inputProps={{
+                        "data-testid": "password",
+                      }}
                       placeholder="Enter your password"
                       name="password"
                       type={state.showPassword ? "text" : "password"}
@@ -153,6 +161,7 @@ const SignIn = ({ initialValues, validationSchema, onSubmit }: Props) => {
                     type="submit"
                     disabled={!isValid}
                     variant="contained"
+                    data-testid="signin-btn"
                   >
                     Sign In
                   </Button>

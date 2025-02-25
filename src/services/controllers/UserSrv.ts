@@ -5,7 +5,7 @@ import ShortUniqueId from "short-unique-id";
 import { Api, GenericResponse } from "../../classes/Api";
 import { createUser, updateUser } from "../redux/slices/users";
 import { selectStore, setUser } from "../redux/slices/user";
-import store from "../redux/store";
+import { getStore } from "../redux/store";
 import { GenericError } from "../../classes/GenericError";
 import emailSrv from "../email";
 
@@ -25,8 +25,9 @@ export class UsersSrv extends Api {
     T extends
       | Types.IUserDocument
       | Types.IStoreDocument
-      | Types.IProductDocument
+      | Types.IProductDocument,
   >(payload: T): GenericResponse<void> {
+    const store = getStore();
     const user = payload as Types.IUserDocument;
     const users = store.getState().users || [];
     const existingUser = users.find((_user) => _user.email === user.email);
@@ -54,8 +55,9 @@ export class UsersSrv extends Api {
     T extends
       | Types.IUserDocument
       | Types.IStoreDocument
-      | Types.IProductDocument
+      | Types.IProductDocument,
   >(filters: any): GenericResponse<T> {
+    const store = getStore();
     const users = store.getState().users || [];
     let user: Types.IUserDocument | null = null;
     const { email, _id, password } = filters || {};
@@ -141,6 +143,7 @@ export class UsersSrv extends Api {
   }: {
     email: string;
   }): Promise<GenericResponse<void>> {
+    const store = getStore();
     const users = store.getState().users || [];
     const user = users.find((user) => user.email === email);
     if (!user) {

@@ -8,9 +8,10 @@ import { NotificationsProvider } from "@toolpad/core/useNotifications";
 import "./App.css";
 
 import ErrorBoundary from "./components/ErrorBoundary";
-import store from "./services/redux/store";
+import { getStore } from "./services/redux/store";
 import Navigation from "./components/Navigation";
 
+const store = getStore();
 const persistore = persistStore(store);
 
 function App() {

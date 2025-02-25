@@ -7,8 +7,10 @@ import {
   deleteGraphic,
   deleteGraphics,
 } from "../redux/slices/graphics";
-import store from "../redux/store";
+import { getStore } from "../redux/store";
 import { GenericError } from "../../classes/GenericError";
+
+const store = getStore();
 
 export class GraphicSrv extends Api {
   dispatch: Dispatch<UnknownAction>;

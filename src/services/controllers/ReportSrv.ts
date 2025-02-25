@@ -7,8 +7,10 @@ import {
   deleteReport,
   deleteReports,
 } from "../redux/slices/reports";
-import store from "../redux/store";
+import { getStore } from "../redux/store";
 import { GenericError } from "../../classes/GenericError";
+
+const store = getStore();
 
 export class ReportSrv extends Api {
   dispatch: Dispatch<UnknownAction>;

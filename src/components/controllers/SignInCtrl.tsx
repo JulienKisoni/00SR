@@ -43,6 +43,10 @@ const SignInCtrl = () => {
         });
         return;
       }
+      notifications.show("Login successful", {
+        severity: "success",
+        autoHideDuration: 5000,
+      });
       navigate(`/${ROUTES.STORES}`);
     },
     [navigate, dispatch, notifications]

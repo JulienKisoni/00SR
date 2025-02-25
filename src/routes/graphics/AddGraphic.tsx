@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 
 import GraphicFormCtrl from "../../components/controllers/forms/GraphicFormCtrl";
-import store from "../../services/redux/store";
+import { getStore } from "../../services/redux/store";
 
 interface FormValues {
   name: string;
@@ -14,6 +14,7 @@ interface IState {
   tempTargetedProducts: Types.IHistoryDocument[];
 }
 
+const store = getStore();
 const initialValues: FormValues = {
   name: "",
   description: "",

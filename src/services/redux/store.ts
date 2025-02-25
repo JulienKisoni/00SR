@@ -10,7 +10,7 @@ import {
 
 import rootReducer, { RootState } from "./rootReducer";
 
-const store = configureStore({
+let store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -22,12 +22,13 @@ const store = configureStore({
 });
 
 export const setupStore = (preloadedState?: RootState) => {
-  return configureStore({
+  store = configureStore({
     reducer: rootReducer,
     preloadedState,
   });
+  return store;
 };
 
 export type AppStore = ReturnType<typeof setupStore>;
 
-export default store;
+export const getStore = () => store;
