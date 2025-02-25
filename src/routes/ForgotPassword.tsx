@@ -77,6 +77,11 @@ const ForgotPassword = ({
                     </InputLabel>
                     <TextField
                       id="email-address"
+                      slotProps={{
+                        htmlInput: {
+                          "data-testid": "email-address",
+                        },
+                      }}
                       placeholder="johndoe@mail.com"
                       variant="outlined"
                       type="email"
@@ -98,6 +103,7 @@ const ForgotPassword = ({
                     type="submit"
                     disabled={!isValid}
                     variant="contained"
+                    data-testid="submit-btn"
                   >
                     Recover password
                   </Button>
