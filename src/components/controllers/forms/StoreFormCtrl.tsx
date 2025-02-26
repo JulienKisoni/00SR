@@ -3,6 +3,7 @@ import { FormikHelpers } from "formik";
 import * as Yup from "yup";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
+import { useNotifications } from "@toolpad/core";
 
 import ImagePicker from "../../ImagePicker";
 import StoreForm from "../../forms/StoreForm";
@@ -67,6 +68,7 @@ const StoreFormCtlr = ({
 }: Props) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const notifications = useNotifications();
 
   const connectedUser = useSelector((state: RootState) => {
     return state.user.connectedUser;
@@ -92,7 +94,10 @@ const StoreFormCtlr = ({
         storeSrv.addOne<Types.IStoreDocument>(payload);
         helpers.resetForm();
         await helpers.validateForm();
-        alert("Store created");
+        notifications.show("Store created", {
+          severity: "success",
+          autoHideDuration: 5000,
+        });
         navigate(`/${ROUTES.STORES}`, { replace: true });
       } else if (mode === "edit") {
         const oldStore = new Store({
@@ -117,6 +122,7 @@ const StoreFormCtlr = ({
       storeId,
       defaultImgSrc,
       navigate,
+      notifications,
     ]
   );
   const onFileUploadError = useCallback((error: GenericError) => {

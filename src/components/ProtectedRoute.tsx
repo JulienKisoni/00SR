@@ -1,8 +1,8 @@
 import React from "react";
 import type { PropsWithChildren } from "react";
 import { useSelector, shallowEqual } from "react-redux";
-
 import { Navigate } from "react-router";
+
 import { RootState } from "../services/redux/rootReducer";
 
 const ProtectedRoute = ({

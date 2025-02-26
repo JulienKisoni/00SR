@@ -82,6 +82,9 @@ const StoreForm = ({
                 <Grid {...inputGridSystem}>
                   <StyledInput
                     id="store-name"
+                    inputProps={{
+                      "data-testid": "store-name",
+                    }}
                     label="Name"
                     name="name"
                     size="small"
@@ -98,6 +101,9 @@ const StoreForm = ({
                 <Grid {...inputGridSystem}>
                   <StyledInput
                     id="store-description"
+                    inputProps={{
+                      "data-testid": "store-description",
+                    }}
                     label="Description"
                     size="small"
                     margin="dense"
@@ -121,6 +127,9 @@ const StoreForm = ({
                 <Grid {...inputGridSystem}>
                   <StyledInput
                     id="address-line1"
+                    inputProps={{
+                      "data-testid": "store-address-line1",
+                    }}
                     label="Address line 1"
                     size="small"
                     margin="dense"
@@ -139,6 +148,9 @@ const StoreForm = ({
                 <Grid {...inputGridSystem}>
                   <StyledInput
                     id="address-line2"
+                    inputProps={{
+                      "data-testid": "store-address-line2",
+                    }}
                     label="Address line 2 (optional)"
                     optional
                     size="small"
@@ -158,6 +170,9 @@ const StoreForm = ({
                 <Grid {...inputGridSystem}>
                   <StyledInput
                     id="store-country"
+                    inputProps={{
+                      "data-testid": "store-country",
+                    }}
                     label="Country"
                     size="small"
                     margin="dense"
@@ -176,6 +191,9 @@ const StoreForm = ({
                     <Select
                       id="store-state"
                       labelId="labelId-store-state"
+                      inputProps={{
+                        "data-testid": "store-state",
+                      }}
                       variant="outlined"
                       name="state"
                       size="small"
@@ -188,7 +206,11 @@ const StoreForm = ({
                       error={touched.state && !!errors.state}
                     >
                       {states.map((state) => (
-                        <MenuItem key={state.value} value={state.value}>
+                        <MenuItem
+                          data-testid={`state-option-${state.value}`}
+                          key={state.value}
+                          value={state.value}
+                        >
                           {state.label}
                         </MenuItem>
                       ))}
@@ -201,6 +223,9 @@ const StoreForm = ({
                 <Grid {...inputGridSystem}>
                   <StyledInput
                     id="store-city"
+                    inputProps={{
+                      "data-testid": "store-city",
+                    }}
                     label="City"
                     size="small"
                     margin="dense"
@@ -220,6 +245,7 @@ const StoreForm = ({
                       type="submit"
                       variant="contained"
                       disabled={disableAll || invalid}
+                      data-testid="store-submit"
                     >
                       {buttonTitle}
                     </Button>

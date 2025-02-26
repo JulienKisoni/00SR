@@ -143,6 +143,7 @@ function Stores() {
           maxWidth: "100vw",
           border: 0,
         }}
+        data-testid="stores-list"
       />
     </Grid>
   );

@@ -14,12 +14,15 @@ import type { AppStore } from "../../src/services/redux/store";
 import { setupStore } from "../../src/services/redux/store";
 import type { RootState } from "../../src/services/redux/rootReducer";
 import ErrorBoundary from "../../src/components/ErrorBoundary";
+import ProtectedRoute from "../../src/components/ProtectedRoute";
+import NotFound from "../../src/routes/NotFound";
 
 // This type interface extends the default options for render from RTL, as well
 // as allows the user to specify other things such as initialState, store.
 interface ExtendedRenderOptions extends Omit<RenderOptions, "queries"> {
   preloadedState?: RootState;
   store?: AppStore;
+  isProtectedRoute?: boolean;
 }
 interface ExtendedCreateOptions {
   preloadedState?: RootState;
@@ -33,6 +36,7 @@ export function renderWithStore(
     preloadedState = {} as RootState,
     // Automatically create a store instance if no store was passed in
     store = setupStore(preloadedState),
+    isProtectedRoute,
     ...renderOptions
   }: ExtendedRenderOptions = {}
 ) {
@@ -48,6 +52,7 @@ export const renderWithProviders = (
     preloadedState = {} as RootState,
     // Automatically create a store instance if no store was passed in
     store = setupStore(preloadedState),
+    isProtectedRoute,
     ...renderOptions
   }: ExtendedRenderOptions = {}
 ) => {
@@ -58,9 +63,20 @@ export const renderWithProviders = (
         <Provider store={store}>
           <NotificationsProvider>
             <BrowserRouter>
-              <Routes>
-                <Route path="/" element={children} />
-              </Routes>
+              {!isProtectedRoute ? (
+                <Routes>
+                  <Route path="/" element={children} />
+                </Routes>
+              ) : (
+                <Routes>
+                  <Route
+                    index
+                    path="/"
+                    element={<ProtectedRoute>{children}</ProtectedRoute>}
+                  />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              )}
             </BrowserRouter>
           </NotificationsProvider>
         </Provider>

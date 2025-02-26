@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 function NotFound() {
-  return <div>NotFound</div>;
+  useEffect(() => {
+    console.log("NotFound rendered");
+  }, []);
+  return <div data-testid="NotFound">NotFound</div>;
 }
 
 export default NotFound;
