@@ -6,6 +6,8 @@ import { useSelector, shallowEqual, useDispatch } from "react-redux";
 import type { GridColDef } from "@mui/x-data-grid";
 import Grid from "@mui/system/Grid";
 import { useNavigate } from "react-router";
+import { useConfirm } from "material-ui-confirm";
+import { useNotifications } from "@toolpad/core";
 
 import ListTable from "../../components/ListTable";
 import { RootState } from "../../services/redux/rootReducer";
@@ -57,6 +59,8 @@ const columns: GridColDef[] = [
 function Stores() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const confirm = useConfirm();
+  const notifications = useNotifications();
 
   const [state, setState] = useState({ search: "" });
   const stores = useSelector((state: RootState) => {
@@ -84,19 +88,25 @@ function Stores() {
   };
 
   const handleDeleteClick = useCallback(
-    (storeId: string | number) => {
+    async (storeId: string | number) => {
       const store = stores.find((_store) => _store._id === storeId.toString());
       if (store) {
         const message = `Are you sure you wanna delete this store (${store.name})?`;
-        // eslint-disable-next-line no-restricted-globals
-        const agree = confirm(message);
-        if (agree) {
+        const { confirmed } = await confirm({
+          title: "Warning !",
+          description: message,
+        });
+        if (confirmed) {
           const storesSrv = new StoreSrv(dispatch);
           storesSrv.deleteOne(store._id);
+          notifications.show(`${store.name} has been deleted`, {
+            severity: "success",
+            autoHideDuration: 5000,
+          });
         }
       }
     },
-    [dispatch, stores]
+    [dispatch, stores, confirm, notifications]
   );
 
   const handleEndTyping = useCallback((value: string) => {
@@ -130,6 +140,9 @@ function Stores() {
           fullWidth
           onEndTyping={handleEndTyping}
           placeholder="Search by name"
+          inputProps={{
+            "data-testid": "store-search",
+          }}
         />
       </Grid>
       <ListTable

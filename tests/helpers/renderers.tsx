@@ -9,6 +9,7 @@ import type {
   TestRendererOptions,
   ReactTestInstance,
 } from "react-test-renderer";
+import { ConfirmProvider } from "material-ui-confirm";
 
 import type { AppStore } from "../../src/services/redux/store";
 import { setupStore } from "../../src/services/redux/store";
@@ -61,24 +62,26 @@ export const renderWithProviders = (
       // @ts-ignore
       <ErrorBoundary fallback={<p>Something went wrong</p>}>
         <Provider store={store}>
-          <NotificationsProvider>
-            <BrowserRouter>
-              {!isProtectedRoute ? (
-                <Routes>
-                  <Route path="/" element={children} />
-                </Routes>
-              ) : (
-                <Routes>
-                  <Route
-                    index
-                    path="/"
-                    element={<ProtectedRoute>{children}</ProtectedRoute>}
-                  />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              )}
-            </BrowserRouter>
-          </NotificationsProvider>
+          <ConfirmProvider>
+            <NotificationsProvider>
+              <BrowserRouter>
+                {!isProtectedRoute ? (
+                  <Routes>
+                    <Route path="/" element={children} />
+                  </Routes>
+                ) : (
+                  <Routes>
+                    <Route
+                      index
+                      path="/"
+                      element={<ProtectedRoute>{children}</ProtectedRoute>}
+                    />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                )}
+              </BrowserRouter>
+            </NotificationsProvider>
+          </ConfirmProvider>
         </Provider>
       </ErrorBoundary>
     );

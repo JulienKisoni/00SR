@@ -7,7 +7,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "jest --coverage false",
-    "test:one": "jest --coverage false --watch tests/routes/stores/ViewStore.test.tsx",
+    "test:one": "jest --coverage false --watch tests/routes/stores/Stores.test.tsx",
     "test:coverage": "jest",
     "eject": "react-scripts eject"
   },
@@ -31,6 +31,7 @@
     "lodash.debounce": "4.0.8",
     "lodash.groupby": "4.6.0",
     "lodash.isempty": "4.4.0",
+    "material-ui-confirm": "4.0.0",
     "moment": "2.30.1",
     "react": "19.0.0",
     "react-dom": "19.0.0",

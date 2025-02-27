@@ -47,7 +47,10 @@ const Actions = ({
   };
   return (
     <>
-      <IconButton onClick={(event) => handleMenuOpen(event, params.id)}>
+      <IconButton
+        data-testid={`list-actions-${params.id}`}
+        onClick={(event) => handleMenuOpen(event, params.id)}
+      >
         <MoreVertIcon />
       </IconButton>
       <Menu
@@ -55,7 +58,7 @@ const Actions = ({
         open={Boolean(anchorEl) && selectedRowId === params.id}
         onClose={handleMenuClose}
       >
-        <MenuList>
+        <MenuList data-testid={`list-actions-menu-${params.id}`}>
           {onViewClick ? (
             <MenuItem onClick={onViewClick}>
               <ListItemIcon>
@@ -73,7 +76,10 @@ const Actions = ({
             </MenuItem>
           ) : null}
           {onDeleteClick ? (
-            <MenuItem onClick={onDeleteClick}>
+            <MenuItem
+              data-testid={`delete-action-${params.id}`}
+              onClick={onDeleteClick}
+            >
               <ListItemIcon>
                 <DeleteIcon fontSize="small" style={{ marginRight: 8 }} />
               </ListItemIcon>

@@ -4,6 +4,7 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistStore } from "redux-persist";
 import { NotificationsProvider } from "@toolpad/core/useNotifications";
+import { ConfirmProvider } from "material-ui-confirm";
 
 import "./App.css";
 
@@ -20,11 +21,13 @@ function App() {
     <ErrorBoundary fallback={<p>Something went wrong</p>}>
       <Provider store={store}>
         <PersistGate loading="Loading datastore" persistor={persistore}>
-          <NotificationsProvider>
-            <BrowserRouter>
-              <Navigation />
-            </BrowserRouter>
-          </NotificationsProvider>
+          <ConfirmProvider>
+            <NotificationsProvider>
+              <BrowserRouter>
+                <Navigation />
+              </BrowserRouter>
+            </NotificationsProvider>
+          </ConfirmProvider>
         </PersistGate>
       </Provider>
     </ErrorBoundary>
