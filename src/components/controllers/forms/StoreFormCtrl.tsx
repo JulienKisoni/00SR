@@ -110,7 +110,10 @@ const StoreFormCtlr = ({
         storeSrv.updateOne(storeId, payload);
         helpers.resetForm({ values });
         await helpers.validateForm();
-        alert("Store updated");
+        notifications.show("Store updated", {
+          severity: "success",
+          autoHideDuration: 5000,
+        });
       }
     },
     [
