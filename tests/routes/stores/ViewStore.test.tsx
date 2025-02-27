@@ -3,14 +3,13 @@
 
 import React from "react";
 import { act, screen, waitFor } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import { useNotifications } from "@toolpad/core";
 import { useNavigate, useParams } from "react-router";
 
 import { renderWithProviders } from "../../helpers/renderers";
 import { generateFakeStore } from "../../helpers/fakers";
 import { RootState } from "../../../src/services/redux/rootReducer";
-import EditStore from "../../../src/routes/stores/EditStore";
+import ViewStore from "../../../src/routes/stores/ViewStore";
 
 let state: RootState;
 
@@ -33,8 +32,8 @@ const mockedUseNotifications = jest.mocked(useNotifications);
 const mockedUseNavigate = jest.mocked(useNavigate);
 const mockedUseParams = jest.mocked(useParams);
 
-describe("Edit Store Feature", () => {
-  describe("User can update a store by filling all the required fields", () => {
+describe("View Store Feature", () => {
+  describe("User can see more details about a store", () => {
     beforeEach(() => {
       const user: Types.IUserDocument = {
         _id: "123",
@@ -65,11 +64,10 @@ describe("Edit Store Feature", () => {
         createdAt: new Date().toISOString(),
       };
       const stores: Types.IStoreDocument[] = [store];
-      const connectedUser = user;
       state = generateFakeStore({
         users,
         stores,
-        user: { connectedUser, selectedStore: null },
+        user: { connectedUser: user, selectedStore: null },
       });
       mockedUseNotifications.mockReturnValue({
         show: mockShow,
@@ -80,42 +78,36 @@ describe("Edit Store Feature", () => {
     });
     test("should work", async () => {
       await act(async () => {
-        renderWithProviders(<EditStore />, { preloadedState: state });
+        renderWithProviders(<ViewStore />, {
+          preloadedState: state,
+          isProtectedRoute: true,
+        });
       });
-      let submitBtn: HTMLElement;
       await act(async () => {
         const name = await screen.findByTestId("store-name");
         const description = await screen.findByTestId("store-description");
         const addressLine1 = await screen.findByTestId("store-address-line1");
         const country = await screen.findByTestId("store-country");
-        const stateElement = await screen.findByTestId("store-state");
+        const state = await screen.findByTestId("store-state");
         const city = await screen.findByTestId("store-city");
-        expect(stateElement).toBeInTheDocument();
-        expect(description).toBeInTheDocument();
-        expect(addressLine1).toBeInTheDocument();
-        expect(city).toBeInTheDocument();
-        submitBtn = await screen.findByTestId("store-submit");
-        expect(submitBtn).toBeDisabled();
+        const submitBtn = screen.queryByTestId("store-submit");
+        const deleteBtn = screen.queryByTestId("store-delete");
+
+        // Disabled
+        expect(name).toBeDisabled();
+        expect(description).toBeDisabled();
+        expect(addressLine1).toBeDisabled();
         expect(country).toBeDisabled();
+        expect(state).toBeDisabled();
+        expect(city).toBeDisabled();
 
-        userEvent.type(name, " updated");
-      });
-
-      await waitFor(async () => {
-        expect(submitBtn).toBeEnabled();
-      });
-
-      await act(async () => {
-        userEvent.click(submitBtn);
-      });
-
-      expect(mockShow).toHaveBeenCalledWith("Store updated", {
-        severity: "success",
-        autoHideDuration: 5000,
+        // Not found
+        expect(submitBtn).not.toBeInTheDocument();
+        expect(deleteBtn).not.toBeInTheDocument();
       });
     });
   });
-  describe("User cannot update a store by omitting one required field", () => {
+  describe("User cannot see more details about a store", () => {
     beforeEach(() => {
       const user: Types.IUserDocument = {
         _id: "123",
@@ -146,11 +138,10 @@ describe("Edit Store Feature", () => {
         createdAt: new Date().toISOString(),
       };
       const stores: Types.IStoreDocument[] = [store];
-      const connectedUser = user;
       state = generateFakeStore({
         users,
         stores,
-        user: { connectedUser, selectedStore: null },
+        user: { connectedUser: null, selectedStore: null },
       });
       mockedUseNotifications.mockReturnValue({
         show: mockShow,
@@ -159,28 +150,20 @@ describe("Edit Store Feature", () => {
       mockedUseNavigate.mockReturnValue(mockNavigate);
       mockedUseParams.mockReturnValue({ storeId: store._id });
     });
-    test("should disable submit button", async () => {
+    test("should redirect to NotFound", async () => {
       await act(async () => {
-        renderWithProviders(<EditStore />, { preloadedState: state });
+        renderWithProviders(<ViewStore />, {
+          preloadedState: state,
+          isProtectedRoute: true,
+        });
       });
-      let submitBtn: HTMLElement;
+      let notFound: HTMLElement;
       await act(async () => {
-        const name = await screen.findByTestId("store-name");
-        const description = await screen.findByTestId("store-description");
-        const addressLine1 = await screen.findByTestId("store-address-line1");
-        const country = await screen.findByTestId("store-country");
-        const stateElement = await screen.findByTestId("store-state");
-        const city = await screen.findByTestId("store-city");
-        expect(stateElement).toBeInTheDocument();
-        expect(description).toBeInTheDocument();
-        expect(addressLine1).toBeInTheDocument();
-        expect(city).toBeInTheDocument();
-        submitBtn = await screen.findByTestId("store-submit");
-        expect(country).toBeDisabled();
-
-        userEvent.clear(name);
+        notFound = await screen.findByTestId("NotFound");
       });
-      expect(submitBtn!).toBeDisabled();
+      await waitFor(async () => {
+        expect(notFound!).toBeInTheDocument();
+      });
     });
   });
 });

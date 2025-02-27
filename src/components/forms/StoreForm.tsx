@@ -256,6 +256,7 @@ const StoreForm = ({
                       variant="contained"
                       onClick={onDeleteStore}
                       color="error"
+                      data-testid="store-delete"
                     >
                       Delete store
                     </Button>
