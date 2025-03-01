@@ -74,6 +74,9 @@ const ProductForm = ({
                 <Grid {...inputGridSystem}>
                   <StyledInput
                     id="product-name"
+                    inputProps={{
+                      "data-testid": "product-name",
+                    }}
                     label="Name"
                     name="name"
                     disabled={disableAll}
@@ -87,6 +90,9 @@ const ProductForm = ({
                 <Grid {...inputGridSystem}>
                   <StyledInput
                     id="product-description"
+                    inputProps={{
+                      "data-testid": "product-description",
+                    }}
                     label="Description"
                     multiline
                     disabled={disableAll}
@@ -105,6 +111,9 @@ const ProductForm = ({
                 <Grid {...inputGridSystem}>
                   <StyledInput
                     id="product-minQuantity"
+                    inputProps={{
+                      "data-testid": "product-minQuantity",
+                    }}
                     label="Minimum quantity"
                     name="minQuantity"
                     disabled={disableAll}
@@ -121,6 +130,9 @@ const ProductForm = ({
                 <Grid {...inputGridSystem}>
                   <StyledInput
                     id="product-quantity"
+                    inputProps={{
+                      "data-testid": "product-quantity",
+                    }}
                     label="Quantity"
                     name="quantity"
                     disabled={disableAll}
@@ -135,6 +147,9 @@ const ProductForm = ({
                 <Grid {...inputGridSystem}>
                   <StyledInput
                     id="product-unitPrice"
+                    inputProps={{
+                      "data-testid": "product-unitPrice",
+                    }}
                     label="Price (CAD)"
                     name="unitPrice"
                     disabled={disableAll}
@@ -154,6 +169,7 @@ const ProductForm = ({
                       type="submit"
                       variant="contained"
                       disabled={disableAll || invalid}
+                      data-testid="product-submit"
                     >
                       {buttonTitle}
                     </Button>
@@ -163,6 +179,7 @@ const ProductForm = ({
                       color="error"
                       variant="contained"
                       onClick={onDeleteProduct}
+                      data-testid="product-delete"
                     >
                       Delete store
                     </Button>

@@ -7,6 +7,8 @@ import type { GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
 import { useNavigate } from "react-router";
 import { useGridApiRef } from "@mui/x-data-grid";
 import Grid from "@mui/system/Grid";
+import { useConfirm } from "material-ui-confirm";
+import { useNotifications } from "@toolpad/core";
 
 import ListTable from "../../components/ListTable";
 import { RootState } from "../../services/redux/rootReducer";
@@ -95,6 +97,8 @@ interface State {
 function Products() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const confirm = useConfirm();
+  const notifications = useNotifications();
 
   const apiRef = useGridApiRef();
 
@@ -143,21 +147,28 @@ function Products() {
   };
 
   const handleDeleteClick = useCallback(
-    (productId: string | number) => {
+    async (productId: string | number) => {
       const product = products.find(
         (_product) => _product._id === productId.toString()
       );
       if (product) {
         const message = `Are you sure you wanna delete this product (${product.name})?`;
         // eslint-disable-next-line no-restricted-globals
-        const agree = confirm(message);
-        if (agree) {
+        const { confirmed } = await confirm({
+          title: "Warning !",
+          description: message,
+        });
+        if (confirmed) {
           const productSrv = new ProductSrv(dispatch);
           productSrv.deleteOne(product._id);
+          notifications.show(`${product.name} has been deleted`, {
+            severity: "success",
+            autoHideDuration: 5000,
+          });
         }
       }
     },
-    [dispatch, products]
+    [dispatch, products, confirm, notifications]
   );
 
   const handleEndTyping = useCallback((value: string) => {
@@ -263,6 +274,9 @@ function Products() {
             size="small"
             onEndTyping={handleEndTyping}
             placeholder="Search by name"
+            inputProps={{
+              "data-testid": "product-search",
+            }}
           />
         </Grid>
         <Grid {...inputGridSystem}>
@@ -306,6 +320,7 @@ function Products() {
           maxWidth: "100vw",
           border: 0,
         }}
+        data-testid="products-list"
       />
     </Grid>
   );
