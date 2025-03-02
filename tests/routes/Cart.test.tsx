@@ -359,7 +359,7 @@ describe("Cart Feature", () => {
     });
   });
   describe("User can update buy quantity of a cart item", () => {
-    let state: RootState;
+    let _state: RootState;
     beforeEach(() => {
       const cartItems: Types.CartItem[] = [
         {
@@ -382,16 +382,17 @@ describe("Cart Feature", () => {
         cartId: "cartId",
         items: cartItems,
       };
-      state = generateFakeStore({
+      const storeCart = {
+        [user._id]: {
+          [store._id]: cart,
+        },
+      };
+      _state = generateFakeStore({
         users,
         stores,
         products,
         user: { connectedUser: user, selectedStore: store },
-        cart: {
-          [user._id]: {
-            [store._id]: cart,
-          },
-        },
+        cart: storeCart,
       });
       mockedUseNotifications.mockReturnValue({
         show: mockShow,
@@ -401,7 +402,7 @@ describe("Cart Feature", () => {
     test("should work", async () => {
       jest.useFakeTimers();
       await act(async () => {
-        renderWithProviders(<Cart />, { preloadedState: state });
+        renderWithProviders(<Cart />, { preloadedState: _state });
       });
       const buyQty = await screen.findByTestId(`buy-quantity-${product1._id}`);
       await act(async () => {
