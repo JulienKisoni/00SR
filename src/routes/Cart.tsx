@@ -12,6 +12,8 @@ import type {
 import { useGridApiRef } from "@mui/x-data-grid";
 import debounce from "lodash.debounce";
 import Grid from "@mui/system/Grid";
+import { useConfirm } from "material-ui-confirm";
+import { useNotifications } from "@toolpad/core";
 
 import SearchBar from "../components/SearchBar";
 import ListTable from "../components/ListTable";
@@ -35,6 +37,7 @@ const BuyQty = memo((props: BuyQtyProps) => {
   const { row, storeId, userId } = props;
 
   const dispatch = useDispatch();
+  const notifications = useNotifications();
 
   const [state, setState] = useState({ value: row.quantity });
   const cartSrv = useMemo(() => new CartSrv(dispatch), [dispatch]);
@@ -49,10 +52,18 @@ const BuyQty = memo((props: BuyQtyProps) => {
         productId,
       });
       if (error) {
-        alert(error.publicMessage);
+        notifications.show(error.publicMessage, {
+          severity: "success",
+          autoHideDuration: 5000,
+        });
+      } else {
+        notifications.show(`${row.productName} updated inside the cart`, {
+          severity: "success",
+          autoHideDuration: 5000,
+        });
       }
     },
-    [cartSrv, storeId, userId, row]
+    [cartSrv, storeId, userId, row, notifications]
   );
   const debouncedEndTyping = useMemo(
     () => debounce(onEndTyping, 1000),
@@ -61,14 +72,19 @@ const BuyQty = memo((props: BuyQtyProps) => {
   const handleChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const value = event.target.value;
-      if (parseInt(value, 10) <= 0) {
+      const num = parseInt(value, 10);
+      if (num <= 0 || isNaN(num)) {
+        notifications.show("Invalid value", {
+          severity: "success",
+          autoHideDuration: 5000,
+        });
         return;
       }
       setState((prev) => ({ ...prev, value }));
       // Call API
       debouncedEndTyping(value);
     },
-    [debouncedEndTyping]
+    [debouncedEndTyping, notifications]
   );
 
   return (
@@ -79,6 +95,9 @@ const BuyQty = memo((props: BuyQtyProps) => {
       type="number"
       onChange={handleChange}
       size="small"
+      inputProps={{
+        "data-testid": `buy-quantity-${row.productId}`,
+      }}
     />
   );
 });
@@ -87,6 +106,8 @@ function Cart() {
   const dispatch = useDispatch();
 
   const apiRef = useGridApiRef();
+  const confirm = useConfirm();
+  const notification = useNotifications();
 
   const cartSrv = useMemo(() => new CartSrv(dispatch), [dispatch]);
   const orderSrv = useMemo(() => new OrderSrv(dispatch), [dispatch]);
@@ -206,15 +227,32 @@ function Cart() {
     []
   );
 
-  const handleDeleteItems = useCallback(() => {
+  const handleDeleteItems = useCallback(async () => {
     if (state.selectedProductIDs.length && selectedStoreId && connectedUserId) {
-      cartSrv.removeProducts({
-        storeId: selectedStoreId,
-        userId: connectedUserId,
-        productIDs: state.selectedProductIDs,
+      const { confirmed } = await confirm({
+        title: "Warning !",
+        description: "Do you want to remove the selected item(s)?",
       });
+      if (confirmed) {
+        cartSrv.removeProducts({
+          storeId: selectedStoreId,
+          userId: connectedUserId,
+          productIDs: state.selectedProductIDs,
+        });
+        notification.show("Item(s) removed successfully", {
+          severity: "success",
+          autoHideDuration: 5000,
+        });
+      }
     }
-  }, [state.selectedProductIDs, cartSrv, selectedStoreId, connectedUserId]);
+  }, [
+    state.selectedProductIDs,
+    cartSrv,
+    selectedStoreId,
+    connectedUserId,
+    confirm,
+    notification,
+  ]);
   const handleGenerateOrder = useCallback(() => {
     if (!connectedUserId || !selectedStoreId) {
       return;
@@ -271,6 +309,9 @@ function Cart() {
             placeholder="Search by product name"
             fullWidth
             size="small"
+            inputProps={{
+              "data-testid": "cart-search",
+            }}
           />
         </Grid>
         <Grid {...inputGridSystem}>
@@ -280,6 +321,7 @@ function Cart() {
               onClick={handleDeleteItems}
               variant="contained"
               color="error"
+              data-testid="delete-items"
             >
               Delete item(s)
             </Button>
@@ -297,6 +339,7 @@ function Cart() {
           maxWidth: "100vw",
           border: 0,
         }}
+        data-testid="cartItems-list"
       />
     </Grid>
   );

@@ -202,9 +202,16 @@ function Products() {
         storeId: selectedStoreId,
         data: cartObj,
       });
+      notifications.show("Cart updated", {
+        severity: "success",
+        autoHideDuration: 5000,
+      });
     } else {
       const error = new GenericError("Something went wrong");
-      alert(error.publicMessage);
+      notifications.show(error.publicMessage, {
+        severity: "success",
+        autoHideDuration: 5000,
+      });
     }
   }, [
     state.selectedProductIDs,
@@ -213,6 +220,7 @@ function Products() {
     connectedUserId,
     selectedStoreId,
     apiRef,
+    notifications,
   ]);
   const handleGenerateGraphics = useCallback(() => {
     if (
@@ -287,6 +295,7 @@ function Products() {
               variant="contained"
               color="secondary"
               sx={{ color: "white" }}
+              data-testid="add-to-cart-btn"
             >
               Add to cart
             </Button>

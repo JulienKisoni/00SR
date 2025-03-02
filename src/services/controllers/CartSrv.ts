@@ -54,12 +54,15 @@ export class CartSrv extends Api {
     userId: string;
     storeId: string;
   }): GenericResponse<T> {
-    const cart = store.getState().cart[userId][storeId];
+    const cart = store.getState().cart || {};
+    if (cart[userId] && cart[userId][storeId]) {
+      return { data: cart[userId][storeId] as T };
+    }
     const error = new GenericError("No existing cart for this user");
     if (!cart) {
-      return { error };
+      return { error, data: null };
     }
-    return { data: cart as T };
+    return { data: null };
   }
   updateOne<T extends Types.IUserDocument | Types.IStoreDocument>(
     id: string,
