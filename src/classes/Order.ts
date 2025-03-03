@@ -3,8 +3,6 @@ import ShortUniqueId from "short-unique-id";
 
 import { getStore } from "../services/redux/store";
 
-const store = getStore();
-
 interface OrderArgs {
   storeId: string;
   userId: string;
@@ -51,6 +49,7 @@ export class Order implements Types.IOrderDocument {
   }
 
   refreshProductItems(cartItems: Types.CartItem[]): Types.CartItem[] {
+    const store = getStore();
     const products = store.getState().products || [];
     const productIDs = cartItems.map((item) => item.productId);
     const refreshedProducts = products.filter((product) =>

@@ -11,6 +11,8 @@ import type {
 import { useGridApiRef } from "@mui/x-data-grid";
 import { useNavigate } from "react-router";
 import Grid from "@mui/system/Grid";
+import { useConfirm } from "material-ui-confirm";
+import { useNotifications } from "@toolpad/core";
 
 import SearchBar from "../../components/SearchBar";
 import ListTable from "../../components/ListTable";
@@ -83,6 +85,8 @@ const columns: GridColDef[] = [
 function Orders() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const confirm = useConfirm();
+  const notifications = useNotifications();
 
   const apiRef = useGridApiRef();
 
@@ -144,11 +148,28 @@ function Orders() {
     []
   );
 
-  const handleDeleteItems = useCallback(() => {
+  const handleDeleteItems = useCallback(async () => {
     if (state.selectedOrderIDs.length && selectedStoreId && connectedUserId) {
-      orderSrv.deleteMany(state.selectedOrderIDs);
+      const { confirmed } = await confirm({
+        title: "Warning !",
+        description: "Are you sure you want to delete the selected order(s)?",
+      });
+      if (confirmed) {
+        orderSrv.deleteMany(state.selectedOrderIDs);
+        notifications.show("Order(s) delete successfully", {
+          severity: "success",
+          autoHideDuration: 5000,
+        });
+      }
     }
-  }, [state.selectedOrderIDs, selectedStoreId, connectedUserId, orderSrv]);
+  }, [
+    state.selectedOrderIDs,
+    selectedStoreId,
+    connectedUserId,
+    orderSrv,
+    notifications,
+    confirm,
+  ]);
   const handleGenerateReport = useCallback(() => {
     if (
       !connectedUserId ||
@@ -185,23 +206,34 @@ function Orders() {
       return row._id;
     }, []);
   const handleSingleDelete = useCallback(
-    (orderId: string | number) => {
+    async (orderId: string | number) => {
       const order = filteredOrders.find(
         (_order) => _order._id === orderId.toString()
       );
       if (order) {
         const message = `Are you sure you wanna delete this order (${order.orderNumber})?`;
         // eslint-disable-next-line no-restricted-globals
-        const agree = confirm(message);
-        if (agree) {
+        const { confirmed } = await confirm({
+          title: "Warning !",
+          description: message,
+        });
+        if (confirmed) {
           const { error } = orderSrv.deleteOne(orderId.toString());
           if (error) {
-            alert(error.publicMessage);
+            notifications.show(error.publicMessage, {
+              severity: "error",
+              autoHideDuration: 5000,
+            });
+          } else {
+            notifications.show(`${order.orderNumber} has been deleted`, {
+              severity: "success",
+              autoHideDuration: 5000,
+            });
           }
         }
       }
     },
-    [orderSrv, filteredOrders]
+    [orderSrv, filteredOrders, confirm, notifications]
   );
   const handleViewOrder = useCallback(
     (orderId: string | number) => {
@@ -236,6 +268,9 @@ function Orders() {
             placeholder="Search by order number"
             size="small"
             fullWidth
+            inputProps={{
+              "data-testid": "orders-search",
+            }}
           />
         </Grid>
         <Grid {...inputGridSystem}>
@@ -245,6 +280,7 @@ function Orders() {
               onClick={handleDeleteItems}
               variant="contained"
               color="error"
+              data-testid="delete-orders"
             >
               Delete orders(s)
             </Button>
@@ -263,6 +299,7 @@ function Orders() {
           maxWidth: "100vw",
           border: 0,
         }}
+        data-testid="orders-list"
       />
     </Grid>
   );

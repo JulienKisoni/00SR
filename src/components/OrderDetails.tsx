@@ -112,6 +112,7 @@ const OrderDetails = ({
           border: 0,
           ...listSx,
         }}
+        data-testid="order-details-list"
       />
     </Stack>
   );

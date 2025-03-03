@@ -268,6 +268,10 @@ function Cart() {
 
     orderSrv.addOne(order.toObject());
     apiRef.current.setRowSelectionModel([]);
+    notification.show("Order generated", {
+      severity: "success",
+      autoHideDuration: 5000,
+    });
   }, [
     state.selectedProductIDs,
     cartItems,
@@ -275,6 +279,7 @@ function Cart() {
     selectedStoreId,
     connectedUserId,
     apiRef,
+    notification,
   ]);
   const getRowId: GridRowIdGetter<any> | undefined = useCallback(
     (row: Types.CartItem) => {
@@ -293,6 +298,7 @@ function Cart() {
           disabled={!state.selectedProductIDs?.length}
           onClick={handleGenerateOrder}
           variant="contained"
+          data-testid="generate-orders"
         >
           Generate Order
         </Button>

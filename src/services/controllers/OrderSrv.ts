@@ -5,8 +5,6 @@ import { getStore } from "../redux/store";
 import { GenericError } from "../../classes/GenericError";
 import { deleteOrder, createOrder, deleteOrders } from "../redux/slices/orders";
 
-const store = getStore();
-
 export class OrderSrv extends Api {
   dispatch: Dispatch<UnknownAction>;
   endpoint?: string | undefined;
@@ -34,6 +32,7 @@ export class OrderSrv extends Api {
       | Types.IProductDocument
       | Types.IOrderDocument,
   >({ orderId }: { orderId: string }): GenericResponse<T> {
+    const store = getStore();
     const order = store
       .getState()
       .orders.find((order) => order._id === orderId);

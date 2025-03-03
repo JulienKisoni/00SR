@@ -21,8 +21,6 @@ interface RemoveProductsParams {
   productIDs: string[];
 }
 
-const store = getStore();
-
 export class CartSrv extends Api {
   dispatch: Dispatch<UnknownAction>;
   endpoint?: string | undefined;

@@ -11,8 +11,6 @@ import {
 import { getStore } from "../redux/store";
 import { GenericError } from "../../classes/GenericError";
 
-const store = getStore();
-
 export class StoreSrv extends Api {
   dispatch: Dispatch<UnknownAction>;
   endpoint?: string | undefined;
@@ -46,6 +44,7 @@ export class StoreSrv extends Api {
   >(filters: { [key: string]: string }): GenericResponse<T> {
     const { _id } = filters;
     if (_id) {
+      const store = getStore();
       const _store = store.getState().stores.find((elt) => elt._id === _id);
       if (_store) {
         return { data: _store as T };
