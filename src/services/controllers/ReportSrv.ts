@@ -10,8 +10,6 @@ import {
 import { getStore } from "../redux/store";
 import { GenericError } from "../../classes/GenericError";
 
-const store = getStore();
-
 export class ReportSrv extends Api {
   dispatch: Dispatch<UnknownAction>;
   endpoint?: string | undefined;
@@ -29,6 +27,7 @@ export class ReportSrv extends Api {
       | Types.IProductDocument
       | Types.IReportDocument,
   >(payload: T): GenericResponse<void> {
+    const store = getStore();
     const _report = store.getState().reports.find((r) => r._id === payload._id);
     if (_report) {
       const error = new GenericError(
@@ -46,6 +45,7 @@ export class ReportSrv extends Api {
       | Types.IProductDocument
       | Types.IReportDocument,
   >({ reportId }: { reportId: string }): GenericResponse<T> {
+    const store = getStore();
     const report = store.getState().reports.find((rep) => rep._id === reportId);
     return { error: undefined, data: report as T };
   }

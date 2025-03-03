@@ -177,6 +177,12 @@ function Orders() {
       !state.selectedOrderIDs.length
     ) {
       return;
+    } else if (state.selectedOrderIDs.length > 4) {
+      notifications.show("You can only create a report of maximum 4 orders", {
+        severity: "warning",
+        autoHideDuration: 5000,
+      });
+      return;
     }
     const tempTargetedOrders: Types.IOrderDocument[] = filteredOrders.filter(
       (order) => state.selectedOrderIDs.includes(order._id)
@@ -200,6 +206,7 @@ function Orders() {
     state.selectedOrderIDs,
     filteredOrders,
     navigate,
+    notifications,
   ]);
   const getRowId: GridRowIdGetter<Types.IOrderDocument> | undefined =
     useCallback((row: Types.IOrderDocument) => {
@@ -252,6 +259,7 @@ function Orders() {
           disabled={!state.selectedOrderIDs?.length}
           onClick={handleGenerateReport}
           variant="contained"
+          data-testid="generate-report"
         >
           Generate report
         </Button>

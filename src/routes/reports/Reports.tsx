@@ -11,6 +11,8 @@ import type {
 } from "@mui/x-data-grid";
 import { useGridApiRef } from "@mui/x-data-grid";
 import { useNavigate } from "react-router";
+import { useNotifications } from "@toolpad/core";
+import { useConfirm } from "material-ui-confirm";
 
 import SearchBar from "../../components/SearchBar";
 import ListTable from "../../components/ListTable";
@@ -91,6 +93,8 @@ const columns: GridColDef[] = [
 function Reports() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const notifications = useNotifications();
+  const confirm = useConfirm();
 
   const apiRef = useGridApiRef();
 
@@ -156,34 +160,62 @@ function Reports() {
     []
   );
 
-  const handleDeleteItems = useCallback(() => {
+  const handleDeleteItems = useCallback(async () => {
     if (state.selectedReportIDs.length && selectedStoreId && connectedUserId) {
-      reportSrv.deleteMany(state.selectedReportIDs);
+      const { confirmed } = await confirm({
+        title: "Warning !",
+        description: "Are you sure you want to delete the selected order(s)?",
+      });
+      if (confirmed) {
+        reportSrv.deleteMany(state.selectedReportIDs);
+        notifications.show("Report(s) deleted successfully", {
+          severity: "success",
+          autoHideDuration: 5000,
+        });
+      }
     }
-  }, [state.selectedReportIDs, selectedStoreId, connectedUserId, reportSrv]);
+  }, [
+    state.selectedReportIDs,
+    selectedStoreId,
+    connectedUserId,
+    reportSrv,
+    confirm,
+    notifications,
+  ]);
 
   const getRowId: GridRowIdGetter<Types.IReportDocument> | undefined =
     useCallback((row: Types.IReportDocument) => {
       return row._id;
     }, []);
   const handleSingleDelete = useCallback(
-    (reportId: string | number) => {
+    async (reportId: string | number) => {
       const report = filteredReports.find(
         (_report) => _report._id === reportId.toString()
       );
       if (report) {
         const message = `Are you sure you wanna delete this report (${report.name})?`;
         // eslint-disable-next-line no-restricted-globals
-        const agree = confirm(message);
-        if (agree) {
+        const { confirmed } = await confirm({
+          title: "Warning !",
+          description: message,
+        });
+        if (confirmed) {
           const { error } = reportSrv.deleteOne(reportId.toString());
           if (error) {
-            alert(error.publicMessage);
+            notifications.show(error.publicMessage, {
+              severity: "error",
+              autoHideDuration: 5000,
+            });
+          } else {
+            notifications.show(`${report.name} has been deleted`, {
+              severity: "success",
+              autoHideDuration: 5000,
+            });
           }
         }
       }
     },
-    [reportSrv, filteredReports]
+    [reportSrv, filteredReports, confirm, notifications]
   );
   const handleViewReport = useCallback(
     (reportId: string | number) => {
@@ -217,6 +249,9 @@ function Reports() {
             size="small"
             onEndTyping={handleEndTyping}
             placeholder="Search by name"
+            inputProps={{
+              "data-testid": "reports-search",
+            }}
           />
         </Grid>
         <Grid {...inputGridSystem}>
@@ -226,6 +261,7 @@ function Reports() {
               onClick={handleDeleteItems}
               variant="contained"
               color="error"
+              data-testid="delete-reports"
             >
               Delete report(s)
             </Button>
@@ -245,6 +281,7 @@ function Reports() {
           maxWidth: "100vw",
           border: 0,
         }}
+        data-testid="reports-list"
       />
     </Grid>
   );

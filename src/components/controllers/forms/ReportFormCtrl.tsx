@@ -69,7 +69,6 @@ const ReportFormCtrl = ({
         });
         return;
       }
-      // TODO: create report with max 4 orders
       const newReport = new Report({
         ...values,
         userId: connectedUser._id,

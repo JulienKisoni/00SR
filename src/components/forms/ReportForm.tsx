@@ -71,6 +71,9 @@ const ReportForm = ({
                 <Grid {...inputGridSystem}>
                   <StyledInput
                     id="report-name"
+                    inputProps={{
+                      "data-testid": "report-name",
+                    }}
                     label="Name"
                     name="name"
                     disabled={disableAll}
@@ -84,6 +87,9 @@ const ReportForm = ({
                 <Grid {...inputGridSystem}>
                   <StyledInput
                     id="report-description"
+                    inputProps={{
+                      "data-testid": "report-description",
+                    }}
                     label="Description"
                     multiline
                     minRows={4}
@@ -105,6 +111,7 @@ const ReportForm = ({
                       type="submit"
                       variant="contained"
                       disabled={disableAll || invalid}
+                      data-testid="report-submit"
                     >
                       {buttonTitle}
                     </Button>
@@ -114,6 +121,7 @@ const ReportForm = ({
                       color="error"
                       variant="contained"
                       onClick={onDeleteReport}
+                      data-testid="report-delete"
                     >
                       Delete report
                     </Button>
