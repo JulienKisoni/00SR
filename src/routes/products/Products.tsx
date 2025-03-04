@@ -232,7 +232,16 @@ function Products() {
       alert(error.publicMessage);
       return;
     }
-    // TODO: max of 3 products per graphic
+    if (state.selectedProductIDs.length > 3) {
+      notifications.show(
+        "You can only create a graphic of maximum 3 products",
+        {
+          severity: "warning",
+          autoHideDuration: 5000,
+        }
+      );
+      return;
+    }
     const tempTargetedProducts = filteredProducts.filter((prod) =>
       state.selectedProductIDs.includes(prod._id)
     );
@@ -255,6 +264,7 @@ function Products() {
     selectedStoreId,
     navigate,
     apiRef,
+    notifications,
   ]);
 
   return (
@@ -304,6 +314,7 @@ function Products() {
               variant="contained"
               onClick={handleGenerateGraphics}
               color="success"
+              data-testid="generate-graphic-btn"
             >
               Generate graphic
             </Button>

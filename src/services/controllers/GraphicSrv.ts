@@ -10,8 +10,6 @@ import {
 import { getStore } from "../redux/store";
 import { GenericError } from "../../classes/GenericError";
 
-const store = getStore();
-
 export class GraphicSrv extends Api {
   dispatch: Dispatch<UnknownAction>;
   endpoint?: string | undefined;
@@ -29,6 +27,7 @@ export class GraphicSrv extends Api {
       | Types.IProductDocument
       | Types.IGraphicDocument,
   >(payload: T): GenericResponse<void> {
+    const store = getStore();
     const _graphic = store
       .getState()
       .graphics.find((r) => r._id === payload._id);
@@ -48,6 +47,7 @@ export class GraphicSrv extends Api {
       | Types.IProductDocument
       | Types.IGraphicDocument,
   >({ graphicId }: { graphicId: string }): GenericResponse<T> {
+    const store = getStore();
     const graphic = store
       .getState()
       .graphics.find((gr) => gr._id === graphicId);

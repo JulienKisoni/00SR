@@ -11,6 +11,8 @@ import type {
 import { useGridApiRef } from "@mui/x-data-grid";
 import { useNavigate } from "react-router";
 import Grid from "@mui/system/Grid";
+import { useNotifications } from "@toolpad/core";
+import { useConfirm } from "material-ui-confirm";
 
 import SearchBar from "../../components/SearchBar";
 import ListTable from "../../components/ListTable";
@@ -70,6 +72,8 @@ const columns: GridColDef[] = [
 function Graphics() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const confirm = useConfirm();
+  const notifications = useNotifications();
 
   const apiRef = useGridApiRef();
 
@@ -124,23 +128,33 @@ function Graphics() {
       return row._id;
     }, []);
   const handleSingleDelete = useCallback(
-    (graphicId: string | number) => {
+    async (graphicId: string | number) => {
       const graphic = filteredGraphics.find(
         (_graphic) => _graphic._id === graphicId.toString()
       );
       if (graphic) {
         const message = `Are you sure you wanna delete this graphic (${graphic.name})?`;
-        // eslint-disable-next-line no-restricted-globals
-        const agree = confirm(message);
-        if (agree) {
+        const { confirmed } = await confirm({
+          title: "Warning !",
+          description: message,
+        });
+        if (confirmed) {
           const { error } = graphicSrv.deleteOne(graphicId.toString());
           if (error) {
-            alert(error.publicMessage);
+            notifications.show(error.publicMessage, {
+              severity: "error",
+              autoHideDuration: 5000,
+            });
+          } else {
+            notifications.show(`${graphic.name} has been deleted`, {
+              severity: "success",
+              autoHideDuration: 5000,
+            });
           }
         }
       }
     },
-    [graphicSrv, filteredGraphics]
+    [graphicSrv, filteredGraphics, confirm, notifications]
   );
   const handleViewGraphic = useCallback(
     (graphicId: string | number) => {
@@ -174,6 +188,9 @@ function Graphics() {
             placeholder="Search by name"
             fullWidth
             size="small"
+            inputProps={{
+              "data-testid": "graphics-search",
+            }}
           />
         </Grid>
         <Grid {...inputGridSystem}>
@@ -202,6 +219,7 @@ function Graphics() {
           maxWidth: "100vw",
           border: 0,
         }}
+        data-testid="graphics-list"
       />
     </Grid>
   );

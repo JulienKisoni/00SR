@@ -71,6 +71,9 @@ const GraphicForm = ({
                 <Grid {...inputGridSystem}>
                   <StyledInput
                     id="graphic-name"
+                    inputProps={{
+                      "data-testid": "graphic-name",
+                    }}
                     label="Name"
                     name="name"
                     disabled={disableAll}
@@ -84,6 +87,9 @@ const GraphicForm = ({
                 <Grid {...inputGridSystem}>
                   <StyledInput
                     id="graphic-description"
+                    inputProps={{
+                      "data-testid": "graphic-description",
+                    }}
                     label="Description"
                     multiline
                     disabled={disableAll}
@@ -105,6 +111,7 @@ const GraphicForm = ({
                       type="submit"
                       variant="contained"
                       disabled={disableAll || invalid}
+                      data-testid="graphic-submit"
                     >
                       {buttonTitle}
                     </Button>
@@ -114,6 +121,7 @@ const GraphicForm = ({
                       color="error"
                       variant="contained"
                       onClick={onDeleteGraphic}
+                      data-testid="graphic-delete"
                     >
                       Delete graphic
                     </Button>

@@ -81,6 +81,7 @@ const Chart = ({ graphic }: Props) => {
 
   return (
     <BarChart
+      data-testid="bar-chart"
       height={400}
       series={state.series}
       xAxis={[{ scaleType: "band", data: state.xAxisData }]}
