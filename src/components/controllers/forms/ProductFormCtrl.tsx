@@ -160,6 +160,9 @@ const ProductFormCtlr = ({
     },
     []
   );
+  const handleRemovePicture = useCallback(() => {
+    setState((prev) => ({ ...prev, picture: "" }));
+  }, []);
 
   return (
     <div>
@@ -168,6 +171,7 @@ const ProductFormCtlr = ({
         defaultSrc={defaultImgSrc}
         onError={onFileUploadError}
         onSuccess={onFileUploadSuccess}
+        onRemovePicture={handleRemovePicture}
         disabled={mode === "readonly"}
       />
       <ProductForm

@@ -53,7 +53,12 @@ const Modal = ({
         <Button variant="outlined" autoFocus onClick={onClose}>
           Cancel
         </Button>
-        <Button variant="contained" onClick={onSave} autoFocus>
+        <Button
+          data-testid="modal-save-btn"
+          variant="contained"
+          onClick={onSave}
+          autoFocus
+        >
           {saveLabel}
         </Button>
       </DialogActions>

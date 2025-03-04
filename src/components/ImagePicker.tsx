@@ -50,6 +50,7 @@ interface ImagePickerProps {
   onSuccess: ({ downloadURL }: { downloadURL: string }) => void;
   onError: (error: GenericError) => void;
   disabled: boolean;
+  onRemovePicture: () => void;
   allowTakePicture?: boolean;
 }
 interface PickerState {
@@ -77,6 +78,7 @@ const ImagePicker = ({
   defaultSrc,
   onError,
   onSuccess,
+  onRemovePicture,
   disabled = false,
   allowTakePicture = false,
 }: ImagePickerProps) => {
@@ -339,11 +341,13 @@ const ImagePicker = ({
           className="btn--upload__icon"
           sx={{ marginBottom: 2, backgroundColor: "white" }}
           onClick={handleMenuBtnClick}
+          data-testid="open-menu-btn"
         >
           <CreateIcon fontSize="small" sx={{ color: "black" }} />
         </Button>
         <Menu
           id="basic-menu"
+          data-testid="basic-menu"
           anchorEl={state.anchorEl}
           open={state.menuOpen}
           onClose={() => {
@@ -370,7 +374,12 @@ const ImagePicker = ({
             </Button>
           </MenuItem>
           {allowTakePicture ? (
-            <MenuItem onClick={onTakePicture}>Take a picture</MenuItem>
+            <MenuItem
+              data-testid="take-picture-menu-item"
+              onClick={onTakePicture}
+            >
+              Take a picture
+            </MenuItem>
           ) : null}
         </Menu>
       </div>
@@ -378,6 +387,8 @@ const ImagePicker = ({
         disabled={disabled}
         variant="text"
         sx={{ textDecoration: "underline" }}
+        data-testid="remove-picture"
+        onClick={onRemovePicture}
       >
         Remove picture
       </Button>

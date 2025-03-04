@@ -57,6 +57,9 @@ const UpdateProfile = ({
                   </InputLabel>
                   <OutlinedInput
                     id="username"
+                    inputProps={{
+                      "data-testid": "username",
+                    }}
                     placeholder="Username"
                     name="username"
                     size="small"
@@ -79,6 +82,9 @@ const UpdateProfile = ({
                   </InputLabel>
                   <OutlinedInput
                     id="email"
+                    inputProps={{
+                      "data-testid": "email",
+                    }}
                     placeholder="Email"
                     type="email"
                     name="email"
@@ -101,6 +107,7 @@ const UpdateProfile = ({
                   type="submit"
                   variant="contained"
                   disabled={disabled}
+                  data-testid="profile-submit"
                 >
                   Update profile
                 </Button>

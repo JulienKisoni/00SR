@@ -20,6 +20,7 @@ const PeripheralCam: React.FC<Props> = ({ webcamRef }) => {
       }}
     >
       <Webcam
+        data-testid="webcam-view"
         audio={false}
         ref={webcamRef}
         height="100%"

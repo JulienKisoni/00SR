@@ -97,11 +97,38 @@ const UpdateProfileCtrl = () => {
           });
           return;
         }
+        notifications.show("Profile updated successfully", {
+          autoHideDuration: 5000,
+          severity: "success",
+        });
         helpers.resetForm({ values });
       }
     },
     [dispatch, connectedUser, notifications]
   );
+  const handleRemovePicture = useCallback(() => {
+    if (!connectedUser) {
+      notifications.show("No connected user", {
+        autoHideDuration: 5000,
+        severity: "error",
+      });
+      return;
+    }
+    const usersSrv = new UsersSrv(dispatch);
+    const userId = connectedUser?._id || "";
+    const profile = connectedUser?.profile || {};
+    const payload: Partial<Types.IUserDocument> = {
+      profile: {
+        ...profile,
+        picture: "",
+      },
+    };
+    usersSrv.updateOne(userId, payload);
+    notifications.show("Picture removed successfully", {
+      autoHideDuration: 5000,
+      severity: "success",
+    });
+  }, [notifications, connectedUser, dispatch]);
 
   if (!connectedUser || !initialValues.email || !initialValues.username) {
     return <div>Loading...</div>;
@@ -117,6 +144,7 @@ const UpdateProfileCtrl = () => {
           onSuccess={onFileUploadSuccess}
           disabled={false}
           allowTakePicture
+          onRemovePicture={handleRemovePicture}
         />
         <UpdateProfile
           initialValues={initialValues}

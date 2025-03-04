@@ -137,6 +137,9 @@ const StoreFormCtlr = ({
     },
     []
   );
+  const handleRemovePicture = useCallback(() => {
+    setState((prev) => ({ ...prev, picture: "" }));
+  }, []);
 
   return (
     <div>
@@ -146,6 +149,7 @@ const StoreFormCtlr = ({
         onError={onFileUploadError}
         onSuccess={onFileUploadSuccess}
         disabled={mode === "readonly"}
+        onRemovePicture={handleRemovePicture}
       />
       <StoreForm
         initialValues={initialValues}
