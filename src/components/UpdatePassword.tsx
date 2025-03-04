@@ -84,6 +84,9 @@ const UpdatePassword = ({
                     </InputLabel>
                     <OutlinedInput
                       id="current-password"
+                      inputProps={{
+                        "data-testid": "current-password",
+                      }}
                       placeholder="Current password"
                       size="small"
                       sx={{ marginTop: 2 }}
@@ -124,6 +127,9 @@ const UpdatePassword = ({
                     </InputLabel>
                     <OutlinedInput
                       id="new-password"
+                      inputProps={{
+                        "data-testid": "new-password",
+                      }}
                       placeholder="New password"
                       size="small"
                       sx={{ marginTop: 2 }}
@@ -165,6 +171,9 @@ const UpdatePassword = ({
                     </InputLabel>
                     <OutlinedInput
                       id="confirm-password"
+                      inputProps={{
+                        "data-testid": "confirm-password",
+                      }}
                       placeholder="Confirm password"
                       size="small"
                       sx={{ marginTop: 2 }}
@@ -203,6 +212,7 @@ const UpdatePassword = ({
                     type="submit"
                     variant="contained"
                     disabled={!isValid}
+                    data-testid="update-pwd-submit"
                   >
                     Update password
                   </Button>

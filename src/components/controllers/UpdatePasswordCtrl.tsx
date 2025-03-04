@@ -60,6 +60,10 @@ const UpdatePasswordCtrl = () => {
         return;
       }
       helpers.resetForm();
+      notifications.show("Password updated successfully", {
+        autoHideDuration: 5000,
+        severity: "success",
+      });
     },
     [dispatch, userId, email, notifications]
   );

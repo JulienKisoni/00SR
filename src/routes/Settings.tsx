@@ -96,9 +96,21 @@ const Settings = () => {
                   onChange={handleChange}
                   aria-label="lab API tabs example"
                 >
-                  <Tab label="Actions" value={0} />
-                  <Tab label="Profile" value={1} />
-                  <Tab label="Password" value={2} />
+                  <Tab
+                    data-testid="settings-actions-tab"
+                    label="Actions"
+                    value={0}
+                  />
+                  <Tab
+                    data-testid="settings-profile-tab"
+                    label="Profile"
+                    value={1}
+                  />
+                  <Tab
+                    data-testid="settings-password-tab"
+                    label="Password"
+                    value={2}
+                  />
                 </TabList>
               </Box>
             </Grid>
@@ -130,7 +142,12 @@ const Settings = () => {
                 </FormControl>
               </Grid>
               <Stack direction="row">
-                <Button color="error" variant="outlined" onClick={handleLogout}>
+                <Button
+                  data-testid="logout-btn"
+                  color="error"
+                  variant="outlined"
+                  onClick={handleLogout}
+                >
                   Logout
                 </Button>
                 <Button
