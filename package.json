@@ -7,7 +7,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "jest --coverage false",
-    "test:one": "jest --coverage false --watch tests/routes/settings/Actions.test.tsx",
+    "test:one": "jest --coverage false --watch tests/components/UnProtectedRoute.test.tsx",
     "test:coverage": "jest",
     "eject": "react-scripts eject"
   },

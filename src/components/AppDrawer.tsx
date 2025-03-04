@@ -26,25 +26,67 @@ const AppDrawer = ({ children }: PropsWithChildren) => {
   const renderIcon = useCallback((route: ROUTES): React.JSX.Element => {
     switch (route) {
       case ROUTES.STORES:
-        return <DomainIcon sx={{ color: "white" }} fontSize="large" />;
+        return (
+          <DomainIcon
+            data-testid="stores-icon"
+            sx={{ color: "white" }}
+            fontSize="large"
+          />
+        );
       case ROUTES.PRODUCTS:
-        return <StoreIcon sx={{ color: "white" }} fontSize="large" />;
+        return (
+          <StoreIcon
+            data-testid="products-icon"
+            sx={{ color: "white" }}
+            fontSize="large"
+          />
+        );
       case ROUTES.CART:
-        return <ShoppingCartIcon sx={{ color: "white" }} fontSize="large" />;
+        return (
+          <ShoppingCartIcon
+            data-testid="cart-icon"
+            sx={{ color: "white" }}
+            fontSize="large"
+          />
+        );
       case ROUTES.ORDERS:
-        return <ReceiptIcon sx={{ color: "white" }} fontSize="large" />;
+        return (
+          <ReceiptIcon
+            data-testid="orders-icon"
+            sx={{ color: "white" }}
+            fontSize="large"
+          />
+        );
       case ROUTES.REPORTS:
-        return <DescriptionIcon sx={{ color: "white" }} fontSize="large" />;
+        return (
+          <DescriptionIcon
+            data-testid="reports-icon"
+            sx={{ color: "white" }}
+            fontSize="large"
+          />
+        );
       case ROUTES.GRAPHICS:
-        return <BarChartIcon sx={{ color: "white" }} fontSize="large" />;
+        return (
+          <BarChartIcon
+            data-testid="graphics-icon"
+            sx={{ color: "white" }}
+            fontSize="large"
+          />
+        );
       case ROUTES.SETTINGS:
-        return <SettingsIcon sx={{ color: "white" }} fontSize="large" />;
+        return (
+          <SettingsIcon
+            data-testid="settings-icon"
+            sx={{ color: "white" }}
+            fontSize="large"
+          />
+        );
       default:
         return <InboxIcon sx={{ color: "white" }} fontSize="large" />;
     }
   }, []);
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box data-testid="drawer-container" sx={{ display: "flex" }}>
       <CssBaseline />
       <Drawer
         sx={{
