@@ -14,6 +14,8 @@ import Grid from "@mui/system/Grid";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
+import { useNotifications } from "@toolpad/core";
+import { useConfirm } from "material-ui-confirm";
 
 import { UsersSrv } from "../services/controllers/UserSrv";
 import { ROUTES } from "../constants/routes";
@@ -37,6 +39,10 @@ const Settings = () => {
   const initialSelectedStore = useSelector((state: RootState) => {
     return state.user.selectedStore;
   }, shallowEqual);
+  const connectedUser = useSelector(
+    (state: RootState) => state.user.connectedUser,
+    shallowEqual
+  );
 
   useEffect(() => {
     if (initialSelectedStore?._id) {
@@ -46,6 +52,8 @@ const Settings = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const notifications = useNotifications();
+  const confirm = useConfirm();
 
   const handleChange = useCallback(
     (event: React.SyntheticEvent, newValue: number) => {
@@ -53,6 +61,23 @@ const Settings = () => {
     },
     []
   );
+  const handleDelete = useCallback(async () => {
+    const { confirmed } = await confirm({
+      title: "Warning !",
+      description:
+        "Are you sure you want to delete your account? You will loose access to all your data. This action is not reversible",
+    });
+    if (confirmed && connectedUser?._id) {
+      const usersSrv = new UsersSrv(dispatch);
+      usersSrv.logout();
+      usersSrv.deleteOne(connectedUser?._id);
+      notifications.show("Account deleted successfully", {
+        severity: "success",
+        autoHideDuration: 5000,
+      });
+      navigate(`/${ROUTES.SIGNUP}`);
+    }
+  }, [dispatch, navigate, confirm, connectedUser, notifications]);
   const handleLogout = useCallback(() => {
     const usersSrv = new UsersSrv(dispatch);
     usersSrv.logout();
@@ -66,9 +91,13 @@ const Settings = () => {
       if (store) {
         const usersSrv = new UsersSrv(dispatch);
         usersSrv.selectStore(store);
+        notifications.show(`${store.name} has been selected`, {
+          severity: "success",
+          autoHideDuration: 5000,
+        });
       }
     },
-    [stores, dispatch]
+    [stores, dispatch, notifications]
   );
 
   return (
@@ -124,6 +153,9 @@ const Settings = () => {
                   </InputLabel>
                   <Select
                     id="selected-store"
+                    inputProps={{
+                      "data-testid": "selected-store",
+                    }}
                     labelId="labelId-selected-store"
                     variant="outlined"
                     name="selectedStore"
@@ -154,6 +186,8 @@ const Settings = () => {
                   sx={{ marginLeft: 2 }}
                   color="error"
                   variant="contained"
+                  onClick={handleDelete}
+                  data-testid="delete-account-btn"
                 >
                   Delete account
                 </Button>

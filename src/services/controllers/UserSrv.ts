@@ -3,7 +3,7 @@ import { hashSync, compareSync } from "bcryptjs";
 import ShortUniqueId from "short-unique-id";
 
 import { Api, GenericResponse } from "../../classes/Api";
-import { createUser, updateUser } from "../redux/slices/users";
+import { createUser, updateUser, deleteUser } from "../redux/slices/users";
 import { selectStore, setUser } from "../redux/slices/user";
 import { getStore } from "../redux/store";
 import { GenericError } from "../../classes/GenericError";
@@ -171,6 +171,7 @@ export class UsersSrv extends Api {
     }
   }
   deleteOne(id: string): GenericResponse<void> {
+    this.dispatch(deleteUser({ userId: id }));
     return {};
   }
   selectStore(store: Types.IStoreDocument): void {
