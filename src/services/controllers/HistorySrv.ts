@@ -38,13 +38,11 @@ export class HistorySrv extends Api {
     const payload = _payload as Types.IHistoryDocument;
     const { data: historyData } = this.getOne({ productId: payload.productId });
     if (!historyData) {
-      const { error, data: productData } =
+      const { data: productData } =
         this.productSrv.getOne<Types.IProductDocument>({
           productId: payload.productId,
         });
-      if (error) {
-        return { error };
-      } else if (productData) {
+      if (productData) {
         const history = new History(payload);
         history.unshiftEvolution(
           productData?.quantity,

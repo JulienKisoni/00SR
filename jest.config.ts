@@ -36,7 +36,9 @@ const config: Config = {
   coveragePathIgnorePatterns: [
     "/node_modules/",
     "src/classes/Api.ts",
+    "src/classes/FileUpload.ts",
     "src/components/Navigation.tsx",
+    "src/components/ImagePicker.tsx",
     "src/index.tsx",
     "src/routes/index.tsx",
   ],

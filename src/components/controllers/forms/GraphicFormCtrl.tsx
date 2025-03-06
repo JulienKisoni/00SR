@@ -63,7 +63,7 @@ const GraphicFormCtrl = ({
         });
         return;
       } else if (!selectedStore) {
-        notifications.show("No connected store", {
+        notifications.show("No selected store", {
           autoHideDuration: 5000,
           severity: "error",
         });
