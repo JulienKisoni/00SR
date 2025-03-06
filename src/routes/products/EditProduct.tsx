@@ -4,6 +4,8 @@ import Stack from "@mui/material/Stack";
 import { Navigate, useNavigate, useParams } from "react-router";
 import { useSelector, shallowEqual, useDispatch } from "react-redux";
 import { Backdrop, CircularProgress } from "@mui/material";
+import { useNotifications } from "@toolpad/core";
+import { useConfirm } from "material-ui-confirm";
 
 import { RootState } from "../../services/redux/rootReducer";
 import { ROUTES } from "../../constants/routes";
@@ -23,6 +25,8 @@ const EditProduct = () => {
   const { productId } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const notifications = useNotifications();
+  const confirm = useConfirm();
 
   const [state, setState] = useState({ deny: false });
 
@@ -43,11 +47,14 @@ const EditProduct = () => {
   useEffect(() => {
     if (selectedStore?.products?.length && product?._id) {
       if (!selectedStore?.products.includes(product?._id)) {
-        alert("You do not have access to this product");
+        notifications.show("You do not have access to this product", {
+          severity: "error",
+          autoHideDuration: 5000,
+        });
         setState((prev) => ({ ...prev, deny: true }));
       }
     }
-  }, [selectedStore, product]);
+  }, [selectedStore, product, notifications]);
 
   const initialValues: FormValues | null = useMemo(() => {
     if (!product) {
@@ -63,19 +70,25 @@ const EditProduct = () => {
     return values;
   }, [product]);
 
-  const handleDeleteProduct = useCallback(() => {
+  const handleDeleteProduct = useCallback(async () => {
     if (product) {
       const message = `Are you sure you wanna delete this product (${product.name})?`;
       // eslint-disable-next-line no-restricted-globals
-      const agree = confirm(message);
-      if (agree) {
+      const { confirmed } = await confirm({
+        title: "Warning !",
+        description: message,
+      });
+      if (confirmed) {
         const productSrv = new ProductSrv(dispatch);
         productSrv.deleteOne(product._id);
-        alert("Product deleted");
+        notifications.show("Product deleted", {
+          severity: "success",
+          autoHideDuration: 5000,
+        });
         navigate(`/${ROUTES.PRODUCTS}`, { replace: true });
       }
     }
-  }, [product, dispatch, navigate]);
+  }, [product, dispatch, navigate, notifications, confirm]);
 
   if (initialValues === null) {
     return <NotFound />;
@@ -85,6 +98,7 @@ const EditProduct = () => {
       <Backdrop
         sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
         open
+        data-testid="backdrop-loading"
       >
         <CircularProgress color="inherit" />
       </Backdrop>

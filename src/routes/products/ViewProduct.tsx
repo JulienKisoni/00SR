@@ -3,6 +3,7 @@ import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import { Navigate, useParams } from "react-router";
 import { shallowEqual, useSelector } from "react-redux";
+import { useNotifications } from "@toolpad/core";
 
 import { RootState } from "../../services/redux/rootReducer";
 import ProductFormCtlr from "../../components/controllers/forms/ProductFormCtrl";
@@ -22,6 +23,8 @@ const ViewProduct = () => {
   const { productId } = useParams();
   const [state, setState] = useState({ deny: false });
 
+  const notifications = useNotifications();
+
   const product = useSelector((state: RootState) => {
     return state.products.find((_product) => _product._id === productId);
   }, shallowEqual);
@@ -39,11 +42,14 @@ const ViewProduct = () => {
   useEffect(() => {
     if (selectedStore?.products?.length && product?._id) {
       if (!selectedStore?.products.includes(product?._id)) {
-        alert("You do not have access to this product");
+        notifications.show("You do not have access to this product", {
+          severity: "error",
+          autoHideDuration: 5000,
+        });
         setState((prev) => ({ ...prev, deny: true }));
       }
     }
-  }, [selectedStore, product]);
+  }, [selectedStore, product, notifications]);
 
   const initialValues: FormValues | null = useMemo(() => {
     if (!product) {
@@ -67,6 +73,7 @@ const ViewProduct = () => {
       <Backdrop
         sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
         open
+        data-testid="backdrop-loading"
       >
         <CircularProgress color="inherit" />
       </Backdrop>

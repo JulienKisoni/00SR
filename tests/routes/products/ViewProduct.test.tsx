@@ -2,7 +2,7 @@
 /// <reference path="../../../src/types/global.d.ts" />
 
 import React from "react";
-import { act, screen, waitFor } from "@testing-library/react";
+import { act, cleanup, screen, waitFor } from "@testing-library/react";
 import { useNotifications } from "@toolpad/core";
 import { useNavigate, useParams } from "react-router";
 
@@ -31,56 +31,61 @@ jest.mock("../../../src/services/workers/wrapper.ts", () => ({
 const mockedUseNotifications = jest.mocked(useNotifications);
 const mockedUseNavigate = jest.mocked(useNavigate);
 const mockedUseParams = jest.mocked(useParams);
+const user: Types.IUserDocument = {
+  _id: "123",
+  email: "johndoe@mail.com",
+  password: "johndoe",
+  profile: {
+    username: "johndoe",
+    picture: "picture_uri",
+    role: "user",
+  },
+  createdAt: new Date().toISOString(),
+};
+const users: Types.IUserDocument[] = [user];
+const store: Types.IStoreDocument = {
+  _id: "1234",
+  name: "My store",
+  owner: user._id,
+  picture: "picture_uri",
+  products: ["abcd"],
+  description: "My store description",
+  address: {
+    line1: "123 daddy street",
+    country: "CANADA",
+    state: "Québec",
+    city: "Montreal",
+  },
+  active: true,
+  createdAt: new Date().toISOString(),
+};
+const product: Types.IProductDocument = {
+  _id: "abcd",
+  name: "My product",
+  description: "My product description",
+  storeId: store._id,
+  key: "KEY",
+  quantity: 10,
+  minQuantity: 5,
+  unitPrice: 200,
+  owner: user._id,
+  reviews: [],
+  picture: "picture_uri",
+  createdAt: new Date().toISOString(),
+  active: true,
+};
+const stores: Types.IStoreDocument[] = [store];
+const products: Types.IProductDocument[] = [product];
+const connectedUser = user;
 
 describe("View Product Feature", () => {
+  afterEach(() => {
+    cleanup();
+    jest.resetAllMocks();
+    jest.resetModules();
+  });
   describe("User can see more details about a product", () => {
     beforeEach(() => {
-      const user: Types.IUserDocument = {
-        _id: "123",
-        email: "johndoe@mail.com",
-        password: "johndoe",
-        profile: {
-          username: "johndoe",
-          picture: "picture_uri",
-          role: "user",
-        },
-        createdAt: new Date().toISOString(),
-      };
-      const users: Types.IUserDocument[] = [user];
-      const store: Types.IStoreDocument = {
-        _id: "1234",
-        name: "My store",
-        owner: user._id,
-        picture: "picture_uri",
-        products: [],
-        description: "My store description",
-        address: {
-          line1: "123 daddy street",
-          country: "CANADA",
-          state: "Québec",
-          city: "Montreal",
-        },
-        active: true,
-        createdAt: new Date().toISOString(),
-      };
-      const product: Types.IProductDocument = {
-        _id: "abcd",
-        name: "My product",
-        description: "My product description",
-        storeId: store._id,
-        key: "KEY",
-        quantity: 10,
-        minQuantity: 5,
-        unitPrice: 200,
-        owner: user._id,
-        reviews: [],
-        picture: "picture_uri",
-        createdAt: new Date().toISOString(),
-        active: true,
-      };
-      const stores: Types.IStoreDocument[] = [store];
-      const products: Types.IProductDocument[] = [product];
-      const connectedUser = user;
       state = generateFakeStore({
         users,
         stores,
@@ -121,38 +126,60 @@ describe("View Product Feature", () => {
       expect(deleteBtn).not.toBeInTheDocument();
     });
   });
-  describe("User cannot see more details about a product", () => {
+  describe("Not Found", () => {
     beforeEach(() => {
-      const user: Types.IUserDocument = {
-        _id: "123",
-        email: "johndoe@mail.com",
-        password: "johndoe",
-        profile: {
-          username: "johndoe",
-          picture: "picture_uri",
-          role: "user",
-        },
-        createdAt: new Date().toISOString(),
-      };
-      const users: Types.IUserDocument[] = [user];
-      const store: Types.IStoreDocument = {
-        _id: "1234",
-        name: "My store",
-        owner: user._id,
-        picture: "picture_uri",
-        products: [],
-        description: "My store description",
-        address: {
-          line1: "123 daddy street",
-          country: "CANADA",
-          state: "Québec",
-          city: "Montreal",
-        },
-        active: true,
-        createdAt: new Date().toISOString(),
-      };
-      const product: Types.IProductDocument = {
-        _id: "abcd",
+      state = generateFakeStore({
+        users,
+        stores,
+        products,
+        user: { connectedUser: user, selectedStore: store },
+      });
+      mockedUseNotifications.mockReturnValue({
+        show: mockShow,
+        close: jest.fn(),
+      });
+      mockedUseNavigate.mockReturnValue(mockNavigate);
+      mockedUseParams.mockReturnValue({ productId: "fakeProduct" });
+    });
+    test("should render NotFound", async () => {
+      await act(async () => {
+        renderWithProviders(<ViewProduct />, { preloadedState: state });
+      });
+      const notFound = await screen.findByTestId("NotFound");
+      await waitFor(async () => {
+        expect(notFound).toBeInTheDocument();
+      });
+    });
+  });
+  describe("Backdrop loading", () => {
+    beforeEach(() => {
+      state = generateFakeStore({
+        users,
+        stores,
+        products,
+        user: { connectedUser: user, selectedStore: null },
+      });
+      mockedUseNotifications.mockReturnValue({
+        show: mockShow,
+        close: jest.fn(),
+      });
+      mockedUseNavigate.mockReturnValue(mockNavigate);
+      mockedUseParams.mockReturnValue({ productId: product._id });
+    });
+    test("should be displayed", async () => {
+      await act(async () => {
+        renderWithProviders(<ViewProduct />, { preloadedState: state });
+      });
+      const backdrop = await screen.findByTestId("backdrop-loading");
+      await waitFor(async () => {
+        expect(backdrop).toBeInTheDocument();
+      });
+    });
+  });
+  describe("Deny access", () => {
+    beforeEach(() => {
+      const product2: Types.IProductDocument = {
+        _id: "product2",
         name: "My product",
         description: "My product description",
         storeId: store._id,
@@ -166,8 +193,39 @@ describe("View Product Feature", () => {
         createdAt: new Date().toISOString(),
         active: true,
       };
-      const stores: Types.IStoreDocument[] = [store];
-      const products: Types.IProductDocument[] = [product];
+      state = generateFakeStore({
+        users,
+        stores,
+        products: [product, product2],
+        user: { connectedUser: user, selectedStore: store },
+      });
+      mockedUseNotifications.mockReturnValue({
+        show: mockShow,
+        close: jest.fn(),
+      });
+      jest.mock("react-router", () => ({
+        ...jest.requireActual("react-router"),
+        Navigate: () => <div />,
+        useNavigate: jest.fn(),
+        useParams: jest.fn(),
+      }));
+      mockedUseNavigate.mockReturnValue(mockNavigate);
+      mockedUseParams.mockReturnValue({ productId: product2._id });
+    });
+    test("should be displayed", async () => {
+      await act(async () => {
+        renderWithProviders(<ViewProduct />, { preloadedState: state });
+      });
+      await waitFor(async () => {
+        expect(mockShow).toHaveBeenCalledWith(
+          "You do not have access to this product",
+          { severity: "error", autoHideDuration: 5000 }
+        );
+      });
+    });
+  });
+  describe("User cannot see more details about a product", () => {
+    beforeEach(() => {
       state = generateFakeStore({
         users,
         stores,
@@ -188,9 +246,9 @@ describe("View Product Feature", () => {
           isProtectedRoute: true,
         });
       });
-      let notFound: HTMLElement = await screen.findByTestId("NotFound");
+      const notFound = screen.queryByTestId("NotFound");
       await waitFor(async () => {
-        expect(notFound!).toBeInTheDocument();
+        expect(notFound).toBeInTheDocument();
       });
     });
   });

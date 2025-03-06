@@ -79,7 +79,10 @@ const StoreFormCtlr = ({
   const onSubmit = useCallback(
     async (values: FormValues, helpers: FormikHelpers<FormValues>) => {
       if (!connectedUser) {
-        alert("No connected user");
+        notifications.show("No connected user", {
+          severity: "error",
+          autoHideDuration: 5000,
+        });
         return;
       }
       const newStore = new Store({

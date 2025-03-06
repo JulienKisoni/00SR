@@ -33,39 +33,40 @@ const mockedUseNotifications = jest.mocked(useNotifications);
 const mockedUseNavigate = jest.mocked(useNavigate);
 const mockedUseParams = jest.mocked(useParams);
 
+const user: Types.IUserDocument = {
+  _id: "123",
+  email: "johndoe@mail.com",
+  password: "johndoe",
+  profile: {
+    username: "johndoe",
+    picture: "picture_uri",
+    role: "user",
+  },
+  createdAt: new Date().toISOString(),
+};
+const users: Types.IUserDocument[] = [user];
+const store: Types.IStoreDocument = {
+  _id: "1234",
+  name: "My store",
+  owner: user._id,
+  picture: "picture_uri",
+  products: [],
+  description: "My store description",
+  address: {
+    line1: "123 daddy street",
+    country: "CANADA",
+    state: "Québec",
+    city: "Montreal",
+  },
+  active: true,
+  createdAt: new Date().toISOString(),
+};
+const stores: Types.IStoreDocument[] = [store];
+const connectedUser = user;
+
 describe("Edit Store Feature", () => {
   describe("User can update a store by filling all the required fields", () => {
     beforeEach(() => {
-      const user: Types.IUserDocument = {
-        _id: "123",
-        email: "johndoe@mail.com",
-        password: "johndoe",
-        profile: {
-          username: "johndoe",
-          picture: "picture_uri",
-          role: "user",
-        },
-        createdAt: new Date().toISOString(),
-      };
-      const users: Types.IUserDocument[] = [user];
-      const store: Types.IStoreDocument = {
-        _id: "1234",
-        name: "My store",
-        owner: user._id,
-        picture: "picture_uri",
-        products: [],
-        description: "My store description",
-        address: {
-          line1: "123 daddy street",
-          country: "CANADA",
-          state: "Québec",
-          city: "Montreal",
-        },
-        active: true,
-        createdAt: new Date().toISOString(),
-      };
-      const stores: Types.IStoreDocument[] = [store];
-      const connectedUser = user;
       state = generateFakeStore({
         users,
         stores,
@@ -117,36 +118,6 @@ describe("Edit Store Feature", () => {
   });
   describe("User cannot update a store by omitting one required field", () => {
     beforeEach(() => {
-      const user: Types.IUserDocument = {
-        _id: "123",
-        email: "johndoe@mail.com",
-        password: "johndoe",
-        profile: {
-          username: "johndoe",
-          picture: "picture_uri",
-          role: "user",
-        },
-        createdAt: new Date().toISOString(),
-      };
-      const users: Types.IUserDocument[] = [user];
-      const store: Types.IStoreDocument = {
-        _id: "1234",
-        name: "My store",
-        owner: user._id,
-        picture: "picture_uri",
-        products: [],
-        description: "My store description",
-        address: {
-          line1: "123 daddy street",
-          country: "CANADA",
-          state: "Québec",
-          city: "Montreal",
-        },
-        active: true,
-        createdAt: new Date().toISOString(),
-      };
-      const stores: Types.IStoreDocument[] = [store];
-      const connectedUser = user;
       state = generateFakeStore({
         users,
         stores,
@@ -181,6 +152,103 @@ describe("Edit Store Feature", () => {
         userEvent.clear(name);
       });
       expect(submitBtn!).toBeDisabled();
+    });
+  });
+  describe("Remove picture", () => {
+    beforeEach(() => {
+      state = generateFakeStore({
+        users,
+        stores,
+        user: { connectedUser: user, selectedStore: store },
+      });
+      mockedUseNotifications.mockReturnValue({
+        show: mockShow,
+        close: jest.fn(),
+      });
+      mockedUseNavigate.mockReturnValue(mockNavigate);
+      mockedUseParams.mockReturnValue({ storeId: store._id });
+    });
+    test("should work", async () => {
+      await act(async () => {
+        renderWithProviders(<EditStore />, { preloadedState: state });
+      });
+      const name = await screen.findByTestId("store-name");
+      const removePicture = await screen.findByTestId("remove-picture");
+      const submitBtn = await screen.findByTestId("store-submit");
+
+      expect(name).toBeInTheDocument();
+      expect(removePicture).toBeInTheDocument();
+      expect(submitBtn).toBeDisabled();
+
+      await act(async () => {
+        userEvent.type(name, "updated");
+        userEvent.click(removePicture);
+      });
+
+      await waitFor(async () => {
+        expect(submitBtn).toBeEnabled();
+      });
+
+      await act(async () => {
+        userEvent.click(submitBtn);
+      });
+
+      expect(mockShow).toHaveBeenCalledWith("Store updated", {
+        autoHideDuration: 5000,
+        severity: "success",
+      });
+    });
+  });
+  describe("No connected user", () => {
+    beforeEach(() => {
+      state = generateFakeStore({
+        users,
+        stores,
+        user: { connectedUser: null, selectedStore: store },
+      });
+      mockedUseNotifications.mockReturnValue({
+        show: mockShow,
+        close: jest.fn(),
+      });
+      mockedUseNavigate.mockReturnValue(mockNavigate);
+      mockedUseParams.mockReturnValue({ storeId: store._id });
+    });
+    test("should display not connected error message", async () => {
+      await act(async () => {
+        renderWithProviders(<EditStore />, { preloadedState: state });
+      });
+      const name = await screen.findByTestId("store-name");
+      const description = await screen.findByTestId("store-description");
+      const addressLine1 = await screen.findByTestId("store-address-line1");
+      const country = await screen.findByTestId("store-country");
+      const stateElement = await screen.findByTestId("store-state");
+      const city = await screen.findByTestId("store-city");
+      const submitBtn = await screen.findByTestId("store-submit");
+
+      expect(name).toBeInTheDocument();
+      expect(description).toBeInTheDocument();
+      expect(addressLine1).toBeInTheDocument();
+      expect(country).toBeInTheDocument();
+      expect(stateElement).toBeInTheDocument();
+      expect(city).toBeInTheDocument();
+      expect(submitBtn).toBeDisabled();
+
+      await act(async () => {
+        userEvent.type(name, "updated");
+      });
+
+      await waitFor(async () => {
+        expect(submitBtn).toBeEnabled();
+      });
+
+      await act(async () => {
+        userEvent.click(submitBtn);
+      });
+
+      expect(mockShow).toHaveBeenCalledWith("No connected user", {
+        autoHideDuration: 5000,
+        severity: "error",
+      });
     });
   });
 });
