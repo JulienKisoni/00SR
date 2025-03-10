@@ -4,7 +4,7 @@ import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
 import { useNotifications } from "@toolpad/core";
 
-import SignUp from "../../routes/SignUp";
+import SignUp from "../../routes/Signup";
 import { UsersSrv } from "../../services/controllers/UserSrv";
 import { User } from "../../classes/User";
 import { ROUTES } from "../../constants/routes";
