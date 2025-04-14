@@ -94,6 +94,7 @@ export class UsersSrv extends Api {
   }
   logout() {
     this.dispatch(setUser({ data: null }));
+    this.dispatch(selectStore({ data: null }));
   }
   updateOne<T extends Types.IUserDocument | Types.IStoreDocument>(
     userId: string,

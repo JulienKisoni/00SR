@@ -126,7 +126,14 @@ function Cart() {
     if (!selectedStoreId || !connectedUserId) {
       return undefined;
     }
-    return state.cart[connectedUserId][selectedStoreId];
+    if (
+      state.cart &&
+      state.cart[connectedUserId] &&
+      state.cart[connectedUserId][selectedStoreId]
+    ) {
+      return state.cart[connectedUserId][selectedStoreId];
+    }
+    return undefined;
   }, shallowEqual);
 
   const columns: GridColDef[] = useMemo(() => {
